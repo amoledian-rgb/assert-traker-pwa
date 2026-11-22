@@ -1131,7 +1131,14 @@ document.getElementById('setup-go').addEventListener('click', function(){ switch
 /* ----- PWA: Service Worker 등록 (오프라인에서도 바로 열림) ----- */
 if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
+    /* 이미 설치된 앱이면: 새 버전이 제어를 잡는 순간 한 번 새로고침해 수정된 화면을 바로 보여 준다. */
+    var hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(!hadController) return;   /* 첫 설치 때는 그냥 둔다 */
+      hadController = false;
+      location.reload();
+    });
+    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
   });
 }
 </script>
