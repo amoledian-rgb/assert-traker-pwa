@@ -103,6 +103,19 @@
   .cur2 span{display:block; font-size:12px; color:#8b93a4; margin-bottom:3px}
   .cur2 b{display:block; font-size:16.5px; font-variant-numeric:tabular-nums}
   .cur2 em{display:block; font-style:normal; font-size:12px; color:var(--sub); margin-top:2px; font-variant-numeric:tabular-nums}
+  /* ---------- 환차익 (기준 매입 환율) ---------- */
+  label.f>span .opt{font-style:normal; font-weight:600; color:#b4bbc9}
+  .kv .fxg{display:block; margin:2px 0 0; font-size:12px; font-weight:700; color:#8b93a4; font-variant-numeric:tabular-nums}
+  .kv .fxg.up{color:var(--up)}
+  .kv .fxg.down{color:var(--down)}
+  .fxg .fxsub{display:block; font-size:11.5px; font-weight:600; margin-top:1px}
+  .cur2 .fxg{font-weight:700; color:#8b93a4}
+  .cur2 .fxg.up{color:var(--up)}
+  .cur2 .fxg.down{color:var(--down)}
+  .fxline{margin-top:9px; padding:7px 10px; border-radius:10px; background:#f4f7ff; color:#5b6577;
+    font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; text-align:center}
+  .fxline.up{background:#fdeeee; color:var(--up)}
+  .fxline.down{background:#eaf1ff; color:var(--down)}
   /* ---------- inputs ---------- */
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
   label.f{display:block; min-width:0}
@@ -315,7 +328,7 @@
         <div><span>투자원금</span><b id="s-principal">0</b></div>
         <div><span>주식 평가액</span><b id="s-stock">0</b></div>
         <div><span>예수금</span><b id="s-cash">0</b></div>
-        <div><span>달러자산</span><b id="s-usd">$0.00</b></div>
+        <div><span>달러자산</span><b id="s-usd">$0.00</b><span class="fxg" id="s-usd-gain">기준 환율 입력 시 환차익 표시</span></div>
       </div>
     </div>
 
@@ -344,7 +357,7 @@
     <div class="card">
       <div class="cur2">
         <div><span>원화자산 (₩)</span><b id="s-krw">0원</b><em id="s-krww">0.0%</em></div>
-        <div><span>달러자산 ($)</span><b id="s-usd2">$0.00</b><em id="s-usdkrw">0원 · 0.0%</em></div>
+        <div><span>달러자산 ($)</span><b id="s-usd2">$0.00</b><em id="s-usdkrw">0원 · 0.0%</em><em class="fxg" id="s-usd-gain2">기준 환율 입력 시 환차익 표시</em></div>
       </div>
     </div>
     <p class="hint" style="margin:0 16px 18px">달러자산은 달러 금액으로 표시하고, 원화 환산액은 위 환율로 계산합니다. 환율을 바꾸면 환산액만 따라 바뀝니다.</p>
@@ -358,7 +371,9 @@
         <label class="f"><span>평가 기준일</span><input class="t txt" id="in-date" type="date"></label>
         <label class="f"><span>환율 <u>₩/$</u></span><input class="t" id="in-fx" inputmode="decimal"></label>
       </div>
-      <p class="hint">매일 고칠 곳은 <b>기준일 · 환율 · 종목 현재가</b> 세 가지입니다. <b>달러($) 종목은 소수점 넷째 자리까지</b> 넣고 표시됩니다.</p>
+      <label class="f" style="margin-top:8px"><span>기준(매입) 환율 <u>₩/$</u> <i class="opt">선택</i></span><input class="t" id="in-fxbase" inputmode="decimal" step="0.01" placeholder="예: 1336.50"></label>
+      <div class="fxline" id="in-fxline">기준(매입) 환율을 넣으면 환차익을 계산합니다</div>
+      <p class="hint">매일 고칠 곳은 <b>기준일 · 환율 · 종목 현재가</b> 세 가지입니다. <b>달러($) 종목은 소수점 넷째 자리까지</b> 넣고 표시됩니다. 기준(매입) 환율을 넣으면 달러자산의 <b>환차익</b>이 자동으로 계산됩니다.</p>
     </div>
 
     <div class="sec">보유 종목 <span id="in-holdn">13건</span></div>
@@ -434,7 +449,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-23 · 글자 10% 확대</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-23 · 환차익 자동 계산</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -502,6 +517,8 @@ function normalize(d){
   var out = {
     asOf: (typeof d.asOf === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.asOf)) ? d.asOf : INITIAL.asOf,
     fx: num(d.fx) || INITIAL.fx,
+    /* 기준(매입) 환율 — 선택 입력. 없거나 0 이하면 null(환차익 계산 안 함) (fxgain-v1) */
+    fxBase: (d.fxBase == null || d.fxBase === '' || !(num(d.fxBase) > 0)) ? null : num(d.fxBase),
     accounts: d.accounts.map(function(a){
       return { name:String(a.name||''), type:(a.type==='연금'?'연금':'주식'),
                principal:num(a.principal), cashKrw:num(a.cashKrw), cashUsd:num(a.cashUsd) };
@@ -598,6 +615,10 @@ function compute(){
   rows.forEach(function(r){ if(r.h.cur === 'USD') usdStock += r.vn; });
   var usdTotal = usdStock + cashUsd;
   var usdKrw = usdTotal * fx;
+  /* 환차익 = (현재 환율 − 기준(매입) 환율) × 달러자산 (fxgain-v1) */
+  var fxBase = (state.fxBase != null && num(state.fxBase) > 0) ? num(state.fxBase) : null;
+  var fxGain = (fxBase != null && fxBase > 0) ? (fx - fxBase) * usdTotal : null;
+  var fxDiff = (fxBase != null) ? (fx - fxBase) : null;
 
   order.forEach(function(k){ var a = map[k]; a.weight = totalAssets ? a.total / totalAssets : 0; });
 
@@ -645,7 +666,8 @@ function compute(){
   return { fx:fx, accounts: order.map(function(k){ return map[k]; }), rows:rows,
            stockSum:stockSum, cashKrw:cashKrw, cashUsd:cashUsd, usdStock:usdStock,
            totalAssets:totalAssets, principalSum:principalSum, pnl:pnl, ret:ret,
-           usdTotal:usdTotal, usdKrw:usdKrw, subs:subs, stocks:stocks };
+           usdTotal:usdTotal, usdKrw:usdKrw, fxBase:fxBase, fxDiff:fxDiff, fxGain:fxGain,
+           subs:subs, stocks:stocks };
 }
 
 /* ---------- header ---------- */
@@ -672,6 +694,11 @@ function renderHeader(m){
   var fxStr = fmtFx(state.fx);
   if(f1.value !== fxStr && document.activeElement !== f1) f1.value = fxStr;
   if(f2 && f2.value !== fxStr && document.activeElement !== f2) f2.value = fxStr;
+  var fb = document.getElementById('in-fxbase');
+  if(fb){
+    var baseStr = (state.fxBase != null && num(state.fxBase) > 0) ? fmtFx(state.fxBase) : '';
+    if(fb.value !== baseStr && document.activeElement !== fb) fb.value = baseStr;
+  }
   updateSetupBanner(m);
 }
 /* 데이터가 하나도 없을 때만 첫 실행 안내 배너 */
@@ -685,6 +712,31 @@ function updateSetupBanner(m){
     if(money > 0) empty = false;
   }
   el.classList.toggle('on', empty);
+}
+/* ---------- 환차익 표시 (fxgain-v1) ---------- */
+function won2s(n){         /* 달러당 차이: +16.00원 · -3.50원 */
+  var v = Math.round(num(n) * 100) / 100;
+  return (v > 0 ? '+' : (v < 0 ? '-' : '')) + Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}) + '원';
+}
+function fxGainLine(m){    /* 환차익 +16,000원 (달러당 +16.00원) */
+  return '환차익 ' + signed(m.fxGain) + '<span class="fxsub">(달러당 ' + won2s(m.fxDiff) + ')</span>';
+}
+function renderFxGain(m){
+  [document.getElementById('s-usd-gain'), document.getElementById('s-usd-gain2')].forEach(function(el){
+    if(!el) return;
+    el.className = 'fxg' + (m.fxGain == null ? '' : ' ' + cls(m.fxGain));
+    el.innerHTML = (m.fxGain == null) ? '기준 환율 입력 시 환차익 표시' : fxGainLine(m);
+  });
+  var line = document.getElementById('in-fxline');
+  if(line){
+    if(m.fxGain == null){
+      line.className = 'fxline';
+      line.innerHTML = '기준(매입) 환율을 넣으면 환차익을 계산합니다';
+    }else{
+      line.className = 'fxline ' + cls(m.fxGain);
+      line.innerHTML = '달러당 ' + won2s(m.fxDiff) + ' · 환차익 ' + signed(m.fxGain);
+    }
+  }
 }
 function fmtFx(v){
   var n = num(v);
@@ -737,6 +789,7 @@ function renderSummary(m){
   document.getElementById('s-krww').textContent = pct(m.totalAssets ? krwOnly/m.totalAssets : 0);
   document.getElementById('s-usd2').textContent = usd(m.usdTotal);
   document.getElementById('s-usdkrw').textContent = won(m.usdKrw) + ' · ' + pct(m.totalAssets ? m.usdKrw/m.totalAssets : 0);
+  renderFxGain(m);
 }
 
 /* ---------- 입력: 종목 ---------- */
@@ -819,6 +872,7 @@ function updateInputCalcs(){
     card.querySelector('.a-pnl').innerHTML = pnlText(h, r);
   });
   renderAccTotals(m);
+  renderFxGain(m);
 }
 function renderAccTotals(m){
   var map = {};
@@ -1021,6 +1075,12 @@ bindNumber(document.getElementById('h-fx'), function(el){
 }, true);
 bindNumber(document.getElementById('in-fx'), function(el){
   state.fx = num(el.value) || 0; afterChange();
+}, true);
+/* 기준(매입) 환율 — 비우면 null 로 되돌려 환차익 계산을 끈다 (fxgain-v1) */
+bindNumber(document.getElementById('in-fxbase'), function(el){
+  var v = num(el.value);
+  state.fxBase = (String(el.value).replace(/[,\s]/g,'') === '' || !(v > 0)) ? null : v;
+  afterChange();
 }, true);
 
 document.getElementById('btn-save').addEventListener('click', saveNow);
