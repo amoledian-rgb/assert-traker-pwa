@@ -13,7 +13,12 @@ self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
       return Promise.all(keys.map(function(k){ return k === CACHE ? null : caches.delete(k); }));
-    }).then(function(){ return self.clients.claim(); })
+    }).then(function(){ return self.clients.claim(); }).then(function(){
+      /* 예전 버전 앱이 이미 열려 있으면 한 번 새로고침해 새 화면으로 바꾼다. */
+      return self.clients.matchAll({type:'window'}).then(function(list){
+        list.forEach(function(c){ try{ c.navigate(c.url); }catch(err){} });
+      });
+    })
   );
 });
 
