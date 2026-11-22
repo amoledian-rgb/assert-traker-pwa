@@ -12,11 +12,15 @@ self.addEventListener('install', function(e){
 self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
-      return Promise.all(keys.map(function(k){ return k === CACHE ? null : caches.delete(k); }));
-    }).then(function(){ return self.clients.claim(); }).then(function(){
-      /* 예전 버전 앱이 이미 열려 있으면 한 번 새로고침해 새 화면으로 바꾼다. */
-      return self.clients.matchAll({type:'window'}).then(function(list){
-        list.forEach(function(c){ try{ c.navigate(c.url); }catch(err){} });
+      var hadOld = keys.some(function(k){ return k !== CACHE; });   /* 예전 버전이 깔려 있었는지 */
+      return Promise.all(keys.map(function(k){ return k === CACHE ? null : caches.delete(k); })).then(function(){
+        return self.clients.claim();
+      }).then(function(){
+        if(!hadOld) return null;   /* 첫 설치면 새로고침할 필요 없다 */
+        /* 예전 버전 앱이 이미 열려 있으면 한 번 새로고침해 새 화면으로 바꾼다. */
+        return self.clients.matchAll({type:'window'}).then(function(list){
+          list.forEach(function(c){ try{ c.navigate(c.url); }catch(err){} });
+        });
       });
     })
   );
