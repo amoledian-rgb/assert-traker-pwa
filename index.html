@@ -22,7 +22,7 @@
   body{
     background:var(--bg); color:var(--ink);
     font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",Roboto,sans-serif;
-    font-size:14px; line-height:1.4; -webkit-text-size-adjust:100%;
+    font-size:15.5px; line-height:1.4; -webkit-text-size-adjust:100%;
     padding-bottom:env(safe-area-inset-bottom);
   }
   b,strong{font-weight:700}
@@ -38,19 +38,19 @@
   .h-top{display:flex; gap:8px; align-items:flex-end}
   .h-field{flex:1; min-width:0; display:block}
   .h-field.sm{flex:0 0 104px}
-  .h-field span{display:block; font-size:10.5px; letter-spacing:.02em; color:#9fb0cd; margin-bottom:3px}
+  .h-field span{display:block; font-size:11.5px; letter-spacing:.02em; color:#9fb0cd; margin-bottom:3px}
   .h-field input{
     width:100%; height:30px; border:1px solid rgba(255,255,255,.16); border-radius:8px;
-    background:rgba(255,255,255,.08); color:#fff; font-size:13px; font-weight:600;
+    background:rgba(255,255,255,.08); color:#fff; font-size:14.5px; font-weight:600;
     padding:0 8px; color-scheme:dark; outline:none;
   }
   .h-field input:focus{border-color:#6f9bff; background:rgba(255,255,255,.14)}
   .h-sum{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:9px}
-  .h-label{font-size:11px; color:#9fb0cd; margin-right:6px}
-  .h-total{font-size:27px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.1}
-  .h-total em{font-style:normal; font-size:15px; font-weight:600; color:#c7d3e8; margin-left:2px}
+  .h-label{font-size:12px; color:#9fb0cd; margin-right:6px}
+  .h-total{font-size:29.5px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.1}
+  .h-total em{font-style:normal; font-size:16.5px; font-weight:600; color:#c7d3e8; margin-left:2px}
   .h-badge{
-    font-size:11.5px; font-weight:700; padding:4px 8px; border-radius:999px; white-space:nowrap;
+    font-size:12.5px; font-weight:700; padding:4px 8px; border-radius:999px; white-space:nowrap;
     background:rgba(229,72,77,.18); color:#ff9ea1; font-variant-numeric:tabular-nums;
   }
   .h-badge.down{background:rgba(47,111,235,.2); color:#a9c6ff}
@@ -59,97 +59,97 @@
   main{padding:0 0 90px}
   .tab{display:none}
   .tab.active{display:block}
-  .sec{font-size:12px; font-weight:700; color:var(--sub); letter-spacing:.01em; margin:16px 16px 7px; display:flex; justify-content:space-between; align-items:baseline}
-  .sec span{font-weight:600; font-size:11px; color:#98a1b3}
+  .sec{font-size:13px; font-weight:700; color:var(--sub); letter-spacing:.01em; margin:16px 16px 7px; display:flex; justify-content:space-between; align-items:baseline}
+  .sec span{font-weight:600; font-size:12px; color:#98a1b3}
   .card{background:var(--card); border-radius:16px; margin:0 12px 10px; padding:13px 14px; box-shadow:0 1px 2px rgba(20,27,43,.05), 0 6px 16px -12px rgba(20,27,43,.18)}
-  .hint{margin:8px 2px 0; font-size:11px; color:#8b93a4; line-height:1.45}
-  .note{margin:0 12px 12px; padding:10px 12px; border-radius:12px; background:#eef3ff; color:#2c4a8f; font-size:11.5px; line-height:1.5}
+  .hint{margin:8px 2px 0; font-size:12px; color:#8b93a4; line-height:1.45}
+  .note{margin:0 12px 12px; padding:10px 12px; border-radius:12px; background:#eef3ff; color:#2c4a8f; font-size:12.5px; line-height:1.5}
   .note.warn{background:#fff5e8; color:#8a5a12}
   /* ---------- summary ---------- */
-  .hero-num{font-size:29px; font-weight:800; letter-spacing:-.025em; font-variant-numeric:tabular-nums}
-  .hero-num em{font-style:normal; font-size:16px; font-weight:600; color:var(--sub); margin-left:2px}
-  .hero-pnl{margin-top:5px; display:flex; align-items:center; gap:7px; font-size:13px; font-weight:700; font-variant-numeric:tabular-nums}
-  .hero-pnl .chiprate{font-size:11.5px; padding:2px 7px; border-radius:999px; background:#fdeeee; color:var(--up)}
+  .hero-num{font-size:32px; font-weight:800; letter-spacing:-.025em; font-variant-numeric:tabular-nums}
+  .hero-num em{font-style:normal; font-size:17.5px; font-weight:600; color:var(--sub); margin-left:2px}
+  .hero-pnl{margin-top:5px; display:flex; align-items:center; gap:7px; font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums}
+  .hero-pnl .chiprate{font-size:12.5px; padding:2px 7px; border-radius:999px; background:#fdeeee; color:var(--up)}
   .hero-pnl.down .chiprate{background:#eaf1ff; color:var(--down)}
   .kv{display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:12px; background:var(--line); border-radius:11px; overflow:hidden}
   .kv>div{background:#fbfcfe; padding:9px 11px}
-  .kv span{display:block; font-size:11px; color:#8b93a4; margin-bottom:2px}
-  .kv b{font-size:13.5px; font-variant-numeric:tabular-nums; font-weight:700}
-  .kv b em{font-style:normal; font-weight:600; color:var(--sub); font-size:11.5px}
+  .kv span{display:block; font-size:12px; color:#8b93a4; margin-bottom:2px}
+  .kv b{font-size:15px; font-variant-numeric:tabular-nums; font-weight:700}
+  .kv b em{font-style:normal; font-weight:600; color:var(--sub); font-size:12.5px}
   .cmp{display:flex; align-items:baseline; justify-content:space-between; padding:7px 0; font-variant-numeric:tabular-nums}
   .cmp .left{display:flex; align-items:center; gap:7px; min-width:0}
-  .cmp .left b{font-size:13.5px}
+  .cmp .left b{font-size:15px}
   .dot{width:9px;height:9px;border-radius:3px;flex:0 0 9px}
-  .cmp .sub2{font-size:11.5px; color:var(--sub); margin-top:1px}
+  .cmp .sub2{font-size:12.5px; color:var(--sub); margin-top:1px}
   .cmp .right{text-align:right}
-  .cmp .right b{font-size:14px; display:block}
-  .cmp .right span{font-size:11.5px; font-variant-numeric:tabular-nums}
+  .cmp .right b{font-size:15.5px; display:block}
+  .cmp .right span{font-size:12.5px; font-variant-numeric:tabular-nums}
   .bar{height:11px; border-radius:7px; display:flex; overflow:hidden; background:#eef1f6; margin:9px 0 2px}
   .bar i{display:block; height:100%}
-  .barnum{display:flex; justify-content:space-between; font-size:11px; color:var(--sub); font-variant-numeric:tabular-nums}
+  .barnum{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); font-variant-numeric:tabular-nums}
   .acc-row{display:flex; align-items:center; gap:9px; padding:10px 0; border-bottom:1px solid var(--line)}
   .acc-row:last-child{border-bottom:0; padding-bottom:2px}
   .acc-row:first-child{padding-top:2px}
   .acc-row .nm{flex:1; min-width:0}
-  .acc-row .nm b{display:block; font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .acc-row .nm span{font-size:11px; color:var(--sub); font-variant-numeric:tabular-nums}
+  .acc-row .nm b{display:block; font-size:14.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .acc-row .nm span{font-size:12px; color:var(--sub); font-variant-numeric:tabular-nums}
   .acc-row .amt{text-align:right; flex:0 0 auto}
-  .acc-row .amt b{display:block; font-size:13.5px; font-weight:700; font-variant-numeric:tabular-nums}
-  .acc-row .amt span{font-size:11px; font-variant-numeric:tabular-nums}
-  .tag{display:inline-block; font-size:10.5px; font-weight:700; padding:1.5px 6px; border-radius:6px; margin-left:5px; vertical-align:1px; background:#eef1f6; color:#5b6577}
+  .acc-row .amt b{display:block; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums}
+  .acc-row .amt span{font-size:12px; font-variant-numeric:tabular-nums}
+  .tag{display:inline-block; font-size:11.5px; font-weight:700; padding:1.5px 6px; border-radius:6px; margin-left:5px; vertical-align:1px; background:#eef1f6; color:#5b6577}
   .tag.pen{background:#fbf3dc; color:#8a6c12}
   .cur2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
   .cur2>div{background:#fbfcfe; border:1px solid var(--line); border-radius:12px; padding:10px 11px}
-  .cur2 span{display:block; font-size:11px; color:#8b93a4; margin-bottom:3px}
-  .cur2 b{display:block; font-size:15px; font-variant-numeric:tabular-nums}
-  .cur2 em{display:block; font-style:normal; font-size:11px; color:var(--sub); margin-top:2px; font-variant-numeric:tabular-nums}
+  .cur2 span{display:block; font-size:12px; color:#8b93a4; margin-bottom:3px}
+  .cur2 b{display:block; font-size:16.5px; font-variant-numeric:tabular-nums}
+  .cur2 em{display:block; font-style:normal; font-size:12px; color:var(--sub); margin-top:2px; font-variant-numeric:tabular-nums}
   /* ---------- inputs ---------- */
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
   label.f{display:block; min-width:0}
-  label.f>span{display:block; font-size:11px; color:#8b93a4; margin-bottom:4px}
+  label.f>span{display:block; font-size:12px; color:#8b93a4; margin-bottom:4px}
   label.f>span u{text-decoration:none; color:#b4bbc9; font-weight:600}
   input.t{
     width:100%; height:42px; border:1px solid var(--line); border-radius:11px; background:#fbfcfe;
-    padding:0 11px; font-size:15px; font-weight:700; color:var(--ink); text-align:right;
+    padding:0 11px; font-size:16.5px; font-weight:700; color:var(--ink); text-align:right;
     font-variant-numeric:tabular-nums; outline:none;
   }
-  input.t.sm{height:38px; font-size:14px; color:#4a5468}
+  input.t.sm{height:38px; font-size:15.5px; color:#4a5468}
   input.t:focus{border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(59,110,240,.12)}
-  input.t.big{font-size:19px; height:46px; color:#0f1c33}
+  input.t.big{font-size:21px; height:46px; color:#0f1c33}
   .grid2>label.f>input.t{height:46px}
-  input.t.txt{text-align:left; font-weight:600; font-size:15px}
+  input.t.txt{text-align:left; font-weight:600; font-size:16.5px}
   input.t::placeholder{color:#c3c9d6; font-weight:600}
   .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 12px 10px; margin:0 -12px; scrollbar-width:none}
   .chips::-webkit-scrollbar{display:none}
   .chip{
     flex:0 0 auto; height:34px; padding:0 13px; border-radius:999px; border:1px solid var(--line);
-    background:#fff; color:#5b6577; font-size:12.5px; font-weight:700; white-space:nowrap;
+    background:#fff; color:#5b6577; font-size:14px; font-weight:700; white-space:nowrap;
   }
   .chip.on{background:var(--navy); border-color:var(--navy); color:#fff}
   .chip .n{font-weight:600; opacity:.6; margin-left:3px}
   .stock-head{display:flex; align-items:center; gap:7px; margin-bottom:9px}
   .stock-head select{
     flex:1; min-width:0; height:30px; border:1px solid var(--line); border-radius:8px; background:#f7f9fc;
-    color:#4a5468; font-size:11.5px; font-weight:700; padding:0 6px; outline:none;
+    color:#4a5468; font-size:12.5px; font-weight:700; padding:0 6px; outline:none;
   }
   .seg{display:flex; flex:0 0 auto; border:1px solid var(--line); border-radius:8px; overflow:hidden; height:30px}
-  .seg button{width:38px; border:0; background:#fff; color:#98a1b3; font-size:11px; font-weight:800; padding:0}
+  .seg button{width:38px; border:0; background:#fff; color:#98a1b3; font-size:12px; font-weight:800; padding:0}
   .seg button.on{background:#eef2ff; color:#2f56c8}
-  .del{flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:#fff; color:#b4bbc9; font-size:13px; line-height:1; padding:0}
+  .del{flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:#fff; color:#b4bbc9; font-size:14.5px; line-height:1; padding:0}
   .del:active{background:#fdeeee; color:var(--up)}
   .delbtn{
     display:flex; align-items:center; justify-content:center; gap:5px; width:100%; height:38px; margin-top:9px;
     border:1px solid #f1d3d3; border-radius:10px; background:#fff; color:#c02b30;
-    font-size:12.5px; font-weight:700; letter-spacing:-.01em;
+    font-size:14px; font-weight:700; letter-spacing:-.01em;
   }
   .delbtn:active{background:#fdeeee; border-color:#e9b9b9}
   .foot{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:7px; padding-top:7px; border-top:1px dashed var(--line); font-variant-numeric:tabular-nums}
-  .foot .l{font-size:11.5px; color:#8b93a4}
-  .foot .l b{margin-left:4px; font-size:13px; color:var(--ink); font-weight:700}
-  .foot .r{font-size:11.5px; font-weight:700}
+  .foot .l{font-size:12.5px; color:#8b93a4}
+  .foot .l b{margin-left:4px; font-size:14.5px; color:var(--ink); font-weight:700}
+  .foot .r{font-size:12.5px; font-weight:700}
   .addbtn{
     display:block; width:calc(100% - 24px); margin:2px 12px 10px; height:46px; border-radius:13px;
-    border:1.5px dashed #c3cbd9; background:#fff; color:#4a5468; font-size:14px; font-weight:700;
+    border:1.5px dashed #c3cbd9; background:#fff; color:#4a5468; font-size:15.5px; font-weight:700;
   }
   .addbtn:active{background:#eef1f6}
   /* ---------- 계좌 추가·수정 (acc-add-v1) ---------- */
@@ -159,13 +159,13 @@
   .types{display:flex; gap:6px; margin:2px 0 9px}
   .types button{
     flex:1; height:38px; border:1px solid var(--line); border-radius:10px; background:#fff;
-    color:#7c869b; font-size:12px; font-weight:700; padding:0 4px;
+    color:#7c869b; font-size:13px; font-weight:700; padding:0 4px;
   }
   .types button.on{background:#eef2ff; border-color:#c9d4ef; color:#1f3f8f}
   .acct-tools{display:flex; gap:6px; flex:0 0 auto; margin-left:auto}
   .acct-tools button{
     height:28px; padding:0 8px; border:1px solid var(--line); border-radius:8px; background:#fff;
-    color:#66718a; font-size:11px; font-weight:700; white-space:nowrap;
+    color:#66718a; font-size:12px; font-weight:700; white-space:nowrap;
   }
   .acct-tools button:active{background:#eef1f6}
   .acct-tools button.warn{color:#c02b30; border-color:#f1d3d3}
@@ -177,57 +177,57 @@
   }
   .addacc[hidden]{display:none}
   .addacc .hd{display:flex; align-items:center; justify-content:space-between; margin-bottom:9px}
-  .addacc .hd b{font-size:13.5px; letter-spacing:-.01em}
-  .addacc .hd button{border:0; background:transparent; color:#8b93a4; font-size:12px; font-weight:700; padding:2px 0 2px 8px}
-  .lbl{display:block; font-size:11px; color:#8b93a4; margin:0 0 4px}
+  .addacc .hd b{font-size:15px; letter-spacing:-.01em}
+  .addacc .hd button{border:0; background:transparent; color:#8b93a4; font-size:13px; font-weight:700; padding:2px 0 2px 8px}
+  .lbl{display:block; font-size:12px; color:#8b93a4; margin:0 0 4px}
   .addacc .act{display:flex; gap:7px; margin-top:11px}
   .addacc .act button{
     flex:1; height:44px; border-radius:11px; border:1px solid var(--line); background:#fff;
-    font-size:13.5px; font-weight:700; color:#4a5468;
+    font-size:15px; font-weight:700; color:#4a5468;
   }
   .addacc .act button.go{background:#1B365D; border-color:#1B365D; color:#fff}
   .addacc .act button:active{filter:brightness(1.06)}
-  .addacc .err{display:none; margin-top:8px; color:#c02b30; font-size:11.5px; font-weight:700}
+  .addacc .err{display:none; margin-top:8px; color:#c02b30; font-size:12.5px; font-weight:700}
   .addacc .err.on{display:block}
-  .acct-head .nm{flex:1; min-width:0; display:flex; align-items:center; gap:5px}
-  .acct-head .nm b{font-size:13.5px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .acct-head .nm{flex:1; min-width:0; display:flex; align-items:center; gap:2px 5px; flex-wrap:wrap}
+  .acct-head .nm b{font-size:15px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .acct-head .tag{margin-left:0}
-  .acct-head .tot{font-size:12px; font-weight:700; color:#4a5468; font-variant-numeric:tabular-nums}
+  .acct-head .tot{font-size:13px; font-weight:700; color:#4a5468; font-variant-numeric:tabular-nums}
   .rowline{display:flex; justify-content:space-between; align-items:baseline; padding:5px 0; font-variant-numeric:tabular-nums}
-  .rowline .k{font-size:13px; color:#4a5468}
-  .rowline .v{font-size:13.5px; font-weight:700}
+  .rowline .k{font-size:14.5px; color:#4a5468}
+  .rowline .v{font-size:15px; font-weight:700}
   /* ---------- stocks tab ---------- */
   .srow{padding:11px 0; border-bottom:1px solid var(--line)}
   .srow:first-child{padding-top:2px}
   .srow:last-child{border-bottom:0; padding-bottom:2px}
   .srow .top{display:flex; align-items:center; gap:6px}
-  .srow .top b{font-size:13.5px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .srow .top .w{font-size:12px; font-weight:800; color:#4a5468; font-variant-numeric:tabular-nums}
-  .srow .meta{display:flex; justify-content:space-between; gap:8px; margin-top:4px; font-size:11.5px; color:var(--sub); font-variant-numeric:tabular-nums}
-  .srow .meta .v{color:var(--ink); font-weight:700; font-size:12.5px}
+  .srow .top b{font-size:15px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .srow .top .w{font-size:13px; font-weight:800; color:#4a5468; font-variant-numeric:tabular-nums}
+  .srow .meta{display:flex; justify-content:space-between; gap:8px; margin-top:4px; font-size:12.5px; color:var(--sub); font-variant-numeric:tabular-nums}
+  .srow .meta .v{color:var(--ink); font-weight:700; font-size:14px}
   /* ---------- backup ---------- */
   .btn{
     display:flex; align-items:center; justify-content:center; gap:8px; width:100%; height:50px;
     border-radius:13px; border:1px solid var(--line); background:#fff; color:var(--ink);
-    font-size:15px; font-weight:700; margin-top:9px;
+    font-size:16.5px; font-weight:700; margin-top:9px;
   }
   .btn.primary{background:var(--navy); border-color:var(--navy); color:#fff}
   .btn.danger{background:#fff; border-color:#f3c9c9; color:#c02b30}
   .btn:active{filter:brightness(.96)}
-  .btn small{font-weight:600; color:inherit; opacity:.6; font-size:11.5px}
+  .btn small{font-weight:600; color:inherit; opacity:.6; font-size:12.5px}
   details{margin-top:10px; border-top:1px dashed var(--line); padding-top:9px}
-  details summary{font-size:12px; font-weight:700; color:#5b6577; cursor:pointer; list-style:none; display:flex; align-items:center; gap:5px}
+  details summary{font-size:13px; font-weight:700; color:#5b6577; cursor:pointer; list-style:none; display:flex; align-items:center; gap:5px}
   details summary::-webkit-details-marker{display:none}
-  details summary::before{content:'▸'; font-size:10px; color:#98a1b3}
+  details summary::before{content:'▸'; font-size:11px; color:#98a1b3}
   details[open] summary::before{content:'▾'}
   details textarea{
     width:100%; height:110px; margin-top:8px; border:1px solid var(--line); border-radius:10px; background:#fbfcfe;
-    font-family:ui-monospace,Menlo,Consolas,monospace; font-size:10.5px; color:#5b6577; padding:8px; resize:none;
+    font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11.5px; color:#5b6577; padding:8px; resize:none;
   }
-  .stat{display:flex; align-items:center; gap:7px; font-size:12.5px; color:#4a5468}
+  .stat{display:flex; align-items:center; gap:7px; font-size:14px; color:#4a5468}
   .dotlive{width:8px;height:8px;border-radius:50%;background:#22a06b;flex:0 0 8px}
   .dotlive.mem{background:#e0a12a}
-  .chk{display:flex; justify-content:space-between; padding:5px 0; font-size:12.5px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
+  .chk{display:flex; justify-content:space-between; padding:5px 0; font-size:14px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums}
   .chk:last-child{border-bottom:0}
   .chk .k{color:#5b6577}
   .chk .v{font-weight:700}
@@ -239,14 +239,14 @@
   }
   nav button{
     flex:1; border:0; background:transparent; padding:7px 0 8px; color:#98a1b3;
-    display:flex; flex-direction:column; align-items:center; gap:2px; font-size:10.5px; font-weight:700;
+    display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11.5px; font-weight:700;
   }
-  nav button i{font-style:normal; font-size:19px; line-height:1.15; filter:grayscale(1); opacity:.55}
+  nav button i{font-style:normal; font-size:21px; line-height:1.15; filter:grayscale(1); opacity:.55}
   nav button.on{color:var(--navy)}
   nav button.on i{filter:none; opacity:1}
   .toast{
     position:fixed; left:50%; bottom:calc(78px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(8px);
-    background:rgba(13,23,41,.94); color:#fff; font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:999px;
+    background:rgba(13,23,41,.94); color:#fff; font-size:14px; font-weight:600; padding:10px 16px; border-radius:999px;
     opacity:0; pointer-events:none; transition:opacity .18s, transform .18s; z-index:50; max-width:88vw; text-align:center;
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
@@ -260,30 +260,30 @@
   .savebar.on{display:flex}
   .savebtn{
     flex:1; min-width:0; height:50px; border:0; border-radius:14px; background:var(--navy); color:#fff;
-    font-size:16.5px; font-weight:800; letter-spacing:-.01em;
+    font-size:18px; font-weight:800; letter-spacing:-.01em;
     display:flex; align-items:center; justify-content:center; gap:7px;
     box-shadow:0 8px 18px -12px rgba(13,23,41,.9);
   }
   .savebtn:active{filter:brightness(1.2)}
   .savebtn.done{animation:savedflash .8s ease}
   @keyframes savedflash{0%{background:var(--navy)}32%{background:#1f7a4d}100%{background:var(--navy)}}
-  .savestamp{flex:0 0 auto; text-align:right; font-size:10px; color:#8b93a4; line-height:1.35; white-space:nowrap}
-  .savestamp b{display:block; font-size:11.5px; font-weight:700; color:#4a5468; font-variant-numeric:tabular-nums; letter-spacing:.02em}
+  .savestamp{flex:0 0 auto; text-align:right; font-size:11px; color:#8b93a4; line-height:1.35; white-space:nowrap}
+  .savestamp b{display:block; font-size:12.5px; font-weight:700; color:#4a5468; font-variant-numeric:tabular-nums; letter-spacing:.02em}
   .savestamp.mem b{color:#a06010}
   .stamp-go{
     display:block; margin:2px 0 0 auto; border:0; background:none; padding:0;
-    color:#2f56c8; font-size:10.5px; font-weight:800; text-decoration:underline;
+    color:#2f56c8; font-size:11.5px; font-weight:800; text-decoration:underline;
   }
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
     background:linear-gradient(150deg,#22386b 0%,#16233d 100%); color:#fff;
-    box-shadow:0 10px 22px -16px rgba(13,23,41,.95); font-size:12.5px; line-height:1.5}
+    box-shadow:0 10px 22px -16px rgba(13,23,41,.95); font-size:14px; line-height:1.5}
   .setup.on{display:block}
-  .setup b{display:block; font-size:13.5px; color:#E8C77E; margin-bottom:3px; letter-spacing:-.01em}
+  .setup b{display:block; font-size:15px; color:#E8C77E; margin-bottom:3px; letter-spacing:-.01em}
   .setup .s-note{color:#c7d3e8}
-  .setup code{background:rgba(255,255,255,.15); padding:1px 5px; border-radius:5px; font-size:11.5px; word-break:break-all}
+  .setup code{background:rgba(255,255,255,.15); padding:1px 5px; border-radius:5px; font-size:12.5px; word-break:break-all}
   .setup button{margin-top:10px; width:100%; height:40px; border:0; border-radius:10px;
-    background:#C5A059; color:#16233d; font-size:13.5px; font-weight:800}
+    background:#C5A059; color:#16233d; font-size:15px; font-weight:800}
   .setup button:active{filter:brightness(1.08)}
 </style>
 </head>
@@ -423,7 +423,7 @@
       <details id="rawwrap">
         <summary>파일 저장이 안 될 때 — 내용 복사</summary>
         <textarea id="raw-json" readonly spellcheck="false"></textarea>
-        <button class="btn" id="btn-copy" style="height:42px; font-size:13px">내용 전체 선택 · 복사</button>
+        <button class="btn" id="btn-copy" style="height:42px; font-size:14.5px">내용 전체 선택 · 복사</button>
         <p class="hint">위 칸의 내용을 메모장이나 메일에 붙여 넣어 보관해도 됩니다. 백업 불러오기는 .json 파일만 읽습니다.</p>
       </details>
       <p class="hint">처음 쓰실 때는 따로 받으신 <b>내_자산_초기데이터.json</b>을 위 <b>⬆ 백업 불러오기</b>로 한 번 불러오면 됩니다.</p>
@@ -434,7 +434,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 달러 소수점 4자리</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-23 · 글자 10% 확대</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -764,7 +764,7 @@ function renderHolds(){
     ? list.length + '건'
     : list.length + '건 / 전체 ' + state.holdings.length + '건';
   if(!list.length){
-    document.getElementById('holds').innerHTML = '<div class="card" style="text-align:center;color:#8b93a4;font-size:12.5px;padding:22px 14px">이 계좌에 표시할 종목이 없습니다.<br>아래 <b>＋ 종목 추가</b>로 넣을 수 있습니다.</div>';
+    document.getElementById('holds').innerHTML = '<div class="card" style="text-align:center;color:#8b93a4;font-size:14px;padding:22px 14px">이 계좌에 표시할 종목이 없습니다.<br>아래 <b>＋ 종목 추가</b>로 넣을 수 있습니다.</div>';
     return;
   }
   document.getElementById('holds').innerHTML = list.map(function(h){
@@ -880,7 +880,7 @@ function renderAccs(){
 /* ---------- 종목 탭 ---------- */
 function renderStocks(m){
   document.getElementById('st-count').textContent = m.stocks.length + '종목 · 주식 ' + won(m.stockSum);
-  if(!m.stocks.length){ document.getElementById('stocks').innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:12.5px;padding:18px 0">보유 종목이 없습니다.</div>'; return; }
+  if(!m.stocks.length){ document.getElementById('stocks').innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:14px;padding:18px 0">보유 종목이 없습니다.</div>'; return; }
   document.getElementById('stocks').innerHTML = m.stocks.map(function(s, i){
     var meta2 = s.avgCost != null
       ? '평균단가 ' + (s.cur==='USD'? usd(s.avgCost) : won(s.avgCost)) + ' · ' + (s.allCost ? '' : '일부 ')
