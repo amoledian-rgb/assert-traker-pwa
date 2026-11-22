@@ -388,7 +388,7 @@
         <label class="f"><span>원화 예수금 <u>원</u></span>
           <input class="t" id="na-cashkrw" type="text" inputmode="numeric" value="0"></label>
         <label class="f"><span>달러 예수금 <u>$</u></span>
-          <input class="t" id="na-cashusd" type="text" inputmode="decimal" step="0.01" value="0.00"></label>
+          <input class="t" id="na-cashusd" type="text" inputmode="decimal" step="0.0001" value="0.00"></label>
       </div>
       <div class="err" id="na-err"></div>
       <div class="act">
@@ -434,7 +434,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 계좌 추가·관리</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 달러 소수점 4자리</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -471,19 +471,19 @@ var state = null, memoryOnly = false, lastSaved = null, activeTab = 'summary', f
 function num(v){ var n = Number(String(v==null?'':v).replace(/,/g,'').replace(/\s/g,'')); return isFinite(n) ? n : 0; }
 function fmtInt(n){ return Math.round(n).toLocaleString('en-US'); }
 function won(n){ return fmtInt(n) + '원'; }
-/* USD 금액은 항상 소수점 둘째 자리까지: $1,234.56 · -$12.30 */
+/* USD 금액은 소수점 넷째 자리까지(표시는 최소 둘째 자리): $1,234.56 · $123.4567 · -$12.30  (usd4-v1) */
 function usd(n){
-  var v = Math.round(num(n)*100)/100;
-  return (v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
+  var v = Math.round(num(n)*10000)/10000;
+  return (v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:4});
 }
-/* 입력칸 값: 1234.5 → 1,234.5 (dec=false 면 정수, true 면 소수점 둘째 자리까지) */
+/* 입력칸 값: 1234.5 → 1,234.5 (dec=false 면 정수, true 면 소수점 넷째 자리까지)  (usd4-v1) */
 function fmtNum(v, dec){
   var n = num(v);
   if(!dec) return fmtInt(n);
-  return n.toLocaleString('en-US',{minimumFractionDigits:0, maximumFractionDigits:2});
+  return n.toLocaleString('en-US',{minimumFractionDigits:0, maximumFractionDigits:4});
 }
-/* USD 입력칸 값은 소수점 둘째 자리 고정: 500 → 500.00 */
-function fmtNum2(v){ return num(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+/* USD 입력칸 값은 소수점 둘째~넷째 자리: 500 → 500.00 · 123.4567 → 123.4567  (usd4-v1) */
+function fmtNum2(v){ return num(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:4}); }
 function signed(n){ var r = Math.round(n); return (r>0?'+':'') + fmtInt(r) + '원'; }
 function pct(r){ return (r*100).toFixed(1) + '%'; }
 function pctS(r){ return (r>0?'+':'') + (r*100).toFixed(1) + '%'; }
@@ -769,7 +769,7 @@ function renderHolds(){
   }
   document.getElementById('holds').innerHTML = list.map(function(h){
     var r = map[h.id] || {vn:0, vk:0, price:0, qty:0};
-    var usdCur = (h.cur === 'USD'), im = usdCur ? 'decimal' : 'numeric', stp = usdCur ? ' step="0.01"' : '';
+    var usdCur = (h.cur === 'USD'), im = usdCur ? 'decimal' : 'numeric', stp = usdCur ? ' step="0.0001"' : '';
     var opt = state.accounts.map(function(a){
       return '<option value="' + esc(a.name) + '"' + (a.name===h.account?' selected':'') + '>' + esc(a.name) + '</option>';
     }).join('');
@@ -870,7 +870,7 @@ function renderAccs(){
         '<input type="text" class="t a-principal" inputmode="numeric" value="' + fmtInt(a.principal) + '"></label>' +
       '<div class="grid2" style="margin-top:8px">' +
         '<label class="f"><span>원화 예수금 <u>원</u></span><input type="text" class="t a-cashkrw" inputmode="numeric" value="' + fmtInt(a.cashKrw) + '"></label>' +
-        '<label class="f"><span>달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.01" value="' + fmtNum2(a.cashUsd) + '"></label>' +
+        '<label class="f"><span>달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.0001" value="' + fmtNum2(a.cashUsd) + '"></label>' +
       '</div>' +
       '<div class="foot"><div class="l">평가자산<b class="tot">0원</b></div>' +
         '<div class="r totusd" style="color:#8b93a4; font-weight:600">달러 예수금 ' + usd(a.cashUsd) + '</div></div>';
@@ -953,7 +953,13 @@ function toast(msg, ms, kind){
   clearTimeout(toastT); toastT = setTimeout(function(){ el.classList.remove('show'); }, ms || 2200);
 }
 /* ---------- 숫자 입력 포맷 ---------- */
-/* 타이핑 중 값을 다듬는다: dec=true 면 소수점(최대 2자리)을 살리고, false 면 정수만 남긴다 */
+/* 입력칸 소수 자릿수 (usd4-v1): false → 정수, true·'money' → 2자리, 'usd'·'usdq' → 4자리 */
+function decDigits(dec){
+  if(!dec) return 0;
+  if(dec === 'usd' || dec === 'usdq') return 4;
+  return 2;
+}
+/* 타이핑 중 값을 다듬는다: dec 가 있으면 소수점(자릿수는 decDigits)을 살리고, false 면 정수만 남긴다 */
 function cleanNum(v, dec){
   var raw = String(v==null?'':v).replace(/,/g,'');
   if(dec){
@@ -963,7 +969,7 @@ function cleanNum(v, dec){
     if(clean === '' || clean === '.') return clean === '.' ? '0.' : '';
     var parts = clean.split('.');
     var ip = parts[0] || '0';
-    var dp = parts.length > 1 ? parts[1].slice(0,2) : null;
+    var dp = parts.length > 1 ? parts[1].slice(0, decDigits(dec)) : null;
     return ip.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dp !== null ? '.' + dp : '');
   }
   var only = raw.split('.')[0].replace(/\D/g,'');   /* 정수 칸에 소수점을 넣으면 소수부는 버린다 */
@@ -972,23 +978,24 @@ function cleanNum(v, dec){
 }
 function formatLive(el, dec){
   var atEnd = (el.selectionStart === el.value.length);
-  var out = cleanNum(el.value, !!dec);
+  var out = cleanNum(el.value, dec);
   if(el.value !== out) el.value = out;
   if(atEnd){ try{ el.setSelectionRange(out.length, out.length); }catch(e){} }
 }
-/* 포커스가 빠질 때 정리: 'money' 는 소수점 둘째 자리 고정(500 → 500.00), true 는 2자리까지 */
+/* 포커스가 빠질 때 정리 (usd4-v1)
+   'usd'  → 달러 금액: 최소 2·최대 4자리 (500 → 500.00, 123.4567 → 123.4567)
+   'usdq' → 달러 수량: 최대 4자리 (10 → 10, 1.2345 → 1.2345)
+   그 밖(true·'money') → 소수점 둘째 자리 고정 (환율 1,350.00) */
 function settleNum(el, dec){
-  if(!dec || !el || !el.value) return;
+  if(!dec || !el || el.value === '') return;
   var v = num(el.value);
-  el.value = (dec === 'money')
-    ? v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})
-    : v.toLocaleString('en-US',{maximumFractionDigits:2});
+  if(dec === 'usd')       el.value = v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:4});
+  else if(dec === 'usdq') el.value = v.toLocaleString('en-US',{maximumFractionDigits:4});
+  else                    el.value = v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function bindNumber(el, handler, dec){
   el.addEventListener('input', function(){ formatLive(el, dec); handler(el); });
-  el.addEventListener('blur', function(){
-    if(dec && el.value && el.value !== ''){ el.value = fmtFx(el.value); }
-  });
+  el.addEventListener('blur', function(){ settleNum(el, dec); });
 }
 
 /* ---------- 이벤트 ---------- */
@@ -1038,11 +1045,11 @@ function holdById(id){
   for(var i=0;i<state.holdings.length;i++){ if(state.holdings[i].id === id) return state.holdings[i]; }
   return null;
 }
-/* 입력칸마다 소수점 허용 범위: USD 현재가·매입단가·달러예수금은 2자리 고정, USD 수량은 2자리까지, KRW 는 정수 */
+/* 입력칸마다 소수점 허용 범위 (usd4-v1): USD 현재가·매입단가·달러예수금은 4자리(최소 2자리 표시), USD 수량은 4자리, KRW 는 정수 */
 function fieldDec(el, holding){
-  if(el.classList.contains('a-cashusd')) return 'money';
+  if(el.classList.contains('a-cashusd')) return 'usd';
   if(!holding || holding.cur !== 'USD') return false;
-  return el.classList.contains('a-qty') ? true : 'money';
+  return el.classList.contains('a-qty') ? 'usdq' : 'usd';
 }
 holdsEl.addEventListener('input', function(e){
   var card = e.target.closest('.card[data-id]');
@@ -1237,7 +1244,7 @@ document.getElementById('na-types').addEventListener('click', function(e){
 });
 bindNumber(document.getElementById('na-principal'), function(){}, false);
 bindNumber(document.getElementById('na-cashkrw'), function(){}, false);
-bindNumber(document.getElementById('na-cashusd'), function(){}, true);
+bindNumber(document.getElementById('na-cashusd'), function(){}, 'usd');
 document.getElementById('na-add').addEventListener('click', function(){
   var nameEl = document.getElementById('na-name');
   var errEl = document.getElementById('na-err');

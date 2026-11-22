@@ -13,7 +13,7 @@
 | --- | --- |
 | `index.html` | 앱 본체 (요약 / 입력 / 종목 / 백업) |
 | `manifest.json` | 설치형 앱 설정 |
-| `sw.js` | 오프라인 캐시 (현재 `asset-shell-v3`) |
+| `sw.js` | 오프라인 캐시 (현재 `asset-shell-v4`) |
 | `icon-192.png`, `icon-512.png`, `icon-180.png` | 앱 아이콘 |
 | `tools/make_icons.py` | 아이콘 생성 스크립트 |
 
