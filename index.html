@@ -152,7 +152,42 @@
     border:1.5px dashed #c3cbd9; background:#fff; color:#4a5468; font-size:14px; font-weight:700;
   }
   .addbtn:active{background:#eef1f6}
-  .acct-head{display:flex; align-items:center; gap:6px; margin-bottom:10px}
+  /* ---------- 계좌 추가·수정 (acc-add-v1) ---------- */
+  .acct-head{display:flex; align-items:center; flex-wrap:wrap; gap:2px 6px; margin-bottom:10px}
+  .tag.cnt{background:#f2f4f8; color:#9aa3b4; white-space:nowrap}
+  .types{display:flex; gap:6px; margin:2px 0 9px}
+  .types button{
+    flex:1; height:38px; border:1px solid var(--line); border-radius:10px; background:#fff;
+    color:#7c869b; font-size:12px; font-weight:700; padding:0 4px;
+  }
+  .types button.on{background:#eef2ff; border-color:#c9d4ef; color:#1f3f8f}
+  .acct-tools{display:flex; gap:6px; flex:0 0 auto; margin-left:auto}
+  .acct-tools button{
+    height:28px; padding:0 8px; border:1px solid var(--line); border-radius:8px; background:#fff;
+    color:#66718a; font-size:11px; font-weight:700; white-space:nowrap;
+  }
+  .acct-tools button:active{background:#eef1f6}
+  .acct-tools button.warn{color:#c02b30; border-color:#f1d3d3}
+  .acct-tools button.go{color:#fff; background:#1B365D; border-color:#1B365D}
+  .acct-edit{margin-bottom:2px}
+  .addacc{
+    margin:0 12px 10px; padding:12px 13px 13px; border:1px solid var(--line); border-radius:14px;
+    background:#fff; box-shadow:0 8px 18px -16px rgba(13,23,41,.5);
+  }
+  .addacc[hidden]{display:none}
+  .addacc .hd{display:flex; align-items:center; justify-content:space-between; margin-bottom:9px}
+  .addacc .hd b{font-size:13.5px; letter-spacing:-.01em}
+  .addacc .hd button{border:0; background:transparent; color:#8b93a4; font-size:12px; font-weight:700; padding:2px 0 2px 8px}
+  .lbl{display:block; font-size:11px; color:#8b93a4; margin:0 0 4px}
+  .addacc .act{display:flex; gap:7px; margin-top:11px}
+  .addacc .act button{
+    flex:1; height:44px; border-radius:11px; border:1px solid var(--line); background:#fff;
+    font-size:13.5px; font-weight:700; color:#4a5468;
+  }
+  .addacc .act button.go{background:#1B365D; border-color:#1B365D; color:#fff}
+  .addacc .act button:active{filter:brightness(1.06)}
+  .addacc .err{display:none; margin-top:8px; color:#c02b30; font-size:11.5px; font-weight:700}
+  .addacc .err.on{display:block}
   .acct-head .nm{flex:1; min-width:0; display:flex; align-items:center; gap:5px}
   .acct-head .nm b{font-size:13.5px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .acct-head .tag{margin-left:0}
@@ -335,6 +370,31 @@
     <div class="sec">계좌별 투자원금 · 예수금 <span>입출금 때만 수정</span></div>
     <div class="note">입출금이 있으면 그 계좌의 <b>투자원금(예치금)</b>과 <b>예수금</b>을 함께 고쳐 주세요. 그래야 수익률이 실제 수익률로 유지됩니다.</div>
     <div id="accs"></div>
+
+    <button class="addbtn" id="btn-addacc" type="button">＋ 새 계좌 추가</button>
+    <div class="addacc" id="addacc" hidden>
+      <div class="hd"><b>새 계좌 추가</b><button type="button" id="addacc-close">닫기 ✕</button></div>
+      <label class="f"><span>계좌명</span>
+        <input class="t txt" id="na-name" type="text" placeholder="예: 토스증권 종합" autocomplete="off"></label>
+      <div class="lbl" style="margin-top:10px">계좌 구분</div>
+      <div class="types" id="na-types">
+        <button type="button" class="on" data-type="주식">일반 (주식계좌)</button>
+        <button type="button" data-type="연금">연금 (연금계좌)</button>
+      </div>
+      <label class="f"><span>투자원금(예치금) <u>원</u></span>
+        <input class="t" id="na-principal" type="text" inputmode="numeric" value="0"></label>
+      <div class="grid2" style="margin-top:8px">
+        <label class="f"><span>원화 예수금 <u>원</u></span>
+          <input class="t" id="na-cashkrw" type="text" inputmode="numeric" value="0"></label>
+        <label class="f"><span>달러 예수금 <u>$</u></span>
+          <input class="t" id="na-cashusd" type="text" inputmode="decimal" step="0.01" value="0.00"></label>
+      </div>
+      <div class="err" id="na-err"></div>
+      <div class="act">
+        <button type="button" id="na-cancel">취소</button>
+        <button type="button" class="go" id="na-add">계좌 추가</button>
+      </div>
+    </div>
     <div style="height:6px"></div>
   </section>
 
@@ -373,7 +433,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 달러 소수점 · 종목 삭제</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 계좌 추가·관리</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -773,10 +833,38 @@ function renderAccTotals(m){
   });
 }
 /* ---------- 입력: 계좌 ---------- */
+/* acc-add-v1: 계좌 추가·이름/구분 수정·삭제 */
+var accEdit = null;          /* 이름·구분을 고치는 중인 계좌 이름 (없으면 null) */
+function accHoldCount(name){
+  var n = 0;
+  state.holdings.forEach(function(h){ if(h.account === name) n++; });
+  return n;
+}
 function renderAccs(){
+  var counts = {};
+  state.holdings.forEach(function(h){ counts[h.account] = (counts[h.account]||0)+1; });
   document.getElementById('accs').innerHTML = state.accounts.map(function(a){
-    return '<div class="card" data-acc="' + esc(a.name) + '">' +
-      '<div class="acct-head"><span class="nm"><b>' + esc(a.name) + '</b><span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span></span></div>' +
+    var editing = (accEdit === a.name);
+    var n = counts[a.name] || 0;
+    var head = editing
+      ? '<div class="acct-edit">' +
+          '<label class="f"><span>계좌명</span><input class="t txt a-aname" type="text" value="' + esc(a.name) + '" placeholder="예: 토스증권 종합" autocomplete="off"></label>' +
+          '<div class="lbl" style="margin-top:9px">계좌 구분</div>' +
+          '<div class="types">' +
+            '<button type="button" class="' + (a.type !== '연금' ? 'on' : '') + '" data-type="주식">일반 (주식계좌)</button>' +
+            '<button type="button" class="' + (a.type === '연금' ? 'on' : '') + '" data-type="연금">연금 (연금계좌)</button>' +
+          '</div>' +
+          '<div class="acct-tools" style="justify-content:flex-end">' +
+            '<button type="button" class="a-acc-cancel">취소</button>' +
+            '<button type="button" class="go a-acc-save">저장</button>' +
+          '</div>' +
+        '</div>'
+      : '<div class="acct-head"><span class="nm"><b class="ttl">' + esc(a.name) + '</b>' +
+          '<span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span>' +
+          '<span class="tag cnt">종목 ' + n + '건</span></span>' +
+          '<span class="acct-tools"><button type="button" class="a-acc-edit">✏️ 수정</button>' +
+          '<button type="button" class="warn a-acc-del">🗑 삭제</button></span></div>';
+    var money = editing ? '' :
       '<label class="f"><span>투자원금(예치금) <u>원</u></span>' +
         '<input type="text" class="t a-principal" inputmode="numeric" value="' + fmtInt(a.principal) + '"></label>' +
       '<div class="grid2" style="margin-top:8px">' +
@@ -784,7 +872,8 @@ function renderAccs(){
         '<label class="f"><span>달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.01" value="' + fmtNum2(a.cashUsd) + '"></label>' +
       '</div>' +
       '<div class="foot"><div class="l">평가자산<b class="tot">0원</b></div>' +
-        '<div class="r totusd" style="color:#8b93a4; font-weight:600">달러 예수금 ' + usd(a.cashUsd) + '</div></div></div>';
+        '<div class="r totusd" style="color:#8b93a4; font-weight:600">달러 예수금 ' + usd(a.cashUsd) + '</div></div>';
+    return '<div class="card" data-acc="' + esc(a.name) + '">' + head + money + '</div>';
   }).join('');
 }
 /* ---------- 종목 탭 ---------- */
@@ -983,6 +1072,7 @@ holdsEl.addEventListener('change', function(e){
     for(var i=0;i<state.holdings.length;i++){
       if(state.holdings[i].id === id){ state.holdings[i].account = e.target.value; break; }
     }
+    if(filter !== 'all') filter = e.target.value;   /* 계좌를 옮기면 보던 목록도 그 계좌로 (행이 사라져 보이지 않게) */
     afterChange({rebuild:true});
   }
 });
@@ -1048,6 +1138,128 @@ accsEl.addEventListener('input', function(e){
   afterChange();
 });
 accsEl.addEventListener('focusout', function(e){ settleNum(e.target, fieldDec(e.target, null)); });
+
+/* 계좌 카드: 수정·저장·취소·삭제 (acc-add-v1) */
+function cleanAccName(v){ return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function saveAccEdit(card, a){
+  var nameEl = card.querySelector('.a-aname');
+  var name = cleanAccName(nameEl && nameEl.value);
+  var onBtn = card.querySelector('.types button.on');
+  var type = (onBtn && onBtn.getAttribute('data-type') === '연금') ? '연금' : '주식';
+  if(!name){ toast('계좌명을 입력해 주세요', 2600, 'warn'); if(nameEl) nameEl.focus(); return; }
+  if(name.length > 40) name = name.slice(0, 40);
+  var dup = state.accounts.some(function(x){ return x !== a && x.name === name; });
+  if(dup){ toast('"' + name + '" 계좌가 이미 있습니다', 2800, 'warn'); if(nameEl) nameEl.focus(); return; }
+  var old = a.name;
+  if(name !== old){
+    a.name = name;
+    state.holdings.forEach(function(h){ if(h.account === old) h.account = name; });
+    if(filter === old) filter = name;
+  }
+  a.type = type;
+  accEdit = null;
+  afterChange({rebuild:true});
+  toast(name === old ? '계좌 정보를 저장했습니다' : '계좌 이름을 바꿨습니다 — 종목 ' + accHoldCount(name) + '건도 함께 옮겼습니다', 2800);
+}
+function deleteAcc(a){
+  if(state.accounts.length <= 1){
+    toast('계좌가 하나뿐이면 삭제할 수 없습니다 — 새 계좌를 먼저 추가해 주세요', 3200, 'warn');
+    return;
+  }
+  var n = accHoldCount(a.name);
+  var msg = '"' + a.name + '" 계좌를 삭제할까요?\n\n' +
+            (n ? '이 계좌와 포함된 ' + n + '개 종목이 함께 삭제됩니다.' : '이 계좌에는 종목이 없습니다 — 계좌만 삭제됩니다.') +
+            '\n삭제한 내용은 되돌릴 수 없습니다.';
+  if(!confirm(msg)) return;
+  var gone = a.name;
+  state.accounts = state.accounts.filter(function(x){ return x.name !== gone; });
+  state.holdings = state.holdings.filter(function(h){ return h.account !== gone; });
+  if(accEdit === gone) accEdit = null;
+  if(filter === gone) filter = 'all';
+  afterChange({rebuild:true});
+  toast(n ? ('계좌와 종목 ' + n + '건을 삭제했습니다') : '계좌를 삭제했습니다');
+}
+accsEl.addEventListener('click', function(e){
+  var card = e.target.closest('.card[data-acc]');
+  if(!card) return;
+  var a = accByCard(card);
+  if(!a) return;
+  var tb = e.target.closest('.types button[data-type]');
+  if(tb){
+    Array.prototype.forEach.call(card.querySelectorAll('.types button'), function(x){ x.classList.toggle('on', x === tb); });
+    return;
+  }
+  if(e.target.closest('.a-acc-edit')){
+    accEdit = (accEdit === a.name) ? null : a.name;
+    renderAccs();
+    var inp = accsEl.querySelector('.a-aname');
+    if(inp){ inp.focus(); try{ inp.setSelectionRange(inp.value.length, inp.value.length); }catch(err){} }
+    return;
+  }
+  if(e.target.closest('.a-acc-cancel')){ accEdit = null; renderAccs(); updateInputCalcs(compute()); toast('수정을 취소했습니다'); return; }
+  if(e.target.closest('.a-acc-save')){ saveAccEdit(card, a); return; }
+  if(e.target.closest('.a-acc-del')){ deleteAcc(a); return; }
+});
+
+/* ---------- 새 계좌 추가 (acc-add-v1) ---------- */
+var addBox = document.getElementById('addacc');
+var naType = '주식';
+function resetAddForm(){
+  document.getElementById('na-name').value = '';
+  document.getElementById('na-principal').value = '0';
+  document.getElementById('na-cashkrw').value = '0';
+  document.getElementById('na-cashusd').value = '0.00';
+  document.getElementById('na-err').classList.remove('on');
+  document.getElementById('na-err').textContent = '';
+  naType = '주식';
+  Array.prototype.forEach.call(document.querySelectorAll('#na-types button'), function(x){
+    x.classList.toggle('on', x.getAttribute('data-type') === '주식');
+  });
+}
+function openAddForm(open){
+  addBox.hidden = !open;
+  document.getElementById('btn-addacc').style.display = open ? 'none' : '';
+  if(open){
+    document.getElementById('na-err').classList.remove('on');
+    try{ addBox.scrollIntoView({block:'center'}); }catch(err){}
+    setTimeout(function(){ var el = document.getElementById('na-name'); if(el) el.focus(); }, 60);
+  }
+}
+document.getElementById('btn-addacc').addEventListener('click', function(){ openAddForm(true); });
+document.getElementById('addacc-close').addEventListener('click', function(){ openAddForm(false); });
+document.getElementById('na-cancel').addEventListener('click', function(){ resetAddForm(); openAddForm(false); });
+document.getElementById('na-types').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-type]');
+  if(!b) return;
+  naType = (b.getAttribute('data-type') === '연금') ? '연금' : '주식';
+  Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.toggle('on', x === b); });
+});
+bindNumber(document.getElementById('na-principal'), function(){}, false);
+bindNumber(document.getElementById('na-cashkrw'), function(){}, false);
+bindNumber(document.getElementById('na-cashusd'), function(){}, true);
+document.getElementById('na-add').addEventListener('click', function(){
+  var nameEl = document.getElementById('na-name');
+  var errEl = document.getElementById('na-err');
+  function bad(msg){ errEl.textContent = msg; errEl.classList.add('on'); toast(msg, 2800, 'warn'); if(nameEl) nameEl.focus(); }
+  var name = cleanAccName(nameEl.value);
+  if(!name){ bad('계좌명을 입력해 주세요'); return; }
+  if(name.length > 40) name = name.slice(0, 40);
+  if(state.accounts.some(function(a){ return a.name === name; })){ bad('"' + name + '" 계좌가 이미 있습니다'); return; }
+  state.accounts.push({
+    name: name,
+    type: naType,
+    principal: Math.abs(num(document.getElementById('na-principal').value)),
+    cashKrw: Math.abs(num(document.getElementById('na-cashkrw').value)),
+    cashUsd: Math.abs(num(document.getElementById('na-cashusd').value))
+  });
+  resetAddForm();
+  openAddForm(false);
+  afterChange({rebuild:true});
+  var cards = accsEl.querySelectorAll('.card[data-acc]');
+  var last = cards[cards.length - 1];
+  if(last){ try{ last.scrollIntoView({block:'center'}); }catch(err){} }
+  toast('"' + name + '" 계좌를 추가했습니다');
+});
 
 /* 백업 */
 function payloadText(){
