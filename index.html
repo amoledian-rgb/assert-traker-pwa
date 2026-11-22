@@ -137,6 +137,12 @@
   .seg button.on{background:#eef2ff; color:#2f56c8}
   .del{flex:0 0 auto; width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:#fff; color:#b4bbc9; font-size:13px; line-height:1; padding:0}
   .del:active{background:#fdeeee; color:var(--up)}
+  .delbtn{
+    display:flex; align-items:center; justify-content:center; gap:5px; width:100%; height:38px; margin-top:9px;
+    border:1px solid #f1d3d3; border-radius:10px; background:#fff; color:#c02b30;
+    font-size:12.5px; font-weight:700; letter-spacing:-.01em;
+  }
+  .delbtn:active{background:#fdeeee; border-color:#e9b9b9}
   .foot{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:7px; padding-top:7px; border-top:1px dashed var(--line); font-variant-numeric:tabular-nums}
   .foot .l{font-size:11.5px; color:#8b93a4}
   .foot .l b{margin-left:4px; font-size:13px; color:var(--ink); font-weight:700}
@@ -316,7 +322,7 @@
         <label class="f"><span>평가 기준일</span><input class="t txt" id="in-date" type="date"></label>
         <label class="f"><span>환율 <u>₩/$</u></span><input class="t" id="in-fx" inputmode="decimal"></label>
       </div>
-      <p class="hint">매일 고칠 곳은 <b>기준일 · 환율 · 종목 현재가</b> 세 가지입니다.</p>
+      <p class="hint">매일 고칠 곳은 <b>기준일 · 환율 · 종목 현재가</b> 세 가지입니다. <b>달러($) 종목은 소수점 둘째 자리까지</b> 넣고 표시됩니다.</p>
     </div>
 
     <div class="sec">보유 종목 <span id="in-holdn">13건</span></div>
@@ -367,6 +373,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-22 · 달러 소수점 · 종목 삭제</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -400,10 +407,22 @@ var KEY = 'asset.tracker.v1';
 var state = null, memoryOnly = false, lastSaved = null, activeTab = 'summary', filter = 'all';
 
 /* ---------- utils ---------- */
-function num(v){ var n = Number(String(v==null?'':v).replace(/,/g,'')); return isFinite(n) ? n : 0; }
+function num(v){ var n = Number(String(v==null?'':v).replace(/,/g,'').replace(/\s/g,'')); return isFinite(n) ? n : 0; }
 function fmtInt(n){ return Math.round(n).toLocaleString('en-US'); }
 function won(n){ return fmtInt(n) + '원'; }
-function usd(n){ return '$' + (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+/* USD 금액은 항상 소수점 둘째 자리까지: $1,234.56 · -$12.30 */
+function usd(n){
+  var v = Math.round(num(n)*100)/100;
+  return (v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
+}
+/* 입력칸 값: 1234.5 → 1,234.5 (dec=false 면 정수, true 면 소수점 둘째 자리까지) */
+function fmtNum(v, dec){
+  var n = num(v);
+  if(!dec) return fmtInt(n);
+  return n.toLocaleString('en-US',{minimumFractionDigits:0, maximumFractionDigits:2});
+}
+/* USD 입력칸 값은 소수점 둘째 자리 고정: 500 → 500.00 */
+function fmtNum2(v){ return num(v).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
 function signed(n){ var r = Math.round(n); return (r>0?'+':'') + fmtInt(r) + '원'; }
 function pct(r){ return (r*100).toFixed(1) + '%'; }
 function pctS(r){ return (r>0?'+':'') + (r*100).toFixed(1) + '%'; }
@@ -647,7 +666,7 @@ function renderSummary(m){
   document.getElementById('s-accs').innerHTML = m.accounts.map(function(a){
     return '<div class="acc-row">' +
       '<div class="nm"><b>' + esc(a.name) + '<span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span></b>' +
-      '<span>' + pct(a.weight) + ' · 예수금 ' + pct(a.total ? a.cash/a.total : 0) + '</span></div>' +
+      '<span>' + pct(a.weight) + ' · 예수금 ' + pct(a.total ? a.cash/a.total : 0) + (a.cashUsd ? ' · ' + usd(a.cashUsd) : '') + '</span></div>' +
       '<div class="amt"><b>' + won(a.total) + '</b>' +
       '<span class="' + cls(a.pnl) + '">' + signed(a.pnl) + ' ' + pctS(a.ret) + '</span></div></div>';
   }).join('');
@@ -689,6 +708,7 @@ function renderHolds(){
   }
   document.getElementById('holds').innerHTML = list.map(function(h){
     var r = map[h.id] || {vn:0, vk:0, price:0, qty:0};
+    var usdCur = (h.cur === 'USD'), im = usdCur ? 'decimal' : 'numeric', stp = usdCur ? ' step="0.01"' : '';
     var opt = state.accounts.map(function(a){
       return '<option value="' + esc(a.name) + '"' + (a.name===h.account?' selected':'') + '>' + esc(a.name) + '</option>';
     }).join('');
@@ -700,16 +720,16 @@ function renderHolds(){
         '<select class="a-acct">' + opt + '</select>' +
         '<div class="seg"><button class="a-cur' + (h.cur==='KRW'?' on':'') + '" data-cur="KRW">KRW</button>' +
         '<button class="a-cur' + (h.cur==='USD'?' on':'') + '" data-cur="USD">USD</button></div>' +
-        '<button class="del a-del" aria-label="종목 삭제">✕</button>' +
       '</div>' +
       '<label class="f"><span>종목명</span><input class="t txt a-name" value="' + esc(h.name) + '" placeholder="예: 배당주 ETF"></label>' +
       '<div class="grid2" style="margin-top:7px">' +
-        '<label class="f"><span>현재가 <u>' + (h.cur==='USD'?'$':'원') + '</u></span><input class="t big a-price" inputmode="numeric" value="' + (h.price==null?'':fmtInt(h.price)) + '" placeholder="0"></label>' +
-        '<label class="f"><span>수량 <u>주</u></span><input class="t a-qty" inputmode="numeric" value="' + (h.qty==null?'':fmtInt(h.qty)) + '" placeholder="0"></label>' +
+        '<label class="f"><span>현재가 <u>' + (usdCur?'$':'원') + '</u></span><input type="text" class="t big a-price" inputmode="' + im + '"' + stp + ' value="' + (h.price==null?'':(usdCur?fmtNum2(h.price):fmtInt(h.price))) + '" placeholder="0"></label>' +
+        '<label class="f"><span>수량 <u>주</u></span><input type="text" class="t a-qty" inputmode="' + im + '"' + stp + ' value="' + (h.qty==null?'':fmtNum(h.qty, usdCur)) + '" placeholder="0"></label>' +
       '</div>' +
       '<div style="margin-top:7px"><label class="f"><span>매입단가 <u>선택 · 채우면 손익 계산</u></span>' +
-        '<input class="t sm a-avg" inputmode="numeric" value="' + (h.avg==null?'':fmtInt(h.avg)) + '" placeholder="비워 두어도 됩니다"></label></div>' +
+        '<input type="text" class="t sm a-avg" inputmode="' + im + '"' + stp + ' value="' + (h.avg==null?'':(usdCur?fmtNum2(h.avg):fmtInt(h.avg))) + '" placeholder="비워 두어도 됩니다"></label></div>' +
       '<div class="foot"><div class="l">평가액<b class="a-val">' + evalText(r, h) + '</b></div><div class="r a-pnl">' + pnlText(h, r) + '</div></div>' +
+      '<button type="button" class="delbtn a-del" aria-label="이 종목 삭제">🗑 이 종목 삭제</button>' +
     '</div>';
   }).join('');
 }
@@ -748,20 +768,23 @@ function renderAccTotals(m){
     if(!a) return;
     var t = card.querySelector('.tot');
     if(t) t.textContent = won(a.total);
+    var u = card.querySelector('.totusd');
+    if(u) u.textContent = '달러 예수금 ' + usd(a.cashUsd);
   });
 }
 /* ---------- 입력: 계좌 ---------- */
 function renderAccs(){
   document.getElementById('accs').innerHTML = state.accounts.map(function(a){
     return '<div class="card" data-acc="' + esc(a.name) + '">' +
-      '<div class="acct-head"><span class="nm"><b>' + esc(a.name) + '</b><span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span></span>' +
-      '<span class="tot">0원</span></div>' +
+      '<div class="acct-head"><span class="nm"><b>' + esc(a.name) + '</b><span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span></span></div>' +
       '<label class="f"><span>투자원금(예치금) <u>원</u></span>' +
-        '<input class="t a-principal" inputmode="numeric" value="' + fmtInt(a.principal) + '"></label>' +
+        '<input type="text" class="t a-principal" inputmode="numeric" value="' + fmtInt(a.principal) + '"></label>' +
       '<div class="grid2" style="margin-top:8px">' +
-        '<label class="f"><span>원화 예수금 <u>원</u></span><input class="t a-cashkrw" inputmode="numeric" value="' + fmtInt(a.cashKrw) + '"></label>' +
-        '<label class="f"><span>달러 예수금 <u>$</u></span><input class="t a-cashusd" inputmode="numeric" value="' + fmtInt(a.cashUsd) + '"></label>' +
-      '</div></div>';
+        '<label class="f"><span>원화 예수금 <u>원</u></span><input type="text" class="t a-cashkrw" inputmode="numeric" value="' + fmtInt(a.cashKrw) + '"></label>' +
+        '<label class="f"><span>달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.01" value="' + fmtNum2(a.cashUsd) + '"></label>' +
+      '</div>' +
+      '<div class="foot"><div class="l">평가자산<b class="tot">0원</b></div>' +
+        '<div class="r totusd" style="color:#8b93a4; font-weight:600">달러 예수금 ' + usd(a.cashUsd) + '</div></div></div>';
   }).join('');
 }
 /* ---------- 종목 탭 ---------- */
@@ -776,7 +799,7 @@ function renderStocks(m){
     return '<div class="srow">' +
       '<div class="top"><b>' + esc(s.name) + '</b><span class="tag">' + s.cur + '</span>' +
       '<span class="w">' + pct(s.weight) + '</span></div>' +
-      '<div class="meta"><span>' + fmtInt(s.qty) + '주 · ' + meta2 + '주식 내 ' + pct(s.stockWeight) + '</span>' +
+      '<div class="meta"><span>' + fmtNum(s.qty, true) + '주 · ' + meta2 + '주식 내 ' + pct(s.stockWeight) + '</span>' +
       '<span class="v">' + (s.cur==='USD'? usd(s.vn) : won(s.vk)) + '</span></div>' +
       '<div class="meta"><span>' + s.accts.map(shortName).join(', ') + '</span><span>' + pnl + '</span></div>' +
     '</div>';
@@ -840,33 +863,39 @@ function toast(msg, ms, kind){
   clearTimeout(toastT); toastT = setTimeout(function(){ el.classList.remove('show'); }, ms || 2200);
 }
 /* ---------- 숫자 입력 포맷 ---------- */
+/* 타이핑 중 값을 다듬는다: dec=true 면 소수점(최대 2자리)을 살리고, false 면 정수만 남긴다 */
+function cleanNum(v, dec){
+  var raw = String(v==null?'':v).replace(/,/g,'');
+  if(dec){
+    var clean = raw.replace(/[^\d.]/g,'');
+    var dot = clean.indexOf('.');
+    if(dot >= 0) clean = clean.slice(0,dot+1) + clean.slice(dot+1).replace(/\./g,'');
+    if(clean === '' || clean === '.') return clean === '.' ? '0.' : '';
+    var parts = clean.split('.');
+    var ip = parts[0] || '0';
+    var dp = parts.length > 1 ? parts[1].slice(0,2) : null;
+    return ip.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dp !== null ? '.' + dp : '');
+  }
+  var only = raw.split('.')[0].replace(/\D/g,'');   /* 정수 칸에 소수점을 넣으면 소수부는 버린다 */
+  if(only.length > 12) only = only.slice(0,12);
+  return only.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function formatLive(el, dec){
+  var atEnd = (el.selectionStart === el.value.length);
+  var out = cleanNum(el.value, !!dec);
+  if(el.value !== out) el.value = out;
+  if(atEnd){ try{ el.setSelectionRange(out.length, out.length); }catch(e){} }
+}
+/* 포커스가 빠질 때 정리: 'money' 는 소수점 둘째 자리 고정(500 → 500.00), true 는 2자리까지 */
+function settleNum(el, dec){
+  if(!dec || !el || !el.value) return;
+  var v = num(el.value);
+  el.value = (dec === 'money')
+    ? v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})
+    : v.toLocaleString('en-US',{maximumFractionDigits:2});
+}
 function bindNumber(el, handler, dec){
-  el.addEventListener('input', function(){
-    var atEnd = (el.selectionStart === el.value.length);
-    var raw = el.value.replace(/,/g,'');
-    var clean, out;
-    if(dec){
-      clean = raw.replace(/[^\d.]/g,'');
-      var dot = clean.indexOf('.');
-      if(dot >= 0) clean = clean.slice(0,dot+1) + clean.slice(dot+1).replace(/\./g,'');
-      if(clean === '' || clean === '.'){
-        out = clean === '.' ? '0.' : '';
-      }else{
-        var endsDot = clean.charAt(clean.length - 1) === '.';
-        var parts = clean.split('.');
-        var ip = parts[0] || '0';
-        var dp = parts.length > 1 ? parts[1].slice(0,2) : null;
-        out = ip.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dp !== null ? '.' + dp : (endsDot ? '.' : ''));
-      }
-    }else{
-      clean = raw.replace(/\D/g,'');
-      if(clean.length > 12) clean = clean.slice(0,12);
-      out = clean.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-    if(el.value !== out) el.value = out;
-    if(atEnd){ try{ el.setSelectionRange(out.length, out.length); }catch(e){} }
-    handler(el);
-  });
+  el.addEventListener('input', function(){ formatLive(el, dec); handler(el); });
   el.addEventListener('blur', function(){
     if(dec && el.value && el.value !== ''){ el.value = fmtFx(el.value); }
   });
@@ -915,18 +944,36 @@ document.getElementById('chips').addEventListener('click', function(e){
 
 /* 종목 카드 이벤트 (위임) */
 var holdsEl = document.getElementById('holds');
+function holdById(id){
+  for(var i=0;i<state.holdings.length;i++){ if(state.holdings[i].id === id) return state.holdings[i]; }
+  return null;
+}
+/* 입력칸마다 소수점 허용 범위: USD 현재가·매입단가·달러예수금은 2자리 고정, USD 수량은 2자리까지, KRW 는 정수 */
+function fieldDec(el, holding){
+  if(el.classList.contains('a-cashusd')) return 'money';
+  if(!holding || holding.cur !== 'USD') return false;
+  return el.classList.contains('a-qty') ? true : 'money';
+}
 holdsEl.addEventListener('input', function(e){
   var card = e.target.closest('.card[data-id]');
   if(!card) return;
-  var id = card.getAttribute('data-id');
-  var h = null;
-  for(var i=0;i<state.holdings.length;i++){ if(state.holdings[i].id === id){ h = state.holdings[i]; break; } }
-  if(!h) return;
   var t = e.target;
-  if(t.classList.contains('a-name')){ h.name = t.value; afterChange(); }
-  else if(t.classList.contains('a-price')){ h.price = (t.value === '' ? null : num(t.value)); afterChange(); }
-  else if(t.classList.contains('a-qty')){ h.qty = (t.value === '' ? null : num(t.value)); afterChange(); }
-  else if(t.classList.contains('a-avg')){ h.avg = (t.value === '' ? null : num(t.value)); afterChange(); }
+  var h = holdById(card.getAttribute('data-id'));
+  if(!h) return;
+  if(t.classList.contains('a-name')){ h.name = t.value; afterChange(); return; }
+  if(!(t.classList.contains('a-price') || t.classList.contains('a-qty') || t.classList.contains('a-avg'))) return;
+  formatLive(t, fieldDec(t, h));
+  if(t.classList.contains('a-price')) h.price = (t.value === '' ? null : num(t.value));
+  else if(t.classList.contains('a-qty')) h.qty = (t.value === '' ? null : num(t.value));
+  else h.avg = (t.value === '' ? null : num(t.value));
+  afterChange();
+});
+holdsEl.addEventListener('focusout', function(e){
+  var t = e.target;
+  if(!t || !t.classList) return;
+  var card = t.closest('.card[data-id]');
+  var h = card ? holdById(card.getAttribute('data-id')) : null;
+  settleNum(t, fieldDec(t, h));
 });
 holdsEl.addEventListener('change', function(e){
   var card = e.target.closest('.card[data-id]');
@@ -961,7 +1008,7 @@ holdsEl.addEventListener('click', function(e){
     var h = null;
     for(var j=0;j<state.holdings.length;j++){ if(state.holdings[j].id === id){ h = state.holdings[j]; break; } }
     if(!h) return;
-    if(!confirm('"' + (h.name || '새 종목') + '"을(를) 삭제할까요?')) return;
+    if(!confirm('"' + (h.name || '새 종목') + '" 종목을 삭제할까요?\n\n삭제하면 합계·요약이 바로 다시 계산됩니다.')) return;
     state.holdings = state.holdings.filter(function(x){ return x.id !== id; });
     afterChange({rebuild:true});
     toast('종목을 삭제했습니다');
@@ -991,13 +1038,16 @@ function accByCard(el){
 accsEl.addEventListener('input', function(e){
   var a = accByCard(e.target);
   if(!a) return;
-  var v = (e.target.value === '' ? 0 : num(e.target.value));
-  if(e.target.classList.contains('a-principal')) a.principal = v;
-  else if(e.target.classList.contains('a-cashkrw')) a.cashKrw = v;
-  else if(e.target.classList.contains('a-cashusd')) a.cashUsd = v;
-  else return;
+  var t = e.target;
+  if(!(t.classList.contains('a-principal') || t.classList.contains('a-cashkrw') || t.classList.contains('a-cashusd'))) return;
+  formatLive(t, fieldDec(t, null));
+  var v = (t.value === '' ? 0 : num(t.value));
+  if(t.classList.contains('a-principal')) a.principal = v;
+  else if(t.classList.contains('a-cashkrw')) a.cashKrw = v;
+  else a.cashUsd = v;
   afterChange();
 });
+accsEl.addEventListener('focusout', function(e){ settleNum(e.target, fieldDec(e.target, null)); });
 
 /* 백업 */
 function payloadText(){
