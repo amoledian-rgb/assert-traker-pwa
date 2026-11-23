@@ -9,3 +9,4 @@ shots_run.py
 test_local.py
 __pycache__/
 *.pyc
+test_live.py
