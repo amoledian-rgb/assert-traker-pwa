@@ -279,6 +279,18 @@
     border-top:1px solid rgba(20,27,43,.07); box-shadow:0 -8px 18px -14px rgba(20,27,43,.45);
   }
   .savebar.on{display:flex}
+  /* ---------- 수동 저장 (manual-save-v1) ---------- */
+  .savebar{flex-direction:column; align-items:stretch; gap:6px}
+  .saverow{display:flex; gap:8px; align-items:center}
+  .saveflag{display:none; align-items:center; gap:6px; font-size:12px; font-weight:800; color:#8a5300; line-height:1.25; letter-spacing:-.01em}
+  .savebar.dirty .saveflag{display:flex}
+  .saveflag::before{content:''; width:7px; height:7px; border-radius:50%; background:#e08a15; flex:0 0 7px}
+  .savebar.dirty{background:#fff7ea; border-top-color:#efcf9b}
+  .savebar.dirty .savebtn{background:linear-gradient(160deg,#e39216,#c97708); box-shadow:0 9px 20px -10px rgba(201,119,8,.95)}
+  .undobtn{flex:0 0 auto; height:50px; padding:0 13px; border-radius:14px; border:1px solid #d3d9e4; background:#fff;
+    color:#3a4356; font-size:14px; font-weight:800; display:flex; align-items:center; gap:3px; white-space:nowrap}
+  .undobtn:disabled{opacity:.42}
+  .undobtn:active{filter:brightness(.96)}
   .savebtn{
     flex:1; min-width:0; height:50px; border:0; border-radius:14px; background:var(--navy); color:#fff;
     font-size:18px; font-weight:800; letter-spacing:-.01em;
@@ -432,10 +444,10 @@
 
   <!-- ============ 백업 ============ -->
   <section class="tab" id="tab-backup">
-    <div class="sec">자동 저장</div>
+    <div class="sec">저장 방식</div>
     <div class="card">
       <div class="stat"><span class="dotlive" id="save-dot"></span><span id="save-stat">확인 중…</span></div>
-      <p class="hint" id="save-hint">입력하는 즉시 이 폰의 브라우저에 저장됩니다. 앱을 닫아도 그대로 남습니다.</p>
+      <p class="hint" id="save-hint">💾 저장하기를 눌렀을 때만 이 폰에 저장됩니다. 입력만 하고 앱을 닫으면 마지막 저장 상태로 돌아갑니다.</p>
     </div>
 
     <div class="sec">백업 파일</div>
@@ -457,7 +469,7 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-23 · 구분선 강화</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v">2026-11-23 · 저장하기 버튼으로만 저장</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -470,8 +482,12 @@
 </main>
 
 <div class="savebar" id="savebar">
-  <button class="savebtn" id="btn-save" type="button">💾 저장하기</button>
-  <div class="savestamp" id="save-stamp"></div>
+  <div class="saveflag" id="save-flag">저장 안 된 변경 있음 · 💾 저장하기를 눌러야 남습니다</div>
+  <div class="saverow">
+    <button class="undobtn" id="btn-undo" type="button" disabled>↩️ 되돌리기</button>
+    <button class="savebtn" id="btn-save" type="button">💾 저장하기</button>
+    <div class="savestamp" id="save-stamp"></div>
+  </div>
 </div>
 
 <nav>
@@ -488,7 +504,8 @@
 var INITIAL = {"asOf":"2026-11-22","fx":1350,"accounts":[{"name":"키움증권 (종합)","type":"주식","principal":0,"cashKrw":0,"cashUsd":0},{"name":"신한증권 (ISA)","type":"주식","principal":0,"cashKrw":0,"cashUsd":0},{"name":"미래에셋증권 (종합)","type":"주식","principal":0,"cashKrw":0,"cashUsd":0},{"name":"메리츠증권 (종합)","type":"주식","principal":0,"cashKrw":0,"cashUsd":0},{"name":"미래에셋증권 (IRP)","type":"연금","principal":0,"cashKrw":0,"cashUsd":0},{"name":"신한투자증권 (연금저축)","type":"연금","principal":0,"cashKrw":0,"cashUsd":0}],"holdings":[]};
 
 var KEY = 'asset.tracker.v1';
-var state = null, memoryOnly = false, lastSaved = null, activeTab = 'summary', filter = 'all';
+var state = null, memoryOnly = false, lastSaved = null, dirty = false, baselineText = null,
+    activeTab = 'summary', filter = 'all';
 
 /* ---------- utils ---------- */
 function num(v){ var n = Number(String(v==null?'':v).replace(/,/g,'').replace(/\s/g,'')); return isFinite(n) ? n : 0; }
@@ -546,7 +563,12 @@ function loadState(){
   try{ raw = window.localStorage.getItem(KEY); }
   catch(e){ memoryOnly = true; return clone(INITIAL); }
   if(raw){
-    try{ var d = JSON.parse(raw); return normalize(d.data || d); }
+    try{
+      var d = JSON.parse(raw);
+      /* 저장된 시각을 되살린다 — 앱을 다시 열어도 '마지막 저장' 시간이 보인다 (manual-save-v1) */
+      if(d && d.savedAt){ var t = new Date(d.savedAt); if(!isNaN(t.getTime())) lastSaved = t; }
+      return normalize(d.data || d);
+    }
     catch(e){ return clone(INITIAL); }   /* 저장된 값이 깨졌으면 초기 데이터로 */
   }
   return clone(INITIAL);
@@ -556,14 +578,28 @@ function saveState(){
   try{
     window.localStorage.setItem(KEY, JSON.stringify(payload));
     memoryOnly = false; lastSaved = new Date();
+    /* 이 내용이 '마지막 저장 상태' — 이후 바뀐 것이 있으면 dirty 로 표시한다 (manual-save-v1) */
+    baselineText = JSON.stringify(state); dirty = false;
   }catch(e){
     memoryOnly = true;
   }
 }
 
-/* ---------- 입력 탭: 저장 버튼 ---------- */
+/* ---------- 저장 바: 수동 저장 (manual-save-v1) ----------
+   · 입력 탭에서 값을 바꾸면 state(메모리)만 바뀐다 — 요약·종목 탭에서 바로 보인다.
+   · localStorage 에는 💾 저장하기 를 눌렀을 때만 쓴다.
+   · 마지막 저장 내용과 달라졌으면 dirty = true → 저장 바에 '저장 안 된 변경 있음' 표시 + ↩️ 되돌리기 활성. */
+function markChanged(){
+  dirty = (JSON.stringify(state) !== baselineText);
+  renderSavebar();
+  syncBar();
+}
 function renderSavebar(){
+  var bar = document.getElementById('savebar');
   var stamp = document.getElementById('save-stamp');
+  var undo = document.getElementById('btn-undo');
+  if(bar) bar.classList.toggle('dirty', dirty);
+  if(undo) undo.disabled = !dirty;
   if(!stamp) return;
   if(memoryOnly){
     stamp.className = 'savestamp mem';
@@ -573,9 +609,20 @@ function renderSavebar(){
     stamp.innerHTML = '마지막 저장<b>' + (lastSaved ? clockOf(lastSaved) : '—') + '</b>';
   }
 }
+/* 저장 바를 보일지 정한다: 입력 탭이면 늘, 다른 탭에서는 저장 안 된 변경이 있을 때만. */
+var barShown = null, barDirty = null;
+function syncBar(){
+  var bar = document.getElementById('savebar');
+  if(!bar) return;
+  var want = (activeTab === 'inputs' || dirty);
+  if(bar.classList.contains('on') !== want) bar.classList.toggle('on', want);
+  if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
+}
+/* 💾 저장하기 — 이때만 localStorage 에 쓴다. */
 function saveNow(){
   saveState();
   renderSavebar();
+  syncBar();
   if(memoryOnly){
     toast('저장 공간이 막혀 있습니다 — 백업 파일로 남겨 주세요', 3200, 'warn');
     return;
@@ -584,6 +631,19 @@ function saveNow(){
   var b = document.getElementById('btn-save');
   b.classList.remove('done'); void b.offsetWidth; b.classList.add('done');
   setTimeout(function(){ b.classList.remove('done'); }, 800);
+}
+/* ↩️ 되돌리기 — 저장하지 않은 변경을 버리고 마지막 저장 상태로 돌아간다. */
+function undoAll(){
+  if(!dirty) return;
+  if(!confirm('저장하지 않은 변경을 버리고 마지막으로 저장한 상태로 되돌릴까요?')) return;
+  state = JSON.parse(baselineText);
+  var names = state.accounts.map(function(a){ return a.name; });
+  if(filter !== 'all' && names.indexOf(filter) < 0) filter = 'all';
+  dirty = false;
+  renderAll();
+  if(activeTab === 'inputs'){ renderChips(); renderHolds(); renderAccs(); updateInputCalcs(); }
+  renderSavebar(); syncBar();
+  toast('마지막 저장 상태로 되돌렸습니다');
 }
 
 /* ---------- 계산 ---------- */
@@ -964,10 +1024,14 @@ function renderBackup(m){
     dot.className = 'dotlive mem';
     st.textContent = '메모리 모드 — 이 화면에서만 유지';
     hint.innerHTML = '<b>브라우저 저장이 막혀 있습니다.</b> 앱을 닫으면 입력한 내용이 사라지니, 작업 후 꼭 <b>백업 파일 저장</b>을 눌러 주세요.';
+  }else if(dirty){
+    dot.className = 'dotlive mem';
+    st.textContent = '저장 안 된 변경 있음';
+    hint.innerHTML = '<b>아직 저장하지 않은 변경이 있습니다.</b> 입력 탭 아래 <b>💾 저장하기</b>를 눌러야 이 폰에 남습니다. 앱을 닫으면 마지막으로 저장한 상태로 돌아갑니다.';
   }else{
     dot.className = 'dotlive';
-    st.textContent = '자동 저장 켜짐' + (lastSaved ? ' · ' + clockOf(lastSaved) : '');
-    hint.textContent = '입력하는 즉시 이 폰의 브라우저에 저장됩니다. 앱을 닫아도 그대로 남습니다.';
+    st.textContent = '수동 저장' + (lastSaved ? ' · 마지막 저장 ' + clockOf(lastSaved) : '');
+    hint.textContent = '💾 저장하기를 눌렀을 때만 이 폰의 브라우저에 저장됩니다. 입력만 하고 앱을 닫으면 마지막 저장 상태로 돌아갑니다.';
   }
   document.getElementById('chk-cnt').textContent = m.accounts.length + '계좌 / ' + state.holdings.length + '건';
   document.getElementById('chk-saved').textContent = lastSaved ? (lastSaved.getMonth()+1) + '/' + lastSaved.getDate() + ' ' + clockOf(lastSaved) : '—';
@@ -982,7 +1046,7 @@ function renderAll(){
   else if(activeTab === 'inputs'){ renderChips(); updateInputCalcs(); }
 }
 function afterChange(opts){
-  saveState();
+  markChanged();   /* state(메모리)만 갱신 — localStorage 저장은 💾 저장하기 에서만 */
   var m = compute();
   renderHeader(m);
   if(activeTab === 'summary') renderSummary(m);
@@ -997,9 +1061,9 @@ function switchTab(t){
   activeTab = t;
   Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(el){ el.classList.toggle('active', el.id === 'tab-' + t); });
   Array.prototype.forEach.call(document.querySelectorAll('nav button'), function(b){ b.classList.toggle('on', b.getAttribute('data-tab') === t); });
-  savebar.classList.toggle('on', t === 'inputs');
-  fitFrame();
+  syncBar();          /* 입력 탭이거나 저장 안 된 변경이 있으면 저장 바를 보인다 */
   renderSavebar();
+  fitFrame();
   if(t === 'summary') renderSummary(compute());
   if(t === 'inputs'){ renderChips(); renderHolds(); renderAccs(); updateInputCalcs(); }
   if(t === 'stocks') renderStocks(compute());
@@ -1092,6 +1156,7 @@ bindNumber(document.getElementById('in-fxbase'), function(el){
 }, true);
 
 document.getElementById('btn-save').addEventListener('click', saveNow);
+document.getElementById('btn-undo').addEventListener('click', undoAll);
 savebar.addEventListener('click', function(e){
   var go = e.target.closest('[data-go]');
   if(go){
@@ -1376,8 +1441,9 @@ fileIn.addEventListener('change', function(){
       var next = normalize(parsed.data || parsed);
       if(!confirm('지금 화면을 백업 파일 내용으로 바꿀까요?\n(계좌 ' + next.accounts.length + '개 · 종목 ' + next.holdings.length + '건)')) return;
       state = next; filter = 'all';
-      saveState();
+      saveState();          /* 불러오기는 명시적 동작 — 그대로 저장한다 (dirty 해제) */
       renderAll();
+      renderSavebar(); syncBar();
       if(activeTab === 'inputs'){ renderChips(); renderHolds(); renderAccs(); }
       toast('백업을 불러왔습니다');
     }catch(err){
@@ -1390,8 +1456,9 @@ fileIn.addEventListener('change', function(){
 document.getElementById('btn-reset').addEventListener('click', function(){
   if(!confirm('모든 계좌·종목 데이터를 지우고 빈 앱으로 되돌립니다.\n지금 입력한 내용은 모두 사라집니다. 계속할까요?')) return;
   state = clone(INITIAL); filter = 'all';
-  saveState();
+  saveState();          /* 초기화도 명시적 동작 — 그대로 저장한다 (dirty 해제) */
   renderAll();
+  renderSavebar(); syncBar();
   if(activeTab === 'inputs'){ renderChips(); renderHolds(); renderAccs(); }
   toast('빈 상태로 되돌렸습니다');
 });
@@ -1405,11 +1472,13 @@ function boot(){
   fitFrame();
   window.addEventListener('resize', fitFrame);
   window.addEventListener('orientationchange', function(){ setTimeout(fitFrame, 120); });
-  saveState();
+  baselineText = JSON.stringify(state);   /* 열었을 때 화면 = 마지막 저장 상태 → dirty 아님 */
+  dirty = false;
   renderAll();
   renderSavebar();
   if(activeTab === 'inputs'){ renderChips(); renderHolds(); renderAccs(); updateInputCalcs(); }
   window.__asset = { get state(){ return state; }, compute:compute, setFilter:function(f){ filter=f; }, save:saveNow,
+                     undo:undoAll, get dirty(){ return dirty; }, get baseline(){ return baselineText; },
                      get memoryOnly(){ return memoryOnly; }, get lastSaved(){ return lastSaved; } };
 }
 boot();
@@ -1424,6 +1493,8 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
     navigator.serviceWorker.addEventListener('controllerchange', function(){
       if(!hadController) return;   /* 첫 설치 때는 그냥 둔다 */
       hadController = false;
+      /* 저장하지 않은 입력이 있으면 새로고침하지 않는다 — 저장 후 다음에 열 때 새 화면을 받는다 */
+      if(window.__asset && window.__asset.dirty) return;
       location.reload();
     });
     navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).catch(function(){});
