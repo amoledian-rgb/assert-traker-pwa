@@ -1,0 +1,11 @@
+# 저장소에는 앱 파일만 올린다 (빌드 도구·개인 데이터·검증 산출물 제외)
+app.template.html
+build.py
+initial_shell.json
+initial_unmun.json
+site/
+shots/
+shots_run.py
+test_local.py
+__pycache__/
+*.pyc
