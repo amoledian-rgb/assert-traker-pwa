@@ -1449,7 +1449,12 @@ bindChips('KRW'); bindChips('USD');
 /* 종목 카드 이벤트 (두 목록 공통) */
 /* 입력칸마다 소수점 허용 범위 (usd4-v1): USD 현재가·매입단가·달러예수금은 4자리(최소 2자리 표시), USD 수량은 4자리, KRW 는 정수 */
 function fieldDec(e, holding){
+  /* 이름·계좌명 같은 글자 칸에는 절대 숫자 서식을 적용하지 않는다 (nameguard-v1) */
+  if(e.classList.contains('txt') || !e.tagName || e.tagName !== 'INPUT') return false;
   if(e.classList.contains('a-cashusd')) return 'usd';
+  var isNum = e.classList.contains('a-price') || e.classList.contains('a-qty') || e.classList.contains('a-avg')
+           || e.classList.contains('a-principal') || e.classList.contains('a-cashkrw');
+  if(!isNum) return false;
   if(!holding || holding.cur !== 'USD') return false;
   return e.classList.contains('a-qty') ? 'usdq' : 'usd';
 }
