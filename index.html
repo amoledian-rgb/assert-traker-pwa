@@ -3145,21 +3145,22 @@ function fetchLiveJpy(){
   });
 }
 function fetchLiveBtc(){
-  return mkFetchJson('https://api.upbit.com/v1/ticker?markets=USDT-BTC', 6000).then(function(d){
-    var t = d && d[0], p = num(t && t.trade_price);
+  /* 1순위 코인게코(CORS *, 브라우저에서 안정적) → 2순위 업비트(USDT 시세, 호출 제한이 걸리기도 함) */
+  return mkFetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true', 6000).then(function(d){
+    var b = (d && d.bitcoin) || {}, p = num(b.usd);
     if(!p) throw new Error('값 없음');
-    var prev = num(t.prev_closing_price) || p;
     var at = null;
-    try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){ at = null; }
-    return { price:p, change: Math.round((p-prev)*100)/100,
-             pct: prev ? Math.round((p-prev)/prev*10000)/100 : null, src:'업비트', at:at };
+    if(b.last_updated_at){ try{ at = new Date(Number(b.last_updated_at)*1000).toISOString(); }catch(e){ at = null; } }
+    return { price:p, change:null, pct:null, src:'코인게코 (USD)', at:at };
   }).catch(function(){
-    return mkFetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true', 6000).then(function(d){
-      var b = (d && d.bitcoin) || {}, p = num(b.usd);
+    return mkFetchJson('https://api.upbit.com/v1/ticker?markets=USDT-BTC', 6000).then(function(d){
+      var t = d && d[0], p = num(t && t.trade_price);
       if(!p) throw new Error('값 없음');
+      var prev = num(t.prev_closing_price) || p;
       var at = null;
-      if(b.last_updated_at){ try{ at = new Date(Number(b.last_updated_at)*1000).toISOString(); }catch(e){ at = null; } }
-      return { price:p, change:null, pct:null, src:'코인게코', at:at };
+      try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){ at = null; }
+      return { price:p, change: Math.round((p-prev)*100)/100,
+               pct: prev ? Math.round((p-prev)/prev*10000)/100 : null, src:'업비트 (USDT)', at:at };
     });
   });
 }
