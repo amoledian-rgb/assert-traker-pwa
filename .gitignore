@@ -64,3 +64,4 @@ test_live_date.py
 
 # 나머지 6개 탭 글자 크기 통일 검증 (2026-11-25)
 shots_fonts/
+tmp_*.js
