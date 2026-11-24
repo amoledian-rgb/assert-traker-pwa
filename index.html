@@ -132,6 +132,14 @@
     font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; text-align:center}
   .fxline.up{background:#fdeeee; color:var(--up)}
   .fxline.down{background:#eaf1ff; color:var(--down)}
+  /* ---------- 실시간 환율 출처 줄 (fxlive-v1) ---------- */
+  .fxsrc{display:flex; align-items:flex-start; gap:5px; margin-top:7px; font-size:11.5px; line-height:1.45;
+    font-weight:600; color:#8b93a4; font-variant-numeric:tabular-nums; word-break:keep-all}
+  .fxsrc i{flex:0 0 auto; width:6px; height:6px; margin:4px 1px 0 0; border-radius:50%; background:#c3c9d4}
+  .fxsrc b{font-weight:800; color:#4a5468}
+  .fxsrc.live{color:#2f6b4f}
+  .fxsrc.live i{background:#1f9d6a; box-shadow:0 0 0 3px rgba(31,157,106,.14)}
+  .fxsrc.live b{color:#1f7a4d}
   /* ---------- inputs ---------- */
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
   label.f{display:block; min-width:0}
@@ -563,6 +571,7 @@
         <label class="f"><span>기준(매입) 환율 <u>₩/$</u> <i class="opt" style="font-style:normal;font-weight:600;color:#b4bbc9">선택</i></span><input class="t" id="in-fxbase" inputmode="decimal" step="0.01" placeholder="예: 1,350.00"></label>
       </div>
       <div class="fxline" id="in-fxline">기준(매입) 환율을 넣으면 환차익을 계산합니다</div>
+      <div class="fxsrc" id="in-fxsrc"><i></i>환율 출처 확인 중…</div>
       <div class="kv" style="margin-top:10px">
         <div><span>달러 주식</span><b id="u-stock">$0.00</b><em id="u-stockkrw">0원</em></div>
         <div><span>달러 예수금</span><b id="u-cash">$0.00</b><em id="u-cashkrw">0원</em></div>
@@ -672,7 +681,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 일·주·월·년 추이</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 실시간 환율</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -784,6 +793,16 @@ function normSnapshots(snaps){
   return out;
 }
 function withSnaps(s){ if(s && !s.snapshots) s.snapshots = {}; return s; }
+/* 실시간 환율 반영 이력 (fxlive-v1) — 저장 파일에 남겨 앱을 다시 열어도 출처·시각이 보인다 */
+function normFxLive(v){
+  if(!v || typeof v !== 'object') return null;
+  var r = num(v.rate);
+  if(!(r > 0)) return null;
+  return { rate: Math.round(r * 100) / 100,
+           src: String(v.src || ''), label: String(v.label || ''),
+           at: (typeof v.at === 'string' && v.at) ? v.at : null,
+           fetchedAt: (typeof v.fetchedAt === 'string' && v.fetchedAt) ? v.fetchedAt : null };
+}
 function normalize(d){
   if(!d || !Array.isArray(d.accounts) || !Array.isArray(d.holdings)) throw new Error('백업 파일 형식이 아닙니다.');
   if(!d.accounts.length) throw new Error('계좌 정보가 없습니다.');
@@ -794,6 +813,8 @@ function normalize(d){
     fxBase: (d.fxBase == null || d.fxBase === '' || !(num(d.fxBase) > 0)) ? null : num(d.fxBase),
     /* 종가 자동 반영 이력 — prices.json 의 updatedAt. 같은 파일을 다시 반영하지 않게 한다 (prices-v1) */
     pricesAppliedAt: (typeof d.pricesAppliedAt === 'string' && d.pricesAppliedAt) ? d.pricesAppliedAt : null,
+    /* 마지막으로 반영한 실시간 환율 출처 (fxlive-v1) */
+    fxLive: normFxLive(d.fxLive),
     accounts: normAccounts(d.accounts),
     holdings: normHoldings(d.holdings),
     snapshots: normSnapshots(d.snapshots)
@@ -991,6 +1012,7 @@ function useSnapshotNow(){
   state = liveState || state;
   liveState = null; liveBaseline = null; viewingDate = null;
   state.asOf = view.asOf; state.fx = num(view.fx);
+  state.fxLive = null;                     /* 과거 기록의 환율을 지금 환율로 착각하지 않게 */
   state.accounts = clone(view.accounts); state.holdings = clone(view.holdings);
   setViewing(null);
   baselineText = JSON.stringify(state); dirty = true;
@@ -1458,6 +1480,7 @@ function renderHeader(m){
     var baseStr = (state.fxBase != null && num(state.fxBase) > 0) ? fmtFx(state.fxBase) : '';
     if(fb.value !== baseStr && document.activeElement !== fb) fb.value = baseStr;
   }
+  updateFxNote();
 }
 /* ---------- 환차익 표시 (fxgain-v1) ---------- */
 function won2s(n){         /* 달러당 차이: +16.00원 · -3.50원 */
@@ -1942,6 +1965,7 @@ function switchTab(t){
 var toastT = null;
 function toast(msg, ms, kind){
   var e = document.getElementById('toast');
+  try{ fitFrame(); }catch(err){}   /* 저장 바 높이가 바뀌었어도 토스트가 바 아래로 깔리지 않게 */
   e.textContent = msg;
   e.classList.toggle('warn', kind === 'warn');
   e.classList.toggle('long', String(msg).length > 34);
@@ -2043,61 +2067,248 @@ function applyPrices(data, force){
     res.matched++;
     if(res.names.indexOf(h.name) < 0) res.names.push(h.name);
   });
-  if(data.fx != null && num(data.fx) > 0){ state.fx = num(data.fx); res.fx = true; }
+  /* 환율: 방금 받은 실시간 환율이 이 파일보다 최신이면 건드리지 않는다 (fxlive-v1) */
+  if(data.fx != null && num(data.fx) > 0 && !liveFxNewerThan(stamp)){ state.fx = num(data.fx); res.fx = true; }
   if(data.date) state.asOf = String(data.date);
   if(stamp) state.pricesAppliedAt = stamp;
   else if(!state.pricesAppliedAt) state.pricesAppliedAt = new Date().toISOString();
   return res;
 }
-/* opts.manual = 사용자가 🔄 종가 새로고침 을 누른 경우(이미 반영된 파일이라도 다시 채운다) */
+/* opts.manual = 사용자가 🔄 종가 새로고침 을 누른 경우(이미 반영된 파일이라도 다시 채운다)
+   opts.quiet  = 토스트를 띄우지 않음 (🔄 는 종가·환율 결과를 하나로 묶어 알린다)
+   돌려주는 값: {ok, matched, stamp, date, snapshot, filled} 또는 {ok:false, why} */
+var pricesLast = null;
 function loadPrices(opts){
   opts = opts || {};
-  if(viewingDate || pricesBusy) return;
+  if(viewingDate || pricesBusy) return Promise.resolve(null);
   pricesBusy = true;
   var btns = document.querySelectorAll('.px-btn');
   Array.prototype.forEach.call(btns, function(b){ b.disabled = true; });
-  function done(msg, kind){
-    pricesBusy = false;
-    Array.prototype.forEach.call(btns, function(b){ b.disabled = false; });
-    if(msg) toast(msg, 2600, kind);
-  }
-  if(opts.manual && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가를 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){ done(); return; }
-  if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
-    done(opts.manual ? '종가 자동 반영은 홈 화면 앱(웹 주소)에서 됩니다' : '', 'warn');
+  return new Promise(function(resolve){
+    function done(res, msg, kind){
+      pricesBusy = false;
+      Array.prototype.forEach.call(btns, function(b){ b.disabled = false; });
+      if(msg && !opts.quiet) toast(msg, 2600, kind);
+      pricesLast = res || null;
+      resolve(res || null);
+    }
+    if(opts.manual && !opts.noConfirm && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가를 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){ done({ok:false, cancelled:true}); return; }
+    if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
+      done({ok:false, local:true}, opts.manual ? '종가 자동 반영은 홈 화면 앱(웹 주소)에서 됩니다' : '', 'warn');
+      return;
+    }
+    var p;
+    try{
+      p = fetch(PRICES_URL + '?t=' + Date.now(), {cache:'no-store'});
+    }catch(err){
+      done({ok:false, offline:true}, opts.manual ? '종가 파일을 열지 못했습니다 — 인터넷 연결을 확인해 주세요' : '', 'warn');
+      return;
+    }
+    p.then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+     .then(function(data){
+       pricesInfo = data;
+       indexPrices(data);
+       var res = applyPrices(data, !!opts.manual);
+       if(!res.matched && !res.fx){
+         var why = res.mismatch && res.mismatch.length
+           ? '통화가 다른 종목만 있습니다 — 달러 종목은 달러 탭에서 채워집니다'
+           : '지금 종목과 맞는 종가가 파일에 없습니다';
+         done({ok:false, why:why, mismatch:!!(res.mismatch && res.mismatch.length)});
+         return;
+       }
+       var snapDate = String(data.date || state.asOf);
+       var snapped = autoSnapshotOK(snapDate) ? recordSnapshot(snapDate, 'auto') : null;
+       var filled = autoBackfill(pricesHistory);
+       saveState(true);                 /* 자동 반영도 저장 스냅샷을 갱신 → dirty 가 뜨지 않는다 */
+       renderAll(); renderSavebar(); syncBar();
+       var stamp = priceStampText(data.updatedAt || state.pricesAppliedAt);
+       done({ok:true, matched:res.matched, stamp:stamp, date:snapDate,
+             snapshot:!!snapped, filled:filled},
+            '최신 종가 반영됨 (' + stamp + ')'
+            + (snapped ? ' · ' + snapDate + ' 기록 저장' : (filled ? ' · ' + filled + '일 기록 보충' : '')));
+     })
+     .catch(function(err){
+       /* 오프라인·file:// 에서는 조용히 넘어간다 (자동). 수동일 때만 알린다. */
+       if(opts.manual) done({ok:false, error:true}, '종가를 불러오지 못했습니다 — ' + ((err && err.message) ? err.message : '인터넷 연결을 확인해 주세요'), 'warn');
+       else done({ok:false, error:true});
+     });
+  });
+}
+/* ---------- 실시간 원/달러 환율 (fxlive-v1) ----------
+   배포 오리진(github.io)에서 CORS 로 읽히는 공개 환율 API 만 쓴다 — 개인 데이터는 보내지 않는 GET 한 번뿐이다.
+     1순위 국내 시세(마나나, 당일 장중 시세)  →  2순위 exchangerate-api(open.er-api)  →  3순위 currency-api(jsDelivr)
+   모두 실패하면 prices.json 의 환율을 그대로 둔다(이것도 없으면 저장된 환율).
+   · 앱을 열 때, 🔄 종가 새로고침 때 한 번씩 받는다
+   · 과거 기록 조회 중(viewingDate)에는 건드리지 않는다 — 그날의 환율이 남아야 한다
+   · 저장 안 된 입력(dirty)이 있는 자동 실행은 덮어쓰지 않는다 (수동 새로고침은 확인을 받고 함께 저장) */
+var FX_MIN = 800, FX_MAX = 2500, FX_TIMEOUT = 5000;
+var fxBusy = false;
+var FX_SOURCES = [
+  { id:'manana', label:'국내 시세',
+    url:'https://api.manana.kr/exchange/rate/KRW/USD.json',
+    pick:function(d){ var r = d && d[0]; return (r && fxOk(r.rate)) ? { rate:r.rate, at:r.date } : null; } },
+  { id:'er-api', label:'exchangerate-api',
+    url:'https://open.er-api.com/v6/latest/USD',
+    pick:function(d){ var v = d && d.rates && d.rates.KRW; return fxOk(v) ? { rate:v, at:d.time_last_update_utc } : null; } },
+  { id:'currency-api', label:'currency-api',
+    url:'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+    pick:function(d){ var v = d && d.usd && d.usd.krw; return fxOk(v) ? { rate:v, at:d.date } : null; } }
+];
+function fxOk(v){ v = num(v); return isFinite(v) && v >= FX_MIN && v <= FX_MAX; }
+function fxRound(v){ return Math.round(num(v) * 100) / 100; }
+/* 실시간 환율을 받은 시각이 prices.json 의 updatedAt 보다 나중인가 */
+function liveFxNewerThan(fileStamp){
+  var L = state && state.fxLive;
+  if(!L || !fxOk(L.rate)) return false;
+  var t = Date.parse(L.fetchedAt || L.at || '');
+  if(isNaN(t)) return true;
+  var f = Date.parse(fileStamp || '');
+  if(isNaN(f)) return true;
+  return t > f;
+}
+/* API 가 알려 준 시각(at)을 '11/24 15:00 기준' 처럼 — 형식이 제각각이라 손봐서 읽는다 */
+function fxWhenText(at, fetchedAt){
+  var s = String(at || '');
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if(m) return m[2] + '/' + m[3] + ' ' + m[4] + ':' + m[5] + ' 기준';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.slice(5, 7) + '/' + s.slice(8, 10) + ' 종가';
+  var d = new Date(s);
+  if(!isNaN(d.getTime())) return pad2(d.getMonth()+1) + '/' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ' 기준';
+  var f = new Date(String(fetchedAt || ''));
+  if(!isNaN(f.getTime())) return pad2(f.getMonth()+1) + '/' + pad2(f.getDate()) + ' ' + pad2(f.getHours()) + ':' + pad2(f.getMinutes()) + ' 조회';
+  return '';
+}
+function fetchFxSource(src){
+  return new Promise(function(resolve, reject){
+    var ac = null, timer = null;
+    try{
+      if(window.AbortController){
+        ac = new AbortController();
+        timer = setTimeout(function(){ try{ ac.abort(); }catch(e){} }, FX_TIMEOUT);
+      }
+    }catch(e){ ac = null; }
+    function fail(e){ if(timer) clearTimeout(timer); reject(e || new Error('실패')); }
+    try{
+      fetch(src.url, ac ? {cache:'no-store', signal:ac.signal} : {cache:'no-store'})
+        .then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+        .then(function(d){
+          if(timer) clearTimeout(timer);
+          var got = src.pick(d);
+          if(!got) throw new Error('값 없음');
+          got.rate = fxRound(got.rate);
+          got.src = src.id;
+          got.label = src.label;
+          got.fetchedAt = new Date().toISOString();
+          resolve(got);
+        })
+        .catch(fail);
+    }catch(e){ fail(e); }
+  });
+}
+/* 후보를 순서대로 — 하나가 실패하면 다음 것으로 */
+function fetchLiveFx(i){
+  i = i || 0;
+  if(i >= FX_SOURCES.length) return Promise.reject(new Error('모든 환율 API 실패'));
+  return fetchFxSource(FX_SOURCES[i]).catch(function(){ return fetchLiveFx(i + 1); });
+}
+/* 반영 — opts.force: 수동 새로고침(확인 후) · opts.save: 함께 저장 · opts.announce: 토스트 */
+function applyLiveFx(got, opts){
+  opts = opts || {};
+  if(!state || !got || !fxOk(got.rate)) return false;
+  if(viewingDate) return false;                        /* 과거 기록은 덮어쓰지 않는다 */
+  if(dirty && !opts.force) return false;               /* 저장 안 된 입력이 있으면 자동 반영은 건너뜀 */
+  state.fx = fxRound(got.rate);
+  state.fxLive = { rate: state.fx, src: got.src || '', label: got.label || '',
+                   at: got.at ? String(got.at) : null,
+                   fetchedAt: got.fetchedAt || new Date().toISOString() };
+  saveState(true);                                     /* 자동 반영은 '내가 저장한 시각'이 아니다 */
+  renderAll(); renderSavebar(); syncBar();
+  return true;
+}
+/* 환율 칸 아래 출처 줄 — 실시간 값이면 초록 점, 아니면 저장된/종가 파일 값이라고 밝힌다 */
+function updateFxNote(){
+  var el = document.getElementById('in-fxsrc');
+  if(!el) return;
+  if(viewingDate){
+    el.className = 'fxsrc';
+    el.innerHTML = '<i></i>' + viewingDate + ' 기록의 환율입니다 (실시간 환율로 바뀌지 않습니다)';
     return;
   }
-  var p;
-  try{
-    p = fetch(PRICES_URL + '?t=' + Date.now(), {cache:'no-store'});
-  }catch(err){
-    done(opts.manual ? '종가 파일을 열지 못했습니다 — 인터넷 연결을 확인해 주세요' : '', 'warn');
+  var L = state && state.fxLive;
+  if(L && fxOk(L.rate) && fxRound(L.rate) === fxRound(state.fx)){
+    el.className = 'fxsrc live';
+    var when = fxWhenText(L.at, L.fetchedAt);
+    el.innerHTML = '<i></i>실시간 환율 반영 <b>' + fmtFx(L.rate) + '원</b> · ' + esc(L.label || '공개 API') + (when ? ' ' + when : '');
     return;
   }
-  p.then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
-   .then(function(data){
-     pricesInfo = data;
-     indexPrices(data);
-     var res = applyPrices(data, !!opts.manual);
-     if(!res.matched && !res.fx){
-       var why = res.mismatch && res.mismatch.length
-         ? '통화가 다른 종목만 있습니다 — 달러 종목은 달러 탭에서 채워집니다'
-         : '지금 종목과 맞는 종가가 파일에 없습니다';
-       done(opts.manual ? why : '', 'warn');
-       return;
-     }
-     var snapDate = String(data.date || state.asOf);
-     var snapped = autoSnapshotOK(snapDate) ? recordSnapshot(snapDate, 'auto') : null;
-     var filled = autoBackfill(pricesHistory);
-     saveState(true);                 /* 자동 반영도 저장 스냅샷을 갱신 → dirty 가 뜨지 않는다 */
-     renderAll(); renderSavebar(); syncBar();
-     done('최신 종가 반영됨 (' + priceStampText(data.updatedAt || state.pricesAppliedAt) + ')'
-          + (snapped ? ' · ' + snapDate + ' 기록 저장' : (filled ? ' · ' + filled + '일 기록 보충' : '')));
-   })
-   .catch(function(err){
-     /* 오프라인·file:// 에서는 조용히 넘어간다 (자동). 수동일 때만 알린다. */
-     if(opts.manual) done('종가를 불러오지 못했습니다 — ' + ((err && err.message) ? err.message : '인터넷 연결을 확인해 주세요'), 'warn');
-     else done();
-   });
+  el.className = 'fxsrc';
+  el.innerHTML = '<i></i>저장된 환율입니다 · 🔄 종가 새로고침을 누르면 실시간 환율을 다시 받습니다';
+}
+function loadLiveFx(opts){
+  opts = opts || {};
+  if(!state || viewingDate || fxBusy) return Promise.resolve(null);
+  if(location.protocol === 'file:'){        /* 파일 하나로 연 화면에서는 브라우저가 외부 요청을 막는다 */
+    updateFxNote();
+    return Promise.resolve(null);
+  }
+  if(navigator.onLine === false){          /* 오프라인이면 조용히 넘어간다 — 콘솔 오류도 만들지 않는다 */
+    updateFxNote();
+    if(opts.manual) toast('인터넷이 끊겨 있어 저장된 환율 ' + fmtFx(state.fx) + '원을 그대로 씁니다', 3200, 'warn');
+    return Promise.resolve(null);
+  }
+  fxBusy = true;
+  return fetchLiveFx().then(function(got){
+    fxBusy = false;
+    var applied = applyLiveFx(got, opts);
+    updateFxNote();
+    if((opts.manual || opts.announce) && !opts.quiet){
+      if(applied){
+        toast('실시간 환율 반영 (' + fmtFx(state.fx) + '원)', 2800);
+      }else if(dirty && !opts.force){
+        toast('저장 안 된 변경이 있어 실시간 환율은 저장한 뒤에 반영됩니다', 3200, 'warn');
+      }
+    }
+    return applied ? got : null;
+  }).catch(function(){
+    fxBusy = false;
+    updateFxNote();
+    if(opts.manual && !opts.quiet){
+      toast('실시간 환율을 못 받았습니다 — 저장된 환율 ' + fmtFx(state.fx) + '원을 그대로 씁니다', 3400, 'warn');
+    }
+    return null;
+  });
+}
+/* 🔄 종가 새로고침 — 종가 파일과 실시간 환율을 함께 새로 받는다 (확인은 여기서 한 번만, 결과 안내도 하나로) */
+function refreshAll(opts){
+  opts = opts || {};
+  var manual = !!opts.manual;
+  if(manual && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가·환율을 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){
+    return false;
+  }
+  if(location.protocol === 'file:'){
+    toast('종가·실시간 환율 자동 반영은 홈 화면 앱(웹 주소)에서 됩니다', 3400, 'warn');
+    return true;
+  }
+  var pPrices = loadPrices({manual:manual, noConfirm:true, quiet:manual});
+  var pFx = loadLiveFx({manual:manual, force:!!opts.force, quiet:manual});
+  if(manual){
+    Promise.all([pPrices, pFx]).then(function(r){
+      var px = r[0], fx = r[1];
+      var parts = [];
+      if(fx && fx.rate) parts.push('실시간 환율 반영 (' + fmtFx(state.fx) + '원)');
+      if(px && px.ok && px.stamp) parts.push('종가 ' + px.stamp + (px.snapshot ? ' · ' + px.date + ' 기록 저장' : ''));
+      if(parts.length){
+        toast(parts.join(' · '), 3200);
+      }else if(px && px.mismatch){
+        toast(px.why, 3400, 'warn');
+      }else if(px && px.local){
+        /* file:// 는 위에서 이미 안내했다 */
+      }else{
+        toast('인터넷 연결을 확인해 주세요 — 저장된 종가·환율(' + fmtFx(state.fx) + '원)을 그대로 씁니다', 3600, 'warn');
+      }
+    });
+  }
+  return true;
 }
 /* ---------- 숫자 입력 포맷 ---------- */
 /* 입력칸 소수 자릿수 (usd4-v1): false → 정수, true·'money' → 2자리, 'usd'·'usdq' → 4자리 */
@@ -2540,6 +2751,7 @@ fileIn.addEventListener('change', function(){
       renderAll();
       renderSavebar(); syncBar();
       loadPrices();         /* 더 새로운 시세가 있으면 반영하며 그날 기록도 남긴다 */
+      loadLiveFx();         /* 환율도 지금 시세로 — 실패하면 파일 환율 그대로 */
       loadHistory();        /* 시세 기록에만 있는 날짜는 지금 수량 기준으로 보충 */
       toast('백업을 불러왔습니다');
     }catch(err){
@@ -2573,7 +2785,7 @@ function boot(){
   renderAll();
   renderSavebar();
   Array.prototype.forEach.call(document.querySelectorAll('.px-btn'), function(b){
-    b.addEventListener('click', function(){ loadPrices({manual:true}); });
+    b.addEventListener('click', function(){ refreshAll({manual:true}); });
   });
   window.__asset = { get state(){ return state; }, compute:compute, switchTab:switchTab,
                      setFilter:function(c, f){ filters[c] = f; }, save:saveNow,
@@ -2582,6 +2794,7 @@ function boot(){
                      get tab(){ return activeTab; }, loadPrices:loadPrices,
                      get pricesAppliedAt(){ return state.pricesAppliedAt; },
                      get pricesInfo(){ return pricesInfo; },
+                     get fxLive(){ return state.fxLive || null; }, loadLiveFx:loadLiveFx, refreshAll:refreshAll,
                      get history(){ return pricesHistory; }, loadHistory:loadHistory,
                      get snapshots(){ return state.snapshots || {}; }, loadSnapshot:loadSnapshot,
                      backToLatest:backToLatest, get viewing(){ return viewingDate; },
@@ -2589,7 +2802,9 @@ function boot(){
                      get trendRange(){ return trendRange; },
                      get records(){ return snapList(); } };
   loadPrices();   /* 열 때 한 번 — prices.json 이 없거나 오프라인이면 조용히 넘어간다 */
+  loadLiveFx();   /* 실시간 원/달러 환율 — 실패하면 종가 파일 환율을 그대로 둔다(안내는 환율 칸 아래 줄에서) */
   loadHistory();  /* 시세 기록으로 빠진 날짜 보충 + 추이 탭 준비 */
+  window.addEventListener('online', function(){ loadLiveFx(); });   /* 끊겼던 연결이 돌아오면 환율도 새로 */
 }
 boot();
 </script>

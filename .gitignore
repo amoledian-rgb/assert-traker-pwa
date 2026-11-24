@@ -22,3 +22,11 @@ probe_cors.py
 test_trend.py
 shots_trend/
 shots_trend_live/
+
+# 환율 연동 검증용 (로컬 chromium 라이브러리·스크린샷·프로브)
+.libs/
+probe_fx*.py
+fetch_browser_libs.py
+test_fx.py
+shots_fx/
+shots_fx_live/
