@@ -470,11 +470,11 @@
   .mk-tbl td:first-child{text-align:left; color:#141b2b}
   .mk-tbl td em{display:block; font-style:normal; font-size:10.5px; font-weight:700; margin-top:1px}
   .mk-tbl td.na{color:#c0c6d0; font-weight:600}
-  /* 6열(코스피·코스닥·선물·주식선물·콜옵션·풋옵션) — 390px 에서 잘리지 않게 글자를 줄이고 머리글은 두 줄로 */
-  .mk-tbl.mk-tbl-6 th{font-size:10px; letter-spacing:-.04em; line-height:1.15; padding:0 0 5px}
-  .mk-tbl.mk-tbl-6 th:first-child{width:26px}
-  .mk-tbl.mk-tbl-6 td{font-size:11px; letter-spacing:-.04em; padding:7px 0}
-  .mk-tbl.mk-tbl-6 td:first-child{font-size:11.5px}
+  /* 5열(코스피·코스닥·선물·주식선물·옵션 합산) — 390px 에서 잘리지 않게 글자를 줄이고 머리글은 두 줄로 */
+  .mk-tbl.mk-tbl-5 th{font-size:10.5px; letter-spacing:-.03em; line-height:1.15; padding:0 0 5px}
+  .mk-tbl.mk-tbl-5 th:first-child{width:28px}
+  .mk-tbl.mk-tbl-5 td{font-size:12px; letter-spacing:-.03em; padding:7px 0}
+  .mk-tbl.mk-tbl-5 td:first-child{font-size:12px}
   .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
   .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
   .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
@@ -557,7 +557,7 @@
     <div class="sec">환율 <span id="mk-fx-when">—</span></div>
     <div class="card" id="mk-fx"></div>
 
-    <p class="hint" style="margin:0 16px 18px">가격은 네이버 증권·업비트의 공개 시세입니다. 받지 못한 항목은 값을 지어내지 않고 <b>—</b>로 둡니다. 값 옆의 <b>▲ 빨강</b>은 상승·순매수, <b>▼ 파랑</b>은 하락·순매도입니다. 예탁금·신용잔고는 확정 발표가 하루 늦고, 국채·유가·지수·구리는 각 시장의 마지막 체결 기준입니다. 콜·풋옵션 투자자별 수치는 공개 API에 없어 비워 둡니다.</p>
+    <p class="hint" style="margin:0 16px 18px">가격은 네이버 증권·업비트·한국거래소(KRX)의 공개 시세입니다. 받지 못한 항목은 값을 지어내지 않고 <b>—</b>로 둡니다. 값 옆의 <b>▲ 빨강</b>은 상승·순매수, <b>▼ 파랑</b>은 하락·순매도입니다. 예탁금·신용잔고는 확정 발표가 하루 늦고, 국채·유가·지수·구리는 각 시장의 마지막 체결 기준입니다. 투자자별 <b>옵션</b>은 한국거래소 공개 위젯의 KOSPI200옵션 <b>콜+풋 합산</b> 순매수입니다(원문 십억원 → 억원 환산).</p>
   </section>
 
   <!-- ============ 요약 ============ -->
@@ -768,7 +768,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 시장종합 확장</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 옵션 합산 반영</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -3004,7 +3004,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T21:49:41+09:00",
+ "updatedAt": "2026-11-24T22:14:46+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
@@ -3105,7 +3105,7 @@ var MARKET_INLINE = {
   },
   "investors": {
    "asOf": "2026-11-24",
-   "src": "네이버 증권 투자자별 매매동향",
+   "src": "네이버 증권 투자자별 매매동향 · 한국거래소(KRX)",
    "cols": [
     {
      "key": "KOSPI",
@@ -3128,14 +3128,9 @@ var MARKET_INLINE = {
      "unit": "억원"
     },
     {
-     "key": "CALL",
-     "name": "콜옵션",
-     "unit": "백만원"
-    },
-    {
-     "key": "PUT",
-     "name": "풋옵션",
-     "unit": "백만원"
+     "key": "OPT",
+     "name": "옵션(합산)",
+     "unit": "억원"
     }
    ],
    "rows": [
@@ -3147,8 +3142,7 @@ var MARKET_INLINE = {
       -3366,
       -137,
       -24716,
-      null,
-      null
+      -150
      ]
     },
     {
@@ -3159,8 +3153,7 @@ var MARKET_INLINE = {
       1309,
       3450,
       9579,
-      null,
-      null
+      90
      ]
     },
     {
@@ -3171,22 +3164,21 @@ var MARKET_INLINE = {
       2225,
       -3332,
       10959,
-      null,
-      null
+      50
      ]
     }
    ],
    "ready": true,
-   "note": "콜·풋옵션은 네이버 증권·공개 API에 투자자별 수치가 없어 비워 둡니다(한국거래소는 회원 로그인 필요).",
+   "note": "옵션(합산)은 한국거래소(KRX) 메인 공개 위젯의 KOSPI200옵션 콜+풋 합산 순매수입니다. 원문 단위 십억원을 억원으로 환산했고, 콜/풋을 나눈 투자자별 수치는 KRX 회원 로그인 뒤에만 공개됩니다.",
    "warn": null
   },
   "bonds": {
    "asOf": "2026-11-24T16:13:20+09:00",
    "src": "네이버 증권",
    "cols": [
+    "30년",
     "10년",
-    "2년",
-    "30년"
+    "2년"
    ],
    "rows": [
     {
@@ -3203,67 +3195,67 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.7,
-     "c10": -0.019,
-     "y2": 1.782,
-     "c2": -0.001,
-     "y30": 3.916,
-     "c30": -0.023,
-     "asOf": "2026-11-24T19:43:53+09:00"
+     "y10": 2.696,
+     "c10": -0.023,
+     "y2": 1.781,
+     "c2": -0.002,
+     "y30": 3.912,
+     "c30": -0.027,
+     "asOf": "2026-11-24T19:59:57+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.898,
-     "c10": -0.0222,
-     "y2": 4.648,
-     "c2": -0.0182,
-     "y30": 5.279,
-     "c30": -0.0162,
-     "asOf": "2026-11-24T07:39:50-05:00"
+     "y10": 4.888,
+     "c10": -0.0321,
+     "y2": 4.639,
+     "c2": -0.0265,
+     "y30": 5.275,
+     "c30": -0.0203,
+     "asOf": "2026-11-24T08:09:59-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T07:39:34-05:00",
+   "asOf": "2026-11-24T08:04:37-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.92,
-     "change": -0.39,
-     "pct": -0.38,
-     "asOf": "2026-11-24T07:39:34-05:00",
+     "value": 103.89,
+     "change": -0.43,
+     "pct": -0.41,
+     "asOf": "2026-11-24T08:04:37-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 29.35,
-     "change": 2.73,
-     "pct": 10.26,
-     "asOf": "2026-11-24T07:34:37-05:00",
+     "value": 28.79,
+     "change": 2.17,
+     "pct": 8.15,
+     "asOf": "2026-11-24T07:59:41-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3633.4,
-     "change": -18,
-     "pct": -0.49,
-     "asOf": "2026-11-24T06:39:37-06:00",
+     "value": 3634.3,
+     "change": -17.1,
+     "pct": -0.47,
+     "asOf": "2026-11-24T07:04:41-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.449,
-     "change": -0.185,
-     "pct": -3.28,
-     "asOf": "2026-11-24T06:39:37-06:00",
+     "value": 5.43,
+     "change": -0.204,
+     "pct": -3.62,
+     "asOf": "2026-11-24T07:04:41-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3272,25 +3264,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T06:39:37-06:00",
+   "asOf": "2026-11-24T07:04:41-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.21,
-     "change": 0.04,
-     "pct": 0.05,
-     "asOf": "2026-11-24T06:39:37-06:00",
+     "value": 80.31,
+     "change": 0.14,
+     "pct": 0.17,
+     "asOf": "2026-11-24T07:04:41-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 89.46,
-     "change": 0.09,
-     "pct": 0.1,
-     "asOf": "2026-11-24T12:39:37Z",
+     "value": 89.53,
+     "change": 0.16,
+     "pct": 0.18,
+     "asOf": "2026-11-24T13:04:41Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3298,71 +3290,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T21:32:13+09:00",
+   "asOf": "2026-11-24T22:11:56+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60324.28,
-     "change": -565.94,
-     "pct": -0.93,
+     "value": 59999.75,
+     "change": -890.47,
+     "pct": -1.46,
      "unit": "USDT",
-     "asOf": "2026-11-24T21:32:13+09:00"
+     "asOf": "2026-11-24T22:11:56+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1706.32,
-     "change": -18.48,
-     "pct": -1.07,
+     "value": 1690,
+     "change": -34.8,
+     "pct": -2.02,
      "unit": "USDT",
-     "asOf": "2026-11-24T21:33:12+09:00"
+     "asOf": "2026-11-24T22:13:12+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 70.64,
-     "change": -1.12,
-     "pct": -1.56,
+     "value": 70,
+     "change": -1.76,
+     "pct": -2.45,
      "unit": "USDT",
-     "asOf": "2026-11-24T20:29:51+09:00"
+     "asOf": "2026-11-24T22:10:45+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T21:47:33+09:00",
+   "asOf": "2026-11-24T22:13:23+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343.6,
-     "change": 1.1,
-     "pct": 0.08,
-     "asOf": "2026-11-24T21:47:33+09:00",
+     "value": 1344.9,
+     "change": 2.4,
+     "pct": 0.18,
+     "asOf": "2026-11-24T22:13:23+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "USDJPY",
      "name": "USDJPY",
-     "value": 159.11,
+     "value": 159.02,
      "change": null,
      "pct": null,
-     "asOf": "2026-11-24T21:47:33+09:00",
+     "asOf": "2026-11-24T22:13:23+09:00",
      "dec": 2,
      "derived": "USDKRW ÷ (원/100엔) × 100"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1472.72,
-     "change": 8.99,
-     "pct": 0.61,
-     "asOf": "2026-11-24T21:47:33+09:00",
+     "value": 1474.82,
+     "change": 11.09,
+     "pct": 0.76,
+     "asOf": "2026-11-24T22:13:23+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -3483,10 +3475,10 @@ function renderMarket(){
   fh += mkNote(fd.note, true) + mkNote(pg.note, true);
   document.getElementById('mk-funds').innerHTML = fh;
 
-  /* 3 · 투자자별 매매동향 (6열 — 390px 에서 글자를 줄여 한 화면에) */
+  /* 3 · 투자자별 매매동향 (5열 — 코스피·코스닥·선물·주식선물·옵션 합산) */
   var iv = S.investors || {};
   var iEl = document.getElementById('mk-inv-when'); if(iEl) iEl.textContent = mkWhen(iv.asOf);
-  var ih = '<table class="mk-tbl mk-tbl-6"><thead><tr><th></th>';
+  var ih = '<table class="mk-tbl mk-tbl-5"><thead><tr><th></th>';
   (iv.cols || []).forEach(function(c){ ih += '<th>' + esc(c.name) + '</th>'; });
   ih += '</tr></thead><tbody>';
   (iv.rows || []).forEach(function(r){
@@ -3498,21 +3490,22 @@ function renderMarket(){
     ih += '</tr>';
   });
   ih += '</tbody></table>';
-  var units = '코스피·코스닥·주식선물 억원 / 선물 계약 / 콜·풋옵션 백만원';
+  var units = '코스피·코스닥·주식선물·옵션 억원 / 선물 계약';
   ih += '<div class="mk-tfoot"><span>단위</span><b>' + esc(units) + '</b></div>';
-  ih += mkNote('선물은 계약 수, 주식선물은 명목금액(억원)입니다.', false) + mkNote(iv.warn, true) + mkNote(iv.note, false);
+  ih += mkNote('선물은 계약 수, 주식선물·옵션은 억원입니다.', false)
+      + mkNote(iv.warn, true) + mkNote(iv.note, false);
   document.getElementById('mk-investors').innerHTML = ih;
 
   /* 4 · 국채수익률 (10년·2년·30년) */
   var bd = S.bonds || {};
   var bEl = document.getElementById('mk-bonds-when'); if(bEl) bEl.textContent = mkWhen(bd.asOf);
-  var bcols = (bd.cols && bd.cols.length) ? bd.cols : ['10년', '2년', '30년'];
+  var bcols = (bd.cols && bd.cols.length) ? bd.cols : ['30년', '10년', '2년'];
   var bh = '<table class="mk-tbl"><thead><tr><th></th>';
   bcols.forEach(function(c){ bh += '<th>' + esc(c) + '</th>'; });
   bh += '</tr></thead><tbody>';
   (bd.rows || []).forEach(function(r){
     bh += '<tr><td>' + esc(r.name) + '</td>';
-    [[r.y10, r.c10], [r.y2, r.c2], [r.y30, r.c30]].forEach(function(p){
+    [[r.y30, r.c30], [r.y10, r.c10], [r.y2, r.c2]].forEach(function(p){
       bh += '<td>' + (p[0] === null || p[0] === undefined ? '—' : mkFixed(p[0], 3) + '%')
         + (p[1] === null || p[1] === undefined ? '' : '<em class="' + (p[1] > 0 ? 'up' : (p[1] < 0 ? 'down' : 'flat'))
           + '">' + mkSigned(p[1], 3) + '</em>') + '</td>';
