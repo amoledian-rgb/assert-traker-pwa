@@ -763,7 +763,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 보유·비중 통합</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 저장 시 시세 반영</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1341,14 +1341,16 @@ function doSave(quiet){
   if(b){ b.classList.remove('done'); void b.offsetWidth; b.classList.add('done'); setTimeout(function(){ b.classList.remove('done'); }, 800); }
   return true;
 }
-/* ---------- 저장할 때 현재가 자동 조회 (ticker-save-v1) ----------
-   종목명 또는 티커만 넣고 저장하면 prices.json 을 새로 받아 현재가를 채운다.
-   파일에 없는 종목은 현재가를 0으로 두고 상태를 숨기지 않고 알린다. */
+/* ---------- 저장할 때 현재가 자동 조회 (ticker-save-v2) ----------
+   💾 저장하기를 누르면 종목명·티커가 있는 **모든** 보유 종목을 대상으로 prices.json 을 새로 받아
+   매칭되는 종목은 이미 가격이 들어 있어도 최신 현재가로 갱신한다.
+   · 파일에 없는 미등록 종목: 직접 넣어 둔 현재가는 지우지 않고, 비어 있던 것만 0으로 둔 채 알린다
+   · 통화가 다른 종목(p.mismatch): 직접 넣어 둔 현재가는 유지, 비어 있던 것만 0 */
 var UNREG_MSG = '미등록 종목은 현재가를 0으로 저장했어요. 톡으로 종목명/티커 알려주시면 시세 목록에 바로 추가해 드려요';
-function needPrice(h){
-  var named = String(h.name || '').trim() !== '' || String(h.code || '').trim() !== '';
-  return named && !(num(h.price) > 0);
+function hasTicker(h){
+  return !!h && (String(h.name || '').trim() !== '' || String(h.code || '').trim() !== '');
 }
+function needPrice(h){ return hasTicker(h) && !(num(h.price) > 0); }
 function rerenderAfterPrices(){
   var m = compute();
   renderHeader(m);   /* 저장하면서 채운 현재가가 위 총자산에도 반영되게 */
@@ -1356,8 +1358,8 @@ function rerenderAfterPrices(){
   renderSavebar(); syncBar();
 }
 function saveNow(){
-  var lacks = state.holdings.filter(needPrice);
-  if(!lacks.length){ doSave(); return; }
+  var rows = state.holdings.filter(hasTicker);   /* 가격 유무와 상관없이 이름·티커가 있는 종목 전부 */
+  if(!rows.length){ doSave(); return; }
   if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
     doSave(true);
     toast('파일로 연 화면에서는 시세를 못 불러와요 — 홈 화면 앱으로 열면 저장할 때 현재가가 채워집니다', 4400, 'warn');
@@ -1370,49 +1372,62 @@ function saveNow(){
     .then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
     .then(function(data){
       pricesInfo = data; indexPrices(data);
-      var filled = [], missed = [], fresh = [], mism = [];
-      lacks.forEach(function(h){
+      var changed = 0, missed = [], fresh = [], missKept = 0, mism = [], mismKept = 0, touched = false;
+      rows.forEach(function(h){
         var p = priceFor(h);
+        var had = num(h.price) > 0;   /* 사용자가 직접 넣어 둔 현재가가 있는가 */
+        var label = String(h.name || h.code || '').trim();
         if(!p){
           var again = !!pxMiss[h.id];   /* 이전 저장에서도 못 찾은 종목은 긴 안내를 반복하지 않는다 */
           pxMiss[h.id] = 1;
-          missed.push(String(h.name || h.code || '').trim() || '이름 없는 종목');
-          if(!again) fresh.push(String(h.name || h.code || '').trim());
+          if(!again) touched = true;   /* 카드에 미등록 안내를 새로 띄운다 */
+          if(had){ missKept++; return; }   /* 미등록이어도 직접 넣은 현재가는 지우지 않는다 */
+          missed.push(label || '이름 없는 종목');
+          if(!again) fresh.push(label);
           return;
         }
         if(p.mismatch){
-          mism.push(String(h.name || h.code || ''));
+          if(!pxMiss[h.id]) touched = true;
           pxMiss[h.id] = 1;
+          if(had){ mismKept++; return; }
+          mism.push(label || '이름 없는 종목');
           return;
         }
-        fillFromPrice(h, p);
-        filled.push(String(h.name || h.code) + ' ' + (h.cur === 'USD' ? usd(h.price) : won(h.price)));
+        var next = num(p.price);
+        if(!had || next !== num(h.price)){ changed++; touched = true; }   /* 실제로 값이 바뀐 종목 수 */
+        h.price = next;
+        if(fillFromPrice(h, p)) touched = true;
+        if(pxMiss[h.id]){ delete pxMiss[h.id]; touched = true; }
       });
       finish();
       var ok = doSave(true);
-      rerenderAfterPrices();
+      if(touched) rerenderAfterPrices();   /* 바뀐 게 있을 때만 다시 그린다 — 화면 위치·포커스 유지 */
       if(!ok) return;
-      if(missed.length && fresh.length){
-        toast((filled.length ? filled.length + '종목 현재가 자동 입력 · ' : '') + UNREG_MSG, 5600, 'warn');
-      }else if(filled.length){
-        toast(filled.length + '종목 현재가 자동 입력 · ' + filled[0] + ' · 저장되었습니다 ✓'
-              + (missed.length ? ' (미등록 ' + missed.length + '종목은 현재가 0)' : ''), 3400);
+      var head = changed ? '최신 현재가 ' + changed + '종목 반영 · ' : '';
+      if(fresh.length){
+        /* 처음 알리는 미등록 종목 — 기존 안내 문구 유지 */
+        toast(head + UNREG_MSG, 5600, 'warn');
       }else if(missed.length){
         /* 이미 알린 종목만 남아 있었다 — 카드 안내만으로 충분하다 */
         toast('저장되었습니다 ✓ — 미등록 ' + missed.length + '종목은 현재가 0입니다', 3000, 'warn');
+      }else if(missKept){
+        toast(head + '저장되었습니다 ✓ · 미등록 ' + missKept + '종목은 입력한 현재가 그대로', 3600);
       }else if(mism.length){
-        toast('달러·원화 통화가 다른 종목이에요 — 그 통화 탭에서 넣어 주세요 (현재가는 0으로 저장)', 4200, 'warn');
+        toast('달러·원화 통화가 다른 종목이에요 — 그 통화 탭에서 넣어 주세요' + (changed ? ' (최신 현재가 ' + changed + '종목 반영)' : ''), 4200, 'warn');
+      }else if(mismKept){
+        toast(head + '저장되었습니다 ✓ · 통화가 다른 ' + mismKept + '종목은 입력한 현재가 그대로', 3800);
+      }else if(changed){
+        toast(head + '저장되었습니다 ✓', 3000);
       }else{
         toast('저장되었습니다 ✓ (' + nowClockSec() + ')');
       }
     })
     .catch(function(){
-      /* 시세를 못 받아도 저장은 꼭 한다 — 현재가는 비운 채로 */
+      /* 시세를 못 받아도 저장은 꼭 한다 — 입력한 현재가는 그대로 */
       finish();
       var ok = doSave(true);
-      rerenderAfterPrices();
       if(!ok) return;
-      toast('시세를 못 불러와 현재가는 비운 채 저장했습니다 — 잠시 뒤 🔄 종가 새로고침을 눌러 보세요', 4200, 'warn');
+      toast('시세를 못 불러와 현재가는 입력한 값 그대로 저장했습니다 — 잠시 뒤 🔄 종가 새로고침을 눌러 보세요', 4400, 'warn');
     });
 }
 /* ↩️ 되돌리기 — 저장하지 않은 변경을 버리고 마지막 저장 상태로 돌아간다. */
@@ -2862,11 +2877,11 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T17:05:10+09:00",
+ "updatedAt": "2026-11-24T20:10:54+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
-   "asOf": "2026-11-24T16:15:00+09:00",
+   "asOf": "2026-11-24T20:10:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -2875,8 +2890,8 @@ var MARKET_INLINE = {
      "value": 5006.03,
      "change": 297.49,
      "pct": 6.32,
-     "tradingValue": 14558877000000,
-     "asOf": "2026-11-24T16:15:00+09:00",
+     "tradingValue": 15768220000000,
+     "asOf": "2026-11-24T20:10:00+09:00",
      "marketStatus": "CLOSE"
     },
     {
@@ -2885,8 +2900,8 @@ var MARKET_INLINE = {
      "value": 665.88,
      "change": 30.43,
      "pct": 4.79,
-     "tradingValue": 5403155000000,
-     "asOf": "2026-11-24T16:15:00+09:00",
+     "tradingValue": 5926822000000,
+     "asOf": "2026-11-24T20:10:00+09:00",
      "marketStatus": "CLOSE"
     }
    ],
@@ -2922,16 +2937,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": 46168.1,
-     "nonArb": 321655.0,
-     "total": 367823.1
+     "arb": 51926.4,
+     "nonArb": 336015.2,
+     "total": 387941.6
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 9704.6,
-     "nonArb": 166390.7,
-     "total": 176095.3
+     "arb": 19161.6,
+     "nonArb": 186546.4,
+     "total": 205708.0
     }
    ],
    "ready": true,
@@ -2967,30 +2982,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -20662,
-      -3076,
+      -21350,
+      -3366,
       -137,
-      -23737
+      -24716
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      7633,
-      1118,
+      8270,
+      1309,
       3450,
-      8751
+      9579
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      8697,
-      2123,
+      8734,
+      2225,
       -3332,
-      10820
+      10959
      ]
     }
    ],
@@ -3018,53 +3033,53 @@ var MARKET_INLINE = {
      "key": "JP",
      "name": "일본",
      "y10": 2.712,
-     "c10": -0.075,
-     "y2": 1.78,
-     "c2": -0.049,
-     "asOf": "2026-11-24T15:00:00+09:00"
+     "c10": -0.007,
+     "y2": 1.782,
+     "c2": -0.001,
+     "asOf": "2026-11-24T17:59:51+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.936,
-     "c10": 0.0157,
-     "y2": 4.687,
-     "c2": 0.0211,
-     "asOf": "2026-11-24T02:59:48-05:00"
+     "y10": 4.894,
+     "c10": -0.0261,
+     "y2": 4.639,
+     "c2": -0.0265,
+     "asOf": "2026-11-24T06:09:52-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T02:55:04-05:00",
+   "asOf": "2026-11-24T06:00:46-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 104.35,
-     "change": 0.03,
-     "pct": 0.03,
-     "asOf": "2026-11-24T02:55:04-05:00",
+     "value": 104.07,
+     "change": -0.25,
+     "pct": -0.24,
+     "asOf": "2026-11-24T06:00:46-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 26.62,
-     "change": -9.27,
-     "pct": -25.83,
-     "asOf": "2026-11-23T16:15:01-05:00",
+     "value": 28.73,
+     "change": 2.11,
+     "pct": 7.93,
+     "asOf": "2026-11-24T05:55:48-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3620.1,
-     "change": -31.3,
-     "pct": -0.86,
-     "asOf": "2026-11-24T01:55:07-06:00",
+     "value": 3627.9,
+     "change": -23.5,
+     "pct": -0.64,
+     "asOf": "2026-11-24T05:00:48-06:00",
      "unit": "USD/t.oz"
     }
    ],
@@ -3072,25 +3087,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T01:55:07-06:00",
+   "asOf": "2026-11-24T05:00:48-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.13,
-     "change": -0.04,
-     "pct": -0.05,
-     "asOf": "2026-11-24T01:55:07-06:00",
+     "value": 79.9,
+     "change": -0.27,
+     "pct": -0.34,
+     "asOf": "2026-11-24T05:00:48-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 89.22,
-     "change": -0.15,
-     "pct": -0.17,
-     "asOf": "2026-11-24T07:55:07Z",
+     "value": 89.16,
+     "change": -0.21,
+     "pct": -0.23,
+     "asOf": "2026-11-24T11:00:48Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3098,15 +3113,15 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T16:40:45+09:00",
+   "asOf": "2026-11-24T20:00:05+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60496.5,
-     "change": -393.72,
-     "pct": -0.65,
+     "value": 59750,
+     "change": -1140.22,
+     "pct": -1.87,
      "unit": "USDT"
     }
    ],
@@ -3114,25 +3129,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T17:04:33+09:00",
+   "asOf": "2026-11-24T20:09:44+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.9,
-     "change": 0.4,
-     "pct": 0.03,
-     "asOf": "2026-11-24T17:04:33+09:00",
+     "value": 1342.5,
+     "change": 0,
+     "pct": 0,
+     "asOf": "2026-11-24T20:09:44+09:00",
      "dec": 2
     },
     {
      "key": "USDJPY",
      "name": "USDJPY",
-     "value": 159.35,
+     "value": 159.23,
      "change": null,
      "pct": null,
-     "asOf": "2026-11-24T17:04:33+09:00",
+     "asOf": "2026-11-24T20:09:44+09:00",
      "dec": 2,
      "derived": "USDKRW ÷ (원/100엔) × 100"
     }
