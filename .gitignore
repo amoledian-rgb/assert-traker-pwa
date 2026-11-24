@@ -30,3 +30,4 @@ fetch_browser_libs.py
 test_fx.py
 shots_fx/
 shots_fx_live/
+test_fx_edge.py

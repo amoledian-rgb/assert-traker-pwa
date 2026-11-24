@@ -2247,10 +2247,6 @@ function updateFxNote(){
 function loadLiveFx(opts){
   opts = opts || {};
   if(!state || viewingDate || fxBusy) return Promise.resolve(null);
-  if(location.protocol === 'file:'){        /* 파일 하나로 연 화면에서는 브라우저가 외부 요청을 막는다 */
-    updateFxNote();
-    return Promise.resolve(null);
-  }
   if(navigator.onLine === false){          /* 오프라인이면 조용히 넘어간다 — 콘솔 오류도 만들지 않는다 */
     updateFxNote();
     if(opts.manual) toast('인터넷이 끊겨 있어 저장된 환율 ' + fmtFx(state.fx) + '원을 그대로 씁니다', 3200, 'warn');
@@ -2284,10 +2280,6 @@ function refreshAll(opts){
   var manual = !!opts.manual;
   if(manual && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가·환율을 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){
     return false;
-  }
-  if(location.protocol === 'file:'){
-    toast('종가·실시간 환율 자동 반영은 홈 화면 앱(웹 주소)에서 됩니다', 3400, 'warn');
-    return true;
   }
   var pPrices = loadPrices({manual:manual, noConfirm:true, quiet:manual});
   var pFx = loadLiveFx({manual:manual, force:!!opts.force, quiet:manual});
