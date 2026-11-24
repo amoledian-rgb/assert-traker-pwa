@@ -833,7 +833,7 @@ function saveState(silent){
    · 💾 저장하기            → 평가 기준일(state.asOf) 기록
    · 20:10 이후 종가 반영   → 그 마감일 기록 자동 저장
    · prices_history.json    → 비어 있는 날짜를 마지막 저장 보유 수량 기준으로 메운다(autoBackfill) */
-var SNAP_MAX = 1500;
+var SNAP_MAX = 1000;      /* localStorage 용량(약 2MB)을 념어서지 않게 오래된 기록부터 정리 */
 var viewingDate = null, liveState = null, liveBaseline = null;
 function todayYmd(){ var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
 function hasAnyData(){
