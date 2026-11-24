@@ -763,7 +763,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 저장 시 시세 반영</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 전종목 시세 지원</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1374,6 +1374,7 @@ function saveNow(){
       pricesInfo = data; indexPrices(data);
       var changed = 0, missed = [], fresh = [], missKept = 0, mism = [], mismKept = 0, touched = false;
       rows.forEach(function(h){
+        if(syncPair(h)) touched = true;   /* 이름·코드 중 한쪽만 적었으면 저장 전에 짝을 맞춘다 */
         var p = priceFor(h);
         var had = num(h.price) > 0;   /* 사용자가 직접 넣어 둔 현재가가 있는가 */
         var label = String(h.name || h.code || '').trim();
@@ -1432,6 +1433,7 @@ function undoAll(){
   if(!dirty) return;
   if(!confirm('저장하지 않은 변경을 버리고 마지막으로 저장한 상태로 되돌릴까요?')) return;
   state = JSON.parse(baselineText);
+  editSide = {};   /* 되돌렸으면 '마지막에 고친 칸' 기록도 버린다 */
   var names = state.accounts.map(function(a){ return a.name; });
   ['KRW','USD'].forEach(function(c){ if(filters[c] !== 'all' && names.indexOf(filters[c]) < 0) filters[c] = 'all'; });
   dirty = false;
@@ -2083,9 +2085,15 @@ function toast(msg, ms, kind){
    반영 뒤에는 저장 스냅샷(baseline)까지 함께 갱신해 dirty 가 켜지지 않는다.
    → 사용자가 직접 입력을 고칠 때만 dirty = true. */
 var PRICES_URL = './prices.json', pricesInfo = null, pricesBusy = false;
-var priceIdx = { byName:{}, byCode:{} };
+var priceIdx = { byName:{}, byCode:{}, n:0 };
 var pxMiss = {};   /* 이번 화면에서 시세를 못 찾은 종목 id — 카드에 안내를 띄운다 */
-function pnorm(s){ return String(s==null?'':s).replace(/[\s·\.\-_()]+/g,'').toLowerCase(); }
+var editSide = {};  /* 종목명 ↔ 티커/코드 중 마지막으로 고친 칸 (sync-v1) */
+function pnorm(s){
+  s = String(s==null?'':s);
+  /* 빠른 경로 — 공백·기호·대문자가 없으면 그대로 (전 종목 색인에서 3만 번 넘게 불린다) */
+  if(!/[^0-9a-z가-힣]/.test(s)) return s;
+  return s.replace(/[\s·\.\-_()]+/g,'').toLowerCase();
+}
 /* 종목코드 비교용 (ticker-v1)
    대소문자·공백·점 구분 무시, 숫자코드는 6자리로 (5930 · A005930 → 005930), NVDA.O → NVDA */
 function pcode(s){
@@ -2094,19 +2102,55 @@ function pcode(s){
   if(/^\d{1,6}$/.test(t)) t = ('000000' + t).slice(-6);
   return t;
 }
-/* prices.json 을 이름·코드 두 가지 색인으로 만든다 */
+/* 통화 (prices-v2) — 항목에 u 가 없으면 코드가 숫자로 시작할 때 원화, 아니면 달러.
+   국내 종목코드는 005930 · 0168K0 처럼 숫자로 시작하고, 미국은 NVDA · SPY 처럼 글자로 시작한다. */
+function pxCur(code, key, u){
+  if(u) return u;
+  return /^[0-9]/.test(String(code || key || '')) ? 'KRW' : 'USD';
+}
+/* 영문 회사명 꼬리말을 떼어 'Apple Inc.' → 'Apple', 'Microsoft Corporation' → 'Microsoft' 로도 찾게 한다 */
+var ENG_WORDS = /\b(inc|incorporated|corp|corporation|co|company|companies|ltd|limited|plc|holdings|holding|group|the|class|adr|ads|trust|fund|etf|index|sa|nv|ag|se|spa|lp|llc|pt|ab|as|oyj)\b/gi;
+function engCore(s){
+  var t = String(s||'').replace(/[,()]/g, ' ').replace(ENG_WORDS, ' ').replace(/\s+/g,' ').trim();
+  return t.length >= 3 ? t : '';
+}
+/* prices.json 을 이름·코드 두 가지 색인으로 만든다.
+   v2 파일은 국내·미국 전 종목(1만 7천여 건)을 담아 항목마다 꼭 필요한 값만 쓴다:
+     보유·관심 종목 {code,name,naverName,aliases,cur,price,market}  ·  그 밖 {c:코드, p:현재가, n:이름, e:영문명, u:통화}
+   두 형식을 여기서 하나로 펴서 이름·코드로 찾을 수 있게 한다. */
 function indexPrices(data){
-  var byName = {}, byCode = {};
-  Object.keys((data && data.prices) || {}).forEach(function(k){
-    var p = data.prices[k];
-    if(!p) return;
-    [k, p.name, p.naverName].forEach(function(n){
-      var key = pnorm(n);
-      if(key && !byName[key]) byName[key] = p;
-    });
-    if(p.code){ var c = pcode(p.code); if(c && !byCode[c]) byCode[c] = p; }
-  });
-  priceIdx = { byName: byName, byCode: byCode };
+  var byName = {}, byCode = {}, src = (data && data.prices) || {}, n = 0;
+  for(var k in src){
+    if(!Object.prototype.hasOwnProperty.call(src, k)) continue;
+    var v = src[k];
+    if(!v) continue;
+    var code = String(v.code || v.c || '');
+    var name = String(v.name || v.n || k);
+    var e = {
+      name: name, code: code,
+      price: (v.price != null ? v.price : v.p),
+      cur: (v.cur || pxCur(code, k, v.u)),
+      market: v.market || '',
+      naverName: v.naverName || '',
+      aliases: v.aliases || null
+    };
+    var k1 = pnorm(k); if(k1 && !byName[k1]) byName[k1] = e;
+    if(name !== k){ var k3 = pnorm(name); if(k3 && !byName[k3]) byName[k3] = e; }
+    if(v.naverName && v.naverName !== k && v.naverName !== name){
+      var k2 = pnorm(v.naverName); if(k2 && !byName[k2]) byName[k2] = e;
+    }
+    if(v.e){   /* 미국 종목 영문명 — 전체 이름과 꼬리말을 뗀 이름 둘 다 */
+      var e1 = pnorm(v.e); if(e1 && !byName[e1]) byName[e1] = e;
+      var e2 = pnorm(engCore(v.e)); if(e2 && !byName[e2]) byName[e2] = e;
+    }
+    if(v.aliases){ for(var i = 0; i < v.aliases.length; i++){
+      var a1 = pnorm(v.aliases[i]); if(a1 && !byName[a1]) byName[a1] = e;
+    } }
+    var c1 = pcode(code); if(c1 && !byCode[c1]) byCode[c1] = e;
+    if(/^[A-Za-z]/.test(k)){ var c2 = pcode(k); if(c2 && !byCode[c2]) byCode[c2] = e; }   /* 미국은 키가 곧 티커 */
+    n++;
+  }
+  priceIdx = { byName: byName, byCode: byCode, n: n };
   return priceIdx;
 }
 /* 종목명 또는 티커로 시세 찾기 — 코드 → 이름 → (종목명 칸에 적힌) 코드 순 */
@@ -2128,19 +2172,68 @@ function priceFor(h){
   return p;
 }
 /* 시세로 빈 현재가·티커·종목명을 보완한다.
-   종목명 칸에 티커를 적어 둔 경우(005930)에는 찾은 진짜 이름으로 바꾼다. */
-function fillFromPrice(h, p){
+   종목명 칸에 티커를 적어 둔 경우(005930 · NVDA)에는 찾은 진짜 이름으로 바꾼다.
+   keepName=true 면 이름은 그대로 두고 가격·티커만 채운다 (코드를 치는 도중). */
+function fillFromPrice(h, p, keepName){
   var changed = false;
   if(num(h.price) <= 0){ h.price = num(p.price); changed = true; }
   if(!String(h.code || '').trim() && p.code){ h.code = String(p.code); changed = true; }
   var nm = String(h.name || '').trim();
-  var asCode = !!nm && /^[A-Za-z0-9.\-]+$/.test(nm) && !priceIdx.byName[pnorm(nm)];
-  if(!nm || asCode){
+  var asCode = !!nm && /^[A-Za-z0-9.\-]+$/.test(nm) &&
+               (!priceIdx.byName[pnorm(nm)] || pcode(nm) === pcode(p.code) || pcode(nm) === pcode(p.name));
+  if(!keepName && (!nm || asCode)){
     var better = String(p.name || p.naverName || '').trim();
-    if(better && better !== nm){ h.name = better; changed = true; }
+    if(better && better !== nm && !(asCode && /^[A-Za-z]/.test(better) && pcode(better) === pcode(nm))){ h.name = better; changed = true; }
   }
   if(changed) delete pxMiss[h.id];
   return changed;
+}
+/* 종목명 ↔ 티커/종목코드 짝 맞추기 (sync-v1)
+   · 이름만 적었으면 → 종목코드/티커를 채운다
+   · 코드/티커만 적었으면 → 공식 종목명을 채운다
+   · 둘 다 있는데 서로 다른 종목이면 → 마지막에 고친 칸을 기준으로 다른 칸을 맞춘다(고친 적 없으면 코드 기준) */
+var CODELIKE = /^[A-Za-z0-9.\-]{2,12}$/;
+function syncPair(h){
+  if(!h) return false;
+  var nm = String(h.name || '').trim(), cd = String(h.code || '').trim();
+  if(!nm && !cd) return false;
+  var side = editSide[h.id] || ((nm && !cd) ? 'name' : 'code');
+  var changed = false;
+  if(side === 'name'){
+    var pn = findPrice(nm, '');
+    if(!pn) return false;
+    if(pn.code && String(pn.code) !== cd){ h.code = String(pn.code); changed = true; }
+    if(!/[가-힣]/.test(nm) && CODELIKE.test(nm)){      /* 이름 칸에 코드·티커만 적은 경우 → 공식 이름 */
+      var off = String(pn.name || pn.naverName || '').trim();
+      if(off && off !== nm && !CODELIKE.test(off)){ h.name = off; changed = true; }
+    }
+  }else{
+    var pc = findPrice('', cd);
+    if(!pc) return false;
+    var want = String(pc.name || pc.naverName || '').trim();
+    if(want && want !== nm){ h.name = want; changed = true; }
+    if(pc.code && (!cd || pcode(cd) !== pcode(pc.code))){ h.code = String(pc.code); changed = true; }
+  }
+  if(changed) delete pxMiss[h.id];
+  return changed;
+}
+/* 입력 칸에서 포커스가 빠질 때 — 짝을 맞추고 화면 칸도 같이 고친다 */
+function syncCard(h, card){
+  if(!pricesInfo || !h) return;
+  var changed = syncPair(h);
+  if(!(num(h.price) > 0)){
+    var p = priceFor(h);
+    if(p && !p.mismatch && fillFromPrice(h, p)) changed = true;
+  }
+  if(!changed) return;
+  afterChange();
+  if(!card) return;
+  var ni = card.querySelector('.a-name'), ci = card.querySelector('.a-code'), pi = card.querySelector('.a-price');
+  if(ni && document.activeElement !== ni) ni.value = h.name || '';
+  if(ci && document.activeElement !== ci) ci.value = h.code || '';
+  if(pi && document.activeElement !== pi && num(h.price) > 0){
+    pi.value = (h.cur === 'USD' ? fmtNum2(num(h.price)) : fmtInt(num(h.price)));
+  }
 }
 function priceStampText(iso){
   var d = new Date(iso);
@@ -2550,8 +2643,8 @@ function bindHolds(cur){
     var t = e.target;
     var h = holdById(card.getAttribute('data-id'));
     if(!h) return;
-    if(t.classList.contains('a-name')){ h.name = t.value; afterChange(); autoFillOnType(h, card); return; }
-    if(t.classList.contains('a-code')){ h.code = t.value.trim(); afterChange(); autoFillOnType(h, card); return; }
+    if(t.classList.contains('a-name')){ h.name = t.value; editSide[h.id] = 'name'; afterChange(); autoFillOnType(h, card); return; }
+    if(t.classList.contains('a-code')){ h.code = t.value.trim(); editSide[h.id] = 'code'; afterChange(); autoFillOnType(h, card); return; }
     if(!(t.classList.contains('a-price') || t.classList.contains('a-qty') || t.classList.contains('a-avg'))) return;
     formatLive(t, fieldDec(t, h));
     if(t.classList.contains('a-price')){ h.price = (t.value === '' ? null : num(t.value)); if(num(h.price) > 0) delete pxMiss[h.id]; }
@@ -2564,6 +2657,11 @@ function bindHolds(cur){
     if(!t || !t.classList) return;
     var card = t.closest('.card[data-id]');
     var h = card ? holdById(card.getAttribute('data-id')) : null;
+    if(h && (t.classList.contains('a-name') || t.classList.contains('a-code'))){
+      settleNum(t, fieldDec(t, h));
+      syncCard(h, card);   /* 종목명 ↔ 티커/코드 짝 맞추기 */
+      return;
+    }
     settleNum(t, fieldDec(t, h));
   });
   box.addEventListener('change', function(e){
@@ -2622,10 +2720,21 @@ function addHold(cur){
 }
 /* 이름·티커를 입력하는 즉시 prices.json 에서 찾아 현재가를 채운다 (저장 전에도) */
 function autoFillOnType(h, card){
-  if(!pricesInfo || num(h.price) > 0) return;
-  var p = priceFor(h);
-  if(!p || p.mismatch) return;
-  fillFromPrice(h, p);
+  if(!pricesInfo) return;
+  var side = editSide[h.id] || '';
+  var nm = String(h.name || '').trim(), cd = String(h.code || '').trim();
+  if(!side && num(h.price) > 0) return;     /* 고친 칸이 없으면 이미 채운 가격은 그대로 */
+  var p = (side === 'name' && nm) ? findPrice(nm, '')
+        : (side === 'code' && cd) ? findPrice('', cd)
+        : priceFor(h);
+  if(!p || p.price == null) return;
+  if(p.cur && h.cur && p.cur !== h.cur) return;   /* 통화가 다른 종목은 저장 때 안내한다 */
+  /* 코드·티커를 치는 도중(1~5자리)에는 종목명을 바꾸지 않는다 — 다 치면 바뀐다 */
+  var ni0 = card ? card.querySelector('.a-name') : null;
+  var partial = side === 'name' && /^[0-9]{1,5}$/.test(nm) && document.activeElement === ni0;
+  if(side && !partial) h.price = num(p.price);   /* 고친 칸 기준으로 현재가도 그 종목 것으로 */
+  fillFromPrice(h, p, partial);
+  if(side === 'code') syncPair(h);   /* 코드를 고치면 종목명도 그 코드 기준으로 (부분 티커가 다른 종목에 걸릴 때 대비) */
   afterChange();
   if(card){
     var pi = card.querySelector('.a-price');
@@ -2874,11 +2983,11 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T20:10:54+09:00",
+ "updatedAt": "2026-11-24T20:38:03+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
-   "asOf": "2026-11-24T20:10:00+09:00",
+   "asOf": "2026-11-24T20:15:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -2888,7 +2997,7 @@ var MARKET_INLINE = {
      "change": 297.49,
      "pct": 6.32,
      "tradingValue": 15768220000000,
-     "asOf": "2026-11-24T20:10:00+09:00",
+     "asOf": "2026-11-24T20:15:00+09:00",
      "marketStatus": "CLOSE"
     },
     {
@@ -2898,7 +3007,7 @@ var MARKET_INLINE = {
      "change": 30.43,
      "pct": 4.79,
      "tradingValue": 5926822000000,
-     "asOf": "2026-11-24T20:10:00+09:00",
+     "asOf": "2026-11-24T20:15:00+09:00",
      "marketStatus": "CLOSE"
     }
    ],
@@ -3029,54 +3138,54 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.712,
-     "c10": -0.007,
-     "y2": 1.782,
-     "c2": -0.001,
-     "asOf": "2026-11-24T17:59:51+09:00"
+     "y10": 2.722,
+     "c10": 0.003,
+     "y2": 1.779,
+     "c2": -0.004,
+     "asOf": "2026-11-24T18:29:43+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.894,
-     "c10": -0.0261,
-     "y2": 4.639,
-     "c2": -0.0265,
-     "asOf": "2026-11-24T06:09:52-05:00"
+     "y10": 4.896,
+     "c10": -0.0242,
+     "y2": 4.641,
+     "c2": -0.0245,
+     "asOf": "2026-11-24T06:29:14-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T06:00:46-05:00",
+   "asOf": "2026-11-24T06:27:55-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 104.07,
-     "change": -0.25,
-     "pct": -0.24,
-     "asOf": "2026-11-24T06:00:46-05:00",
+     "value": 104.01,
+     "change": -0.3,
+     "pct": -0.29,
+     "asOf": "2026-11-24T06:27:55-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 28.73,
-     "change": 2.11,
-     "pct": 7.93,
-     "asOf": "2026-11-24T05:55:48-05:00",
+     "value": 29.06,
+     "change": 2.44,
+     "pct": 9.17,
+     "asOf": "2026-11-24T06:22:59-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3627.9,
-     "change": -23.5,
-     "pct": -0.64,
-     "asOf": "2026-11-24T05:00:48-06:00",
+     "value": 3629.1,
+     "change": -22.3,
+     "pct": -0.61,
+     "asOf": "2026-11-24T05:27:59-06:00",
      "unit": "USD/t.oz"
     }
    ],
@@ -3084,25 +3193,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T05:00:48-06:00",
+   "asOf": "2026-11-24T05:27:59-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 79.9,
-     "change": -0.27,
-     "pct": -0.34,
-     "asOf": "2026-11-24T05:00:48-06:00",
+     "value": 80.03,
+     "change": -0.14,
+     "pct": -0.17,
+     "asOf": "2026-11-24T05:27:59-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 89.16,
-     "change": -0.21,
-     "pct": -0.23,
-     "asOf": "2026-11-24T11:00:48Z",
+     "value": 89.3,
+     "change": -0.07,
+     "pct": -0.08,
+     "asOf": "2026-11-24T11:27:59Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3110,15 +3219,15 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T20:00:05+09:00",
+   "asOf": "2026-11-24T20:33:09+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59750,
-     "change": -1140.22,
-     "pct": -1.87,
+     "value": 59838.39,
+     "change": -1051.83,
+     "pct": -1.73,
      "unit": "USDT"
     }
    ],
@@ -3126,25 +3235,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T20:09:44+09:00",
+   "asOf": "2026-11-24T20:36:34+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.5,
-     "change": 0,
-     "pct": 0,
-     "asOf": "2026-11-24T20:09:44+09:00",
+     "value": 1343.6,
+     "change": 1.1,
+     "pct": 0.08,
+     "asOf": "2026-11-24T20:36:34+09:00",
      "dec": 2
     },
     {
      "key": "USDJPY",
      "name": "USDJPY",
-     "value": 159.23,
+     "value": 159.21,
      "change": null,
      "pct": null,
-     "asOf": "2026-11-24T20:09:44+09:00",
+     "asOf": "2026-11-24T20:36:34+09:00",
      "dec": 2,
      "derived": "USDKRW ÷ (원/100엔) × 100"
     }
