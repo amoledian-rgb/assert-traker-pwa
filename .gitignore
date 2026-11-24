@@ -31,3 +31,9 @@ test_fx.py
 shots_fx/
 shots_fx_live/
 test_fx_edge.py
+
+# 시장종합 수집 스크립트·검증 산출물 (market.json 은 앱이 쓰므로 저장소에 올린다)
+fetch_market.py
+shots_market/
+tmp/
+test_market.py

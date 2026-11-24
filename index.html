@@ -305,13 +305,13 @@
     background:#fff; border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px);
     box-shadow:0 -6px 16px -12px rgba(20,27,43,.35);
   }
-  /* 7개 탭: 390px 폭에서 2글자 라벨이 잘리지 않게 (nav-v7) */
+  /* 8개 탭: 390px 폭에서 2글자 라벨이 잘리지 않게 (nav-v8) */
   nav button{
     flex:1 1 0; min-width:0; border:0; background:transparent; padding:7px 0 8px; color:#98a1b3;
     display:flex; flex-direction:column; align-items:center; gap:2px;
-    font-size:10.5px; font-weight:700; letter-spacing:-.04em; white-space:nowrap;
+    font-size:10.5px; font-weight:700; letter-spacing:-.04em; white-space:nowrap; overflow:hidden;
   }
-  nav button i{font-style:normal; font-size:18px; line-height:1.15; filter:grayscale(1); opacity:.55}
+  nav button i{font-style:normal; font-size:17px; line-height:1.15; filter:grayscale(1); opacity:.55}
   nav button.on{color:var(--navy)}
   nav button.on i{filter:none; opacity:1}
   .toast{
@@ -431,6 +431,59 @@
   body.viewing #tab-krw .delbtn, body.viewing #tab-usd .delbtn,
   body.viewing #tab-krw .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
   body.viewing .px-btn{display:none}
+  /* ---------- 🌐 시장 탭 (market-v1) ---------- */
+  .mk-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .mk-when{min-width:0}
+  .mk-when span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
+  .mk-when b{font-size:13.5px; font-variant-numeric:tabular-nums}
+  .mk-btn{flex:0 0 auto; height:36px; padding:0 13px; border:0; border-radius:10px;
+    background:#16233d; color:#fff; font-size:13.5px; font-weight:800}
+  .mk-btn:active{filter:brightness(1.25)}
+  .mk-btn[disabled]{opacity:.5}
+  .mk-live{margin-top:9px; font-size:11.5px; color:#8b93a4; line-height:1.45}
+  .mk-live.on{color:#1d7a4b}
+  .mk-live i{display:inline-block; width:7px; height:7px; border-radius:50%; background:#c3cad6; margin-right:5px; vertical-align:1px}
+  .mk-live.on i{background:#25a35a}
+  .mk-idx + .mk-idx{margin-top:10px; padding-top:10px; border-top:1px solid #eef1f6}
+  .mk-idx .l1{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+  .mk-idx .l1 b{font-size:14px; font-weight:800}
+  .mk-idx .l1 span{font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .mk-idx .l2{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-top:1px}
+  .mk-idx .l2 .v{font-size:23px; font-weight:800; letter-spacing:-.025em; font-variant-numeric:tabular-nums}
+  .mk-idx .l2 .t{font-size:11.5px; color:#8b93a4; font-variant-numeric:tabular-nums; text-align:right}
+  .mk-idx .l2 .t b{color:#5b6577; font-weight:700}
+  .mk-tbl-h{display:flex; justify-content:space-between; align-items:baseline; font-size:12px; font-weight:800; color:#5b6577; margin:0 0 5px}
+  .mk-tbl-h span{font-size:11px; font-weight:600; color:#98a1b3}
+  .mk-row{display:flex; align-items:baseline; gap:8px; padding:9px 0; border-bottom:1px solid #eef1f6}
+  .mk-row:first-child{padding-top:1px}
+  .mk-row:last-child{border-bottom:0; padding-bottom:1px}
+  .mk-row .nm{flex:0 0 auto; min-width:56px; font-size:13.5px; font-weight:700; color:#141b2b; white-space:nowrap}
+  .mk-row .nm em{display:block; font-style:normal; font-size:11px; font-weight:600; color:#98a1b3; margin-top:1px}
+  .mk-row .val{flex:1 1 auto; text-align:right; font-size:18px; font-weight:800; letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums; white-space:nowrap}
+  .mk-row .chg{flex:0 0 78px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums}
+  .mk-row .chg b{display:block; white-space:nowrap}
+  .mk-row .chg span{display:block; font-size:11.5px}
+  .mk-row .chg.na{color:#b7bec9}
+  .mk-tfoot{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-top:8px;
+    font-size:11.5px; color:#8b93a4; font-variant-numeric:tabular-nums}
+  .mk-tfoot b{color:#5b6577; font-weight:700}
+  .mk-tbl{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; table-layout:fixed}
+  .mk-tbl th{font-size:11px; color:#8b93a4; font-weight:700; padding:0 0 5px; text-align:right; white-space:nowrap}
+  .mk-tbl th:first-child{text-align:left; width:38px}
+  .mk-tbl td{font-size:12.5px; font-weight:700; padding:7px 0; text-align:right; border-top:1px solid #eef1f6; white-space:nowrap}
+  .mk-tbl td:first-child{text-align:left; color:#141b2b}
+  .mk-tbl td em{display:block; font-style:normal; font-size:10.5px; font-weight:700; margin-top:1px}
+  .mk-tbl td.na{color:#c0c6d0; font-weight:600}
+  .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
+  .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
+  .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
+  .mk-duo b{display:block; font-size:16px; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .mk-duo em{display:block; font-style:normal; font-size:11.5px; margin-top:2px; font-variant-numeric:tabular-nums; font-weight:700}
+  .mk-duo span i{font-style:normal; font-size:10.5px; color:#b4bbc9; font-weight:600}
+  .mk-mini{margin-top:9px; padding-top:8px; border-top:1px dashed #e3e8f0}
+  .mk-note{margin:7px 2px 0; font-size:11.5px; color:#8b93a4; line-height:1.45}
+  .mk-note.warn{color:#a06a14}
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
     background:linear-gradient(150deg,#22386b 0%,#16233d 100%); color:#fff;
@@ -466,8 +519,49 @@
     <span class="s-note">💾 <b style="display:inline;color:#fff">백업</b> 탭에서 <code>내_자산_초기데이터.json</code>을 불러오세요.</span>
     <button type="button" id="setup-go">💾 백업 탭 열기</button>
   </div>
+  <!-- ============ 🌐 시장 (시장종합) ============ -->
+  <section class="tab active" id="tab-market">
+    <div class="sec">시장종합 <span id="mk-topwhen">불러오는 중…</span></div>
+    <div class="card mk-head" style="display:block">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+        <div class="mk-when">
+          <span>시장 데이터 기준</span>
+          <b id="mk-when">—</b>
+        </div>
+        <button type="button" class="mk-btn" id="mk-refresh">🔄 새로고침</button>
+      </div>
+      <div class="mk-live" id="mk-live"><i></i>환율·비트코인은 새로고침할 때마다 실시간으로 다시 받습니다</div>
+    </div>
+
+    <div class="sec">국내 지수 <span id="mk-index-when">—</span></div>
+    <div class="card" id="mk-index"></div>
+
+    <div class="sec">예탁금 · 신용 · 프로그램 <span id="mk-funds-when">—</span></div>
+    <div class="card" id="mk-funds"></div>
+
+    <div class="sec">투자자별 매매동향 <span id="mk-inv-when">—</span></div>
+    <div class="card" id="mk-investors"></div>
+
+    <div class="sec">국채수익률 <span id="mk-bonds-when">—</span></div>
+    <div class="card" id="mk-bonds"></div>
+
+    <div class="sec">시장지표 <span id="mk-market-when">—</span></div>
+    <div class="card" id="mk-market"></div>
+
+    <div class="sec">유가 <span id="mk-energy-when">—</span></div>
+    <div class="card" id="mk-energy"></div>
+
+    <div class="sec">암호화폐 <span id="mk-crypto-when">—</span></div>
+    <div class="card" id="mk-crypto"></div>
+
+    <div class="sec">환율 <span id="mk-fx-when">—</span></div>
+    <div class="card" id="mk-fx"></div>
+
+    <p class="hint" style="margin:0 16px 18px">가격은 네이버 증권·업비트의 공개 시세입니다. 받지 못한 항목은 값을 지어내지 않고 <b>—</b>로 둡니다. 값 옆의 <b>▲ 빨강</b>은 상승·순매수, <b>▼ 파랑</b>은 하락·순매도입니다. 예탁금·신용잔고는 확정 발표가 하루 늦고, 국채·유가·지수는 각 시장의 마지막 체결 기준입니다.</p>
+  </section>
+
   <!-- ============ 요약 ============ -->
-  <section class="tab active" id="tab-summary">
+  <section class="tab" id="tab-summary">
     <div class="sec">전체 자산 <span id="sum-unit">원화 환산 기준</span></div>
     <div class="card">
       <div class="hero-num" id="s-total">0<em>원</em></div>
@@ -681,7 +775,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 실시간 환율</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 시장종합</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -703,7 +797,8 @@
 </div>
 
 <nav>
-  <button class="on" data-tab="summary"><i>📊</i>요약</button>
+  <button class="on" data-tab="market"><i>🌐</i>시장</button>
+  <button data-tab="summary"><i>📊</i>요약</button>
   <button data-tab="krw"><i>🇰🇷</i>원화</button>
   <button data-tab="usd"><i>🇺🇸</i>달러</button>
   <button data-tab="stocks"><i>📈</i>종목</button>
@@ -720,7 +815,7 @@ var INITIAL = {"asOf": "2026-11-22", "fx": 1350, "accounts": [{"name": "키움�
 
 var KEY = 'asset.tracker.v1';
 var state = null, memoryOnly = false, lastSaved = null, dirty = false, baselineText = null,
-    activeTab = 'summary', filters = { KRW:'all', USD:'all' };
+    activeTab = 'market', filters = { KRW:'all', USD:'all' };
 
 /* ---------- utils ---------- */
 function num(v){ var n = Number(String(v==null?'':v).replace(/,/g,'').replace(/\s/g,'')); return isFinite(n) ? n : 0; }
@@ -1915,7 +2010,8 @@ function renderAll(){
   var m = compute();
   renderHeader(m);
   updateSetupBanner(m);
-  if(activeTab === 'summary') renderSummary(m);
+  if(activeTab === 'market') renderMarket();
+  else if(activeTab === 'summary') renderSummary(m);
   else if(activeTab === 'stocks') renderStocks(m);
   else if(activeTab === 'weights') renderWeights(m);
   else if(activeTab === 'trend') renderTrend(m);
@@ -1930,7 +2026,8 @@ function afterChange(opts){
   markChanged();   /* state(메모리)만 갱신 — localStorage 저장은 💾 저장하기 에서만 */
   var m = compute();
   renderHeader(m);
-  if(activeTab === 'summary') renderSummary(m);
+  if(activeTab === 'market') renderMarket();
+  else if(activeTab === 'summary') renderSummary(m);
   else if(activeTab === 'stocks') renderStocks(m);
   else if(activeTab === 'weights') renderWeights(m);
   else if(activeTab === 'trend') renderTrend(m);
@@ -1953,6 +2050,7 @@ function switchTab(t){
   renderSavebar();
   fitFrame();
   var m = compute();
+  if(t === 'market'){ renderMarket(); if(!marketData) loadMarketFile(); liveMarket(false); }
   if(t === 'summary') renderSummary(m);
   if(t === 'krw') renderCurrencyTab('KRW', m);
   if(t === 'usd') renderCurrencyTab('USD', m);
@@ -2763,6 +2861,341 @@ document.getElementById('btn-reset').addEventListener('click', function(){
   toast('빈 상태로 되돌렸습니다');
 });
 
+/* ---------- 🌐 시장종합 탭 (market-v1) ----------
+   market.json(fetch_market.py 가 네이버 증권·업비트에서 받아 만든 파일)을 그대로 그린다.
+   환율·비트코인은 브라우저에서 CORS 가 되는 공개 API 로 새로고침할 때마다 다시 받아 덮어쓴다.
+   받지 못한 값은 지어내지 않고 '—' + 미제공 안내로 둔다. */
+var MARKET_URL = './market.json';
+var marketData = null, marketBusy = false, marketErr = null, marketLiveAt = 0;
+var mkLive = { fx:null, jpy:null, btc:null };
+var MK_IDS = ['mk-index','mk-funds','mk-investors','mk-bonds','mk-market','mk-energy','mk-crypto','mk-fx'];
+
+function mkFixed(v, d){
+  if(v === null || v === undefined || v === '' || !isFinite(Number(v))) return '—';
+  return Number(v).toLocaleString('en-US', {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function mkSigned(v, d){
+  if(v === null || v === undefined || !isFinite(Number(v))) return '—';
+  var n = Number(v);
+  return (n > 0 ? '+' : (n < 0 ? '-' : '')) +
+    Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function mkArrow(v){ return v > 0 ? '▲' : (v < 0 ? '▼' : '–'); }
+function mkWhen(s){
+  if(!s) return '—';
+  s = String(s);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.slice(5,7) + '/' + s.slice(8,10) + ' 기준';
+  var d = new Date(s);
+  if(isNaN(d.getTime())) return s;
+  return pad2(d.getMonth()+1) + '/' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+/* 거래대금(원) → '14조 5,589억' */
+function mkMoneyKrw(v){
+  if(v === null || v === undefined || !isFinite(Number(v))) return '—';
+  var eok = Math.round(Number(v)/1e8);
+  if(eok >= 10000){
+    var jo = Math.floor(eok/10000), rest = eok % 10000;
+    return jo + '조' + (rest ? ' ' + rest.toLocaleString('en-US') + '억' : '');
+  }
+  return eok.toLocaleString('en-US') + '억';
+}
+function mkBadge(v, d, pct){
+  var k = (v > 0 ? 'up' : (v < 0 ? 'down' : 'flat'));
+  return '<span class="chg ' + k + '"><b>' + mkArrow(v) + ' ' + mkSigned(v, d) + '</b>'
+    + (pct === null || pct === undefined ? '' : '<span>' + mkSigned(pct, 2) + '%</span>') + '</span>';
+}
+function mkEmptyBox(id){
+  var el = document.getElementById(id);
+  if(el) el.innerHTML = '<div class="mk-row"><span class="nm">—</span><span class="val">—</span>'
+    + '<span class="chg na">미제공</span></div>';
+}
+function mkNote(txt, warn){
+  return txt ? '<p class="mk-note' + (warn ? ' warn' : '') + '">' + esc(txt) + '</p>' : '';
+}
+
+function renderMarket(){
+  var top = document.getElementById('mk-topwhen'), when = document.getElementById('mk-when');
+  if(!marketData){
+    if(when) when.textContent = marketErr ? (marketErr === 'local' ? '앱 주소(웹)에서만 불러옵니다' : '시장 파일을 못 읽었습니다') : '불러오는 중…';
+    if(top) top.textContent = marketErr ? '연결 확인' : '…';
+    MK_IDS.forEach(mkEmptyBox);
+    return;
+  }
+  var S = marketData.sections || {};
+  if(top) top.textContent = mkWhen(marketData.updatedAt) + ' 갱신';
+  if(when) when.textContent = mkWhen((S.index || {}).asOf);
+
+  /* 1 · 국내 지수 */
+  var ix = S.index || {}, h = '';
+  var ixEl = document.getElementById('mk-index-when'); if(ixEl) ixEl.textContent = mkWhen(ix.asOf);
+  (ix.rows || []).forEach(function(r){
+    if(r.value === null || r.value === undefined){
+      h += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      return;
+    }
+    var k = r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'flat');
+    h += '<div class="mk-idx">'
+      + '<div class="l1"><b>' + esc(r.name) + '</b><span class="' + k + '">'
+      + (r.change === null || r.change === undefined ? '' : mkArrow(r.change) + ' ' + mkSigned(r.change, 2) + ' (' + mkSigned(r.pct, 2) + '%)')
+      + '</span></div>'
+      + '<div class="l2"><span class="v ' + k + '">' + mkFixed(r.value, 2) + '</span>'
+      + '<span class="t">거래대금 <b>' + mkMoneyKrw(r.tradingValue) + '</b></span></div>'
+      + '</div>';
+  });
+  h += mkNote(ix.note, true);
+  document.getElementById('mk-index').innerHTML = h || '<div class="mk-row"><span class="nm">—</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+
+  /* 2 · 예탁금·신용 + 프로그램 */
+  var fd = S.funds || {}, pg = S.program || {};
+  var fEl = document.getElementById('mk-funds-when');
+  if(fEl) fEl.textContent = mkWhen(fd.asOf);
+  var fh = '<div class="mk-duo">';
+  (fd.rows || []).forEach(function(r){
+    fh += '<div><span>' + esc(r.name) + ' <i>억원</i></span><b>'
+      + (r.value === null || r.value === undefined ? '—' : mkFixed(r.value, 0)) + '</b>'
+      + '<em class="' + (r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'flat')) + '">'
+      + (r.change === null || r.change === undefined ? '' : '전일 ' + mkSigned(r.change, 0)) + '</em></div>';
+  });
+  fh += '</div>';
+  if((pg.rows || []).length){
+    fh += '<div class="mk-mini"><div class="mk-tbl-h">프로그램 매매 <span>백만원</span></div>'
+      + '<table class="mk-tbl"><thead><tr><th></th>';
+    (pg.rows || []).forEach(function(c){ fh += '<th>' + esc(c.name) + '</th>'; });
+    fh += '</tr></thead><tbody>';
+    [['arb', '차익'], ['nonArb', '비차익']].forEach(function(pair){
+      fh += '<tr><td>' + pair[1] + '</td>';
+      (pg.rows || []).forEach(function(c){
+        var v = c[pair[0]];
+        fh += '<td class="' + (v === null ? 'na"' : (v > 0 ? 'up"' : (v < 0 ? 'down"' : '"'))) + '>'
+          + (v === null || v === undefined ? '—' : mkSigned(v, 0)) + '</td>';
+      });
+      fh += '</tr>';
+    });
+    fh += '</tbody></table></div>';
+  }
+  fh += mkNote(fd.note, true) + mkNote(pg.note, true);
+  document.getElementById('mk-funds').innerHTML = fh;
+
+  /* 3 · 투자자별 매매동향 */
+  var iv = S.investors || {};
+  var iEl = document.getElementById('mk-inv-when'); if(iEl) iEl.textContent = mkWhen(iv.asOf);
+  var ih = '<table class="mk-tbl"><thead><tr><th></th>';
+  (iv.cols || []).forEach(function(c){ ih += '<th>' + esc(c.name) + '</th>'; });
+  ih += '</tr></thead><tbody>';
+  (iv.rows || []).forEach(function(r){
+    ih += '<tr><td>' + esc(r.name) + '</td>';
+    (r.values || []).forEach(function(v){
+      ih += '<td class="' + (v === null ? 'na"' : (v > 0 ? 'up"' : (v < 0 ? 'down"' : '"'))) + '>'
+        + (v === null || v === undefined ? '—' : mkSigned(v, 0)) + '</td>';
+    });
+    ih += '</tr>';
+  });
+  ih += '</tbody></table>';
+  var units = '코스피·코스닥·주식선물 억원 / 선물 계약';
+  ih += '<div class="mk-tfoot"><span>단위</span><b>' + esc(units) + '</b></div>';
+  ih += mkNote('선물은 계약 수, 주식선물은 명목금액(억원)입니다. ' + (iv.note || ''), !!iv.note);
+  document.getElementById('mk-investors').innerHTML = ih;
+
+  /* 4 · 국채수익률 */
+  var bd = S.bonds || {};
+  var bEl = document.getElementById('mk-bonds-when'); if(bEl) bEl.textContent = mkWhen(bd.asOf);
+  var bh = '<table class="mk-tbl"><thead><tr><th></th><th>10년</th><th>2년</th></tr></thead><tbody>';
+  (bd.rows || []).forEach(function(r){
+    bh += '<tr><td>' + esc(r.name) + '</td>';
+    [[r.y10, r.c10], [r.y2, r.c2]].forEach(function(p){
+      bh += '<td>' + (p[0] === null || p[0] === undefined ? '—' : mkFixed(p[0], 3) + '%')
+        + (p[1] === null || p[1] === undefined ? '' : '<em class="' + (p[1] > 0 ? 'up' : (p[1] < 0 ? 'down' : 'flat'))
+          + '">' + mkSigned(p[1], 3) + '</em>') + '</td>';
+    });
+    bh += '</tr>';
+  });
+  bh += '</tbody></table>' + mkNote(bd.note, true);
+  document.getElementById('mk-bonds').innerHTML = bh;
+
+  /* 5 · 시장지표 */
+  var mk = S.market || {};
+  var mEl = document.getElementById('mk-market-when'); if(mEl) mEl.textContent = mkWhen(mk.asOf);
+  var mh = '';
+  (mk.rows || []).forEach(function(r){
+    if(r.value === null || r.value === undefined){
+      mh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span>'
+        + '<span class="chg na">미제공</span></div>';
+      return;
+    }
+    mh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '<em>' + esc(r.unit || '') + '</em></span>'
+      + '<span class="val">' + mkFixed(r.value, 2) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
+  });
+  var missing = (mk.rows || []).filter(function(r){ return (r.value === null || r.value === undefined); });
+  if(missing.length){
+    mh += '<p class="mk-note">미제공: ' + missing.map(function(r){ return esc(r.name); }).join(' · ')
+      + ' — 거래소·증권사 공개 시세가 없어 받지 못했습니다.</p>';
+  }
+  document.getElementById('mk-market').innerHTML = mh;
+  /* 6 · 유가 */
+  var en = S.energy || {};
+  var eEl = document.getElementById('mk-energy-when'); if(eEl) eEl.textContent = mkWhen(en.asOf);
+  var eh = '';
+  (en.rows || []).forEach(function(r){
+    if(r.value === null || r.value === undefined){
+      eh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      return;
+    }
+    eh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '<em>USD/Bbl</em></span>'
+      + '<span class="val">' + mkFixed(r.value, 2) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
+  });
+  eh += mkNote(en.note, true);
+  document.getElementById('mk-energy').innerHTML = eh;
+
+  /* 7 · 암호화폐 (실시간 값이 있으면 그것을 쓴다) */
+  var cr = S.crypto || {}, B = mkLive.btc;
+  var cEl = document.getElementById('mk-crypto-when');
+  if(cEl) cEl.textContent = B ? ('실시간 ' + mkWhen(B.at)) : mkWhen(cr.asOf);
+  var ch = '';
+  var cRow = (cr.rows || [])[0] || {name:'비트코인'};
+  var cVal = B ? B.price : cRow.value;
+  var cChg = B ? B.change : cRow.change;
+  var cPct = B ? B.pct : cRow.pct;
+  var cUnit = B ? 'USDT' : (cRow.unit || 'USDT');
+  if(cVal === null || cVal === undefined){
+    ch = '<div class="mk-row"><span class="nm">비트코인</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+  }else{
+    ch = '<div class="mk-row"><span class="nm">비트코인<em>' + esc(cUnit) + '</em></span>'
+      + '<span class="val">' + mkFixed(cVal, 2) + '</span>'
+      + (cChg === null || cChg === undefined
+          ? '<span class="chg flat"><b>' + (B ? '<span style="color:#1d7a4b">실시간</span>' : '—') + '</b></span>'
+          : mkBadge(cChg, 2, cPct))
+      + '</div>';
+  }
+  ch += '<div class="mk-tfoot"><span>출처</span><b>' + esc(B ? B.src : (cr.src || '—')) + '</b></div>';
+  ch += mkNote(cr.note, false);
+  document.getElementById('mk-crypto').innerHTML = ch;
+
+  /* 8 · 환율 (실시간 값이 있으면 그것을 쓴다) */
+  var fx = S.fx || {};
+  var xEl = document.getElementById('mk-fx-when');
+  var liveOn = !!(mkLive.fx || mkLive.jpy);
+  if(xEl) xEl.textContent = liveOn ? ('실시간 ' + mkWhen((mkLive.fx || mkLive.jpy).fetchedAt || (mkLive.fx || mkLive.jpy).at)) : mkWhen(fx.asOf);
+  var xh = '';
+  (fx.rows || []).forEach(function(r){
+    var live = r.key === 'USDKRW' ? mkLive.fx : (r.key === 'USDJPY' ? mkLive.jpy : null);
+    var v = live ? live.rate : r.value;
+    if(v === null || v === undefined){
+      xh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      return;
+    }
+    var same = live ? (Math.abs(Number(v) - Number(r.value || 0)) < 0.005) : true;
+    xh += '<div class="mk-row"><span class="nm">' + esc(r.name) + (live ? '<em>' + esc(live.label || '실시간') + '</em>' : '<em>원</em>') + '</span>'
+      + '<span class="val">' + mkFixed(v, 2) + '</span>'
+      + (live && !same ? '<span class="chg flat"><b style="color:#1d7a4b">실시간</b></span>'
+                       : mkBadge(r.change, 2, r.pct))
+      + '</div>';
+  });
+  xh += mkNote(fx.note, true);
+  document.getElementById('mk-fx').innerHTML = xh;
+
+  /* 상단 실시간 상태줄 */
+  var lv = document.getElementById('mk-live');
+  if(lv){
+    var bits = [];
+    if(mkLive.fx && mkLive.fx.rate) bits.push('환율 ' + mkFixed(mkLive.fx.rate, 2) + '원');
+    if(mkLive.jpy && mkLive.jpy.rate) bits.push('USDJPY ' + mkFixed(mkLive.jpy.rate, 2));
+    if(mkLive.btc && mkLive.btc.price) bits.push('BTC ' + mkFixed(mkLive.btc.price, 2));
+    lv.className = 'mk-live' + (bits.length ? ' on' : '');
+    lv.innerHTML = '<i></i>' + (bits.length
+      ? '실시간 반영 · ' + bits.join(' · ')
+      : '환율·비트코인은 새로고침할 때마다 실시간으로 다시 받습니다');
+  }
+}
+/* market.json 읽기 — cache: 'no-store' 로 항상 새 파일 */
+function mkFetchJson(url, ms){
+  return new Promise(function(resolve, reject){
+    var ac = null, timer = null;
+    try{ if(window.AbortController){ ac = new AbortController();
+      timer = setTimeout(function(){ try{ ac.abort(); }catch(e){} reject(new Error('시간 초과')); }, ms || 6000); } }catch(e){ ac = null; }
+    try{
+      fetch(url, ac ? {cache:'no-store', signal:ac.signal} : {cache:'no-store'})
+        .then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+        .then(function(d){ if(timer) clearTimeout(timer); resolve(d); })
+        .catch(function(e){ if(timer) clearTimeout(timer); reject(e); });
+    }catch(e){ reject(e); }
+  });
+}
+function loadMarketFile(){
+  if(location.protocol === 'file:'){        /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
+    marketErr = 'local'; renderMarket();
+    return Promise.resolve({ok:false, local:true});
+  }
+  return mkFetchJson(MARKET_URL + '?t=' + Date.now(), 9000).then(function(d){
+    if(!d || !d.sections) throw new Error('형식이 다릅니다');
+    marketData = d; marketErr = null; renderMarket();
+    return {ok:true, when: mkWhen(d.updatedAt)};
+  }).catch(function(e){
+    marketErr = String((e && e.message) || e);
+    renderMarket();                       /* 이미 받은 자료가 있으면 그대로 둔다 */
+    return {ok:false, error:marketErr};
+  });
+}
+/* 브라우저에서 직접 받는 실시간 값 — USDKRW(마나나→er-api→currency-api), USDJPY(er-api), BTC(업비트→코인게코) */
+function fetchLiveJpy(){
+  return mkFetchJson('https://open.er-api.com/v6/latest/USD', 6000).then(function(d){
+    var j = num(d && d.rates && d.rates.JPY);
+    if(!j || !isFinite(j)) throw new Error('값 없음');
+    return { rate: Math.round(j*100)/100, at: d.time_last_update_utc, label: 'exchangerate-api',
+             fetchedAt: new Date().toISOString() };
+  });
+}
+function fetchLiveBtc(){
+  return mkFetchJson('https://api.upbit.com/v1/ticker?markets=USDT-BTC', 6000).then(function(d){
+    var t = d && d[0], p = num(t && t.trade_price);
+    if(!p) throw new Error('값 없음');
+    var prev = num(t.prev_closing_price) || p;
+    var at = null;
+    try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){ at = null; }
+    return { price:p, change: Math.round((p-prev)*100)/100,
+             pct: prev ? Math.round((p-prev)/prev*10000)/100 : null, src:'업비트', at:at };
+  }).catch(function(){
+    return mkFetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true', 6000).then(function(d){
+      var b = (d && d.bitcoin) || {}, p = num(b.usd);
+      if(!p) throw new Error('값 없음');
+      var at = null;
+      if(b.last_updated_at){ try{ at = new Date(Number(b.last_updated_at)*1000).toISOString(); }catch(e){ at = null; } }
+      return { price:p, change:null, pct:null, src:'코인게코', at:at };
+    });
+  });
+}
+function liveMarket(force){
+  if(location.protocol === 'file:') return Promise.resolve(null);
+  if(navigator.onLine === false) return Promise.resolve(null);
+  if(!force && (Date.now() - marketLiveAt) < 25000) return Promise.resolve(null);
+  marketLiveAt = Date.now();
+  return Promise.all([
+    fetchLiveFx().then(function(g){ mkLive.fx = g; }).catch(function(){ mkLive.fx = null; }),
+    fetchLiveJpy().then(function(g){ mkLive.jpy = g; }).catch(function(){ mkLive.jpy = null; }),
+    fetchLiveBtc().then(function(g){ mkLive.btc = g; }).catch(function(){ mkLive.btc = null; })
+  ]).then(function(){ renderMarket(); return mkLive; });
+}
+/* 🔄 새로고침 — market.json + 실시간 환율/비트코인을 함께 새로 받는다 */
+function refreshMarket(manual){
+  if(marketBusy) return;
+  marketBusy = true;
+  var btn = document.getElementById('mk-refresh');
+  if(btn) btn.disabled = true;
+  Promise.all([loadMarketFile(), liveMarket(true)]).then(function(r){
+    marketBusy = false;
+    if(btn) btn.disabled = false;
+    if(!manual) return;
+    var f = r[0] || {}, L = r[1] || null, parts = [];
+    if(L && L.fx && L.fx.rate) parts.push('환율 ' + mkFixed(L.fx.rate, 2) + '원');
+    if(L && L.jpy && L.jpy.rate) parts.push('USDJPY ' + mkFixed(L.jpy.rate, 2));
+    if(L && L.btc && L.btc.price) parts.push('BTC ' + mkFixed(L.btc.price, 2));
+    if(!f.ok && !parts.length){
+      toast('시장 데이터를 못 받았습니다 — 인터넷 연결을 확인해 주세요', 3400, 'warn');
+      return;
+    }
+    toast(parts.length ? '실시간 반영 · ' + parts.join(' · ') : '시장 데이터를 새로 받았습니다', 3000);
+  });
+}
+
 /* ---------- 시작 ---------- */
 function boot(){
   state = loadState();
@@ -2779,6 +3212,8 @@ function boot(){
   Array.prototype.forEach.call(document.querySelectorAll('.px-btn'), function(b){
     b.addEventListener('click', function(){ refreshAll({manual:true}); });
   });
+  var mkBtn = document.getElementById('mk-refresh');
+  if(mkBtn) mkBtn.addEventListener('click', function(){ refreshMarket(true); });
   window.__asset = { get state(){ return state; }, compute:compute, switchTab:switchTab,
                      setFilter:function(c, f){ filters[c] = f; }, save:saveNow,
                      undo:undoAll, get dirty(){ return dirty; }, get baseline(){ return baselineText; },
@@ -2792,11 +3227,16 @@ function boot(){
                      backToLatest:backToLatest, get viewing(){ return viewingDate; },
                      setTrend:function(r){ trendRange = r; trSel = null; renderTrend(); },
                      get trendRange(){ return trendRange; },
-                     get records(){ return snapList(); } };
+                     get records(){ return snapList(); },
+                     get market(){ return marketData; }, loadMarket:loadMarketFile,
+                     refreshMarket:refreshMarket, liveMarket:liveMarket,
+                     get marketLive(){ return mkLive; } };
   loadPrices();   /* 열 때 한 번 — prices.json 이 없거나 오프라인이면 조용히 넘어간다 */
+  loadMarketFile();   /* 오늘 첫 화면인 🌐 시장 탭의 시장종합 */
+  liveMarket(true);   /* 환율·USDJPY·비트코인 실시간 */
   loadLiveFx();   /* 실시간 원/달러 환율 — 실패하면 종가 파일 환율을 그대로 둔다(안내는 환율 칸 아래 줄에서) */
   loadHistory();  /* 시세 기록으로 빠진 날짜 보충 + 추이 탭 준비 */
-  window.addEventListener('online', function(){ loadLiveFx(); });   /* 끊겼던 연결이 돌아오면 환율도 새로 */
+  window.addEventListener('online', function(){ loadLiveFx(); if(activeTab === 'market') liveMarket(true); });   /* 끊겼던 연결이 돌아오면 환율도 새로 */
 }
 boot();
 </script>

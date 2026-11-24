@@ -1,7 +1,7 @@
 /* 내 자산관리 — 오프라인에서도 앱이 바로 열리도록 껍데기만 캐싱한다.
    사용자가 입력한 자산 데이터는 localStorage 에만 있고 여기로 오지 않는다. */
-var CACHE = 'asset-shell-v13';
-var ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './prices.json', './prices_history.json'];
+var CACHE = 'asset-shell-v14';
+var ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './prices.json', './prices_history.json', './market.json'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(
@@ -39,19 +39,20 @@ self.addEventListener('fetch', function(e){
   var url = new URL(req.url);
   if(url.origin !== self.location.origin) return;   /* 이 앱의 파일만 다룬다 */
 
-  if(/(^|\/)(prices\.json|prices_history\.json)$/.test(url.pathname)){
-    /* 시세·시세 기록은 네트워크 우선 — 캐시 때문에 옛 종가가 보이면 안 된다.
+  if(/(^|\/)(prices\.json|prices_history\.json|market\.json)$/.test(url.pathname)){
+    /* 시세·시장종합은 네트워크 우선 — 캐시 때문에 옛 값이 보이면 안 된다.
        오프라인일 때만 마지막으로 받은 파일을 쓴다. */
-    var cacheName = /prices_history\.json$/.test(url.pathname) ? './prices_history.json' : './prices.json';
+    var name = url.pathname.match(/market\.json$/) ? './market.json'
+             : (/prices_history\.json$/.test(url.pathname) ? './prices_history.json' : './prices.json');
     e.respondWith(
       fetch(req).then(function(res){
         if(res && res.ok){
           var copy = res.clone();
-          caches.open(CACHE).then(function(c){ c.put(cacheName, copy); }).catch(function(){});
+          caches.open(CACHE).then(function(c){ c.put(name, copy); }).catch(function(){});
         }
         return res;
       }).catch(function(){
-        return caches.match(cacheName, {ignoreSearch:true});
+        return caches.match(name, {ignoreSearch:true});
       })
     );
     return;
