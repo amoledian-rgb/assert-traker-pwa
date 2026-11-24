@@ -58,3 +58,6 @@ test_swipe.py
 # 기준일 자동 갱신 검증 (2026-11-25)
 test_date.py
 shots_date/
+
+# 기준일 자동 갱신 실배포 검증 (2026-11-25)
+test_live_date.py
