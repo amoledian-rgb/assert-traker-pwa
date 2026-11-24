@@ -1416,6 +1416,10 @@ function loadPrices(opts){
     if(msg) toast(msg, 2600, kind);
   }
   if(opts.manual && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가를 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){ done(); return; }
+  if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
+    done(opts.manual ? '종가 자동 반영은 홈 화면 앱(웹 주소)에서 됩니다' : '', 'warn');
+    return;
+  }
   var p;
   try{
     p = fetch(PRICES_URL + '?t=' + Date.now(), {cache:'no-store'});
