@@ -470,6 +470,11 @@
   .mk-tbl td:first-child{text-align:left; color:#141b2b}
   .mk-tbl td em{display:block; font-style:normal; font-size:10.5px; font-weight:700; margin-top:1px}
   .mk-tbl td.na{color:#c0c6d0; font-weight:600}
+  /* 6열(코스피·코스닥·선물·주식선물·콜옵션·풋옵션) — 390px 에서 잘리지 않게 글자를 줄이고 머리글은 두 줄로 */
+  .mk-tbl.mk-tbl-6 th{font-size:10px; letter-spacing:-.04em; line-height:1.15; padding:0 0 5px}
+  .mk-tbl.mk-tbl-6 th:first-child{width:26px}
+  .mk-tbl.mk-tbl-6 td{font-size:11px; letter-spacing:-.04em; padding:7px 0}
+  .mk-tbl.mk-tbl-6 td:first-child{font-size:11.5px}
   .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
   .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
   .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
@@ -525,7 +530,7 @@
         </div>
         <button type="button" class="mk-btn" id="mk-refresh">🔄 새로고침</button>
       </div>
-      <div class="mk-live" id="mk-live"><i></i>환율·비트코인은 새로고침할 때마다 실시간으로 다시 받습니다</div>
+      <div class="mk-live" id="mk-live"><i></i>환율·코인은 새로고침할 때마다 실시간으로 다시 받습니다</div>
     </div>
 
     <div class="sec">국내 지수 <span id="mk-index-when">—</span></div>
@@ -552,7 +557,7 @@
     <div class="sec">환율 <span id="mk-fx-when">—</span></div>
     <div class="card" id="mk-fx"></div>
 
-    <p class="hint" style="margin:0 16px 18px">가격은 네이버 증권·업비트의 공개 시세입니다. 받지 못한 항목은 값을 지어내지 않고 <b>—</b>로 둡니다. 값 옆의 <b>▲ 빨강</b>은 상승·순매수, <b>▼ 파랑</b>은 하락·순매도입니다. 예탁금·신용잔고는 확정 발표가 하루 늦고, 국채·유가·지수는 각 시장의 마지막 체결 기준입니다.</p>
+    <p class="hint" style="margin:0 16px 18px">가격은 네이버 증권·업비트의 공개 시세입니다. 받지 못한 항목은 값을 지어내지 않고 <b>—</b>로 둡니다. 값 옆의 <b>▲ 빨강</b>은 상승·순매수, <b>▼ 파랑</b>은 하락·순매도입니다. 예탁금·신용잔고는 확정 발표가 하루 늦고, 국채·유가·지수·구리는 각 시장의 마지막 체결 기준입니다. 콜·풋옵션 투자자별 수치는 공개 API에 없어 비워 둡니다.</p>
   </section>
 
   <!-- ============ 요약 ============ -->
@@ -763,7 +768,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 전종목 시세 지원</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 시장종합 확장</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -2999,7 +3004,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T21:00:55+09:00",
+ "updatedAt": "2026-11-24T21:49:41+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
@@ -3014,7 +3019,8 @@ var MARKET_INLINE = {
      "pct": 6.32,
      "tradingValue": 15768220000000,
      "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE"
+     "marketStatus": "CLOSE",
+     "dec": 2
     },
     {
      "key": "KOSDAQ",
@@ -3024,11 +3030,34 @@ var MARKET_INLINE = {
      "pct": 4.79,
      "tradingValue": 5926822000000,
      "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE"
+     "marketStatus": "CLOSE",
+     "dec": 2
+    },
+    {
+     "key": "KPI200",
+     "name": "코스피200",
+     "value": 778.68,
+     "change": 47.85,
+     "pct": 6.55,
+     "tradingValue": 14283409000000,
+     "asOf": "2026-11-24T20:15:00+09:00",
+     "marketStatus": "CLOSE",
+     "dec": 2
+    },
+    {
+     "key": "FUT",
+     "name": "선물지수",
+     "value": 778.1,
+     "change": 51.45,
+     "pct": 7.08,
+     "tradingValue": 28423754000000,
+     "asOf": "2026-11-24T15:34:59+09:00",
+     "marketStatus": "CLOSE",
+     "dec": 2
     }
    ],
    "ready": true,
-   "note": null
+   "note": "코스피200은 현물 지수, 선물지수는 코스피200 선물 최근월물입니다. 선물 거래대금은 명목가 기준입니다."
   },
   "funds": {
    "asOf": "2026-11-20",
@@ -3097,6 +3126,16 @@ var MARKET_INLINE = {
      "key": "SFUT",
      "name": "주식선물",
      "unit": "억원"
+    },
+    {
+     "key": "CALL",
+     "name": "콜옵션",
+     "unit": "백만원"
+    },
+    {
+     "key": "PUT",
+     "name": "풋옵션",
+     "unit": "백만원"
     }
    ],
    "rows": [
@@ -3107,7 +3146,9 @@ var MARKET_INLINE = {
       -21350,
       -3366,
       -137,
-      -24716
+      -24716,
+      null,
+      null
      ]
     },
     {
@@ -3117,7 +3158,9 @@ var MARKET_INLINE = {
       8270,
       1309,
       3450,
-      9579
+      9579,
+      null,
+      null
      ]
     },
     {
@@ -3127,19 +3170,23 @@ var MARKET_INLINE = {
       8734,
       2225,
       -3332,
-      10959
+      10959,
+      null,
+      null
      ]
     }
    ],
    "ready": true,
-   "note": null
+   "note": "콜·풋옵션은 네이버 증권·공개 API에 투자자별 수치가 없어 비워 둡니다(한국거래소는 회원 로그인 필요).",
+   "warn": null
   },
   "bonds": {
    "asOf": "2026-11-24T16:13:20+09:00",
    "src": "네이버 증권",
    "cols": [
     "10년",
-    "2년"
+    "2년",
+    "30년"
    ],
    "rows": [
     {
@@ -3149,85 +3196,101 @@ var MARKET_INLINE = {
      "c10": -0.012,
      "y2": 3.655,
      "c2": 0,
+     "y30": 3.974,
+     "c30": -0.008,
      "asOf": "2026-11-24T16:13:20+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.71,
-     "c10": -0.009,
-     "y2": 1.784,
-     "c2": 0.001,
-     "asOf": "2026-11-24T18:59:36+09:00"
+     "y10": 2.7,
+     "c10": -0.019,
+     "y2": 1.782,
+     "c2": -0.001,
+     "y30": 3.916,
+     "c30": -0.023,
+     "asOf": "2026-11-24T19:43:53+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.904,
-     "c10": -0.0162,
-     "y2": 4.65,
-     "c2": -0.0162,
-     "asOf": "2026-11-24T06:58:37-05:00"
+     "y10": 4.898,
+     "c10": -0.0222,
+     "y2": 4.648,
+     "c2": -0.0182,
+     "y30": 5.279,
+     "c30": -0.0162,
+     "asOf": "2026-11-24T07:39:50-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T06:50:49-05:00",
+   "asOf": "2026-11-24T07:39:34-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 104,
-     "change": -0.32,
-     "pct": -0.31,
-     "asOf": "2026-11-24T06:50:49-05:00",
+     "value": 103.92,
+     "change": -0.39,
+     "pct": -0.38,
+     "asOf": "2026-11-24T07:39:34-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 28.36,
-     "change": 1.74,
-     "pct": 6.54,
-     "asOf": "2026-11-24T06:45:51-05:00",
+     "value": 29.35,
+     "change": 2.73,
+     "pct": 10.26,
+     "asOf": "2026-11-24T07:34:37-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3633.3,
-     "change": -18.1,
-     "pct": -0.5,
-     "asOf": "2026-11-24T05:50:51-06:00",
+     "value": 3633.4,
+     "change": -18,
+     "pct": -0.49,
+     "asOf": "2026-11-24T06:39:37-06:00",
      "unit": "USD/t.oz"
+    },
+    {
+     "key": "COPPER",
+     "name": "구리",
+     "value": 5.449,
+     "change": -0.185,
+     "pct": -3.28,
+     "asOf": "2026-11-24T06:39:37-06:00",
+     "unit": "USD/lb",
+     "dec": 4
     }
    ],
    "ready": true,
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T05:50:51-06:00",
+   "asOf": "2026-11-24T06:39:37-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.24,
-     "change": 0.07,
-     "pct": 0.09,
-     "asOf": "2026-11-24T05:50:51-06:00",
+     "value": 80.21,
+     "change": 0.04,
+     "pct": 0.05,
+     "asOf": "2026-11-24T06:39:37-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 89.5,
-     "change": 0.13,
-     "pct": 0.15,
-     "asOf": "2026-11-24T11:50:51Z",
+     "value": 89.46,
+     "change": 0.09,
+     "pct": 0.1,
+     "asOf": "2026-11-24T12:39:37Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3235,43 +3298,73 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T21:00:11+09:00",
+   "asOf": "2026-11-24T21:32:13+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60200,
-     "change": -690.22,
-     "pct": -1.13,
-     "unit": "USDT"
+     "value": 60324.28,
+     "change": -565.94,
+     "pct": -0.93,
+     "unit": "USDT",
+     "asOf": "2026-11-24T21:32:13+09:00"
+    },
+    {
+     "key": "ETH",
+     "name": "이더리움",
+     "value": 1706.32,
+     "change": -18.48,
+     "pct": -1.07,
+     "unit": "USDT",
+     "asOf": "2026-11-24T21:33:12+09:00"
+    },
+    {
+     "key": "SOL",
+     "name": "솔라나",
+     "value": 70.64,
+     "change": -1.12,
+     "pct": -1.56,
+     "unit": "USDT",
+     "asOf": "2026-11-24T20:29:51+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T20:57:44+09:00",
+   "asOf": "2026-11-24T21:47:33+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343.3,
-     "change": 0.8,
-     "pct": 0.06,
-     "asOf": "2026-11-24T20:57:44+09:00",
-     "dec": 2
+     "value": 1343.6,
+     "change": 1.1,
+     "pct": 0.08,
+     "asOf": "2026-11-24T21:47:33+09:00",
+     "dec": 2,
+     "unit": "원"
     },
     {
      "key": "USDJPY",
      "name": "USDJPY",
-     "value": 159.24,
+     "value": 159.11,
      "change": null,
      "pct": null,
-     "asOf": "2026-11-24T20:57:44+09:00",
+     "asOf": "2026-11-24T21:47:33+09:00",
      "dec": 2,
      "derived": "USDKRW ÷ (원/100엔) × 100"
+    },
+    {
+     "key": "EURKRW",
+     "name": "EURKRW",
+     "value": 1472.72,
+     "change": 8.99,
+     "pct": 0.61,
+     "asOf": "2026-11-24T21:47:33+09:00",
+     "dec": 2,
+     "unit": "원"
     }
    ],
    "ready": true,
@@ -3281,7 +3374,7 @@ var MARKET_INLINE = {
 };
 var marketInline = false;
 var marketData = null, marketBusy = false, marketErr = null, marketLiveAt = 0;
-var mkLive = { fx:null, jpy:null, btc:null };
+var mkLive = { fx:null, jpy:null, eur:null, btc:null, coins:{} };
 var MK_IDS = ['mk-index','mk-funds','mk-investors','mk-bonds','mk-market','mk-energy','mk-crypto','mk-fx'];
 
 function mkFixed(v, d){
@@ -3352,11 +3445,11 @@ function renderMarket(){
       + '<div class="l1"><b>' + esc(r.name) + '</b><span class="' + k + '">'
       + (r.change === null || r.change === undefined ? '' : mkArrow(r.change) + ' ' + mkSigned(r.change, 2) + ' (' + mkSigned(r.pct, 2) + '%)')
       + '</span></div>'
-      + '<div class="l2"><span class="v ' + k + '">' + mkFixed(r.value, 2) + '</span>'
+      + '<div class="l2"><span class="v ' + k + '">' + mkFixed(r.value, r.dec === undefined ? 2 : r.dec) + '</span>'
       + '<span class="t">거래대금 <b>' + mkMoneyKrw(r.tradingValue) + '</b></span></div>'
       + '</div>';
   });
-  h += mkNote(ix.note, true);
+  h += mkNote(ix.note, !ix.ready);
   document.getElementById('mk-index').innerHTML = h || '<div class="mk-row"><span class="nm">—</span><span class="val">—</span><span class="chg na">미제공</span></div>';
 
   /* 2 · 예탁금·신용 + 프로그램 */
@@ -3390,10 +3483,10 @@ function renderMarket(){
   fh += mkNote(fd.note, true) + mkNote(pg.note, true);
   document.getElementById('mk-funds').innerHTML = fh;
 
-  /* 3 · 투자자별 매매동향 */
+  /* 3 · 투자자별 매매동향 (6열 — 390px 에서 글자를 줄여 한 화면에) */
   var iv = S.investors || {};
   var iEl = document.getElementById('mk-inv-when'); if(iEl) iEl.textContent = mkWhen(iv.asOf);
-  var ih = '<table class="mk-tbl"><thead><tr><th></th>';
+  var ih = '<table class="mk-tbl mk-tbl-6"><thead><tr><th></th>';
   (iv.cols || []).forEach(function(c){ ih += '<th>' + esc(c.name) + '</th>'; });
   ih += '</tr></thead><tbody>';
   (iv.rows || []).forEach(function(r){
@@ -3405,18 +3498,21 @@ function renderMarket(){
     ih += '</tr>';
   });
   ih += '</tbody></table>';
-  var units = '코스피·코스닥·주식선물 억원 / 선물 계약';
+  var units = '코스피·코스닥·주식선물 억원 / 선물 계약 / 콜·풋옵션 백만원';
   ih += '<div class="mk-tfoot"><span>단위</span><b>' + esc(units) + '</b></div>';
-  ih += mkNote('선물은 계약 수, 주식선물은 명목금액(억원)입니다. ' + (iv.note || ''), !!iv.note);
+  ih += mkNote('선물은 계약 수, 주식선물은 명목금액(억원)입니다.', false) + mkNote(iv.warn, true) + mkNote(iv.note, false);
   document.getElementById('mk-investors').innerHTML = ih;
 
-  /* 4 · 국채수익률 */
+  /* 4 · 국채수익률 (10년·2년·30년) */
   var bd = S.bonds || {};
   var bEl = document.getElementById('mk-bonds-when'); if(bEl) bEl.textContent = mkWhen(bd.asOf);
-  var bh = '<table class="mk-tbl"><thead><tr><th></th><th>10년</th><th>2년</th></tr></thead><tbody>';
+  var bcols = (bd.cols && bd.cols.length) ? bd.cols : ['10년', '2년', '30년'];
+  var bh = '<table class="mk-tbl"><thead><tr><th></th>';
+  bcols.forEach(function(c){ bh += '<th>' + esc(c) + '</th>'; });
+  bh += '</tr></thead><tbody>';
   (bd.rows || []).forEach(function(r){
     bh += '<tr><td>' + esc(r.name) + '</td>';
-    [[r.y10, r.c10], [r.y2, r.c2]].forEach(function(p){
+    [[r.y10, r.c10], [r.y2, r.c2], [r.y30, r.c30]].forEach(function(p){
       bh += '<td>' + (p[0] === null || p[0] === undefined ? '—' : mkFixed(p[0], 3) + '%')
         + (p[1] === null || p[1] === undefined ? '' : '<em class="' + (p[1] > 0 ? 'up' : (p[1] < 0 ? 'down' : 'flat'))
           + '">' + mkSigned(p[1], 3) + '</em>') + '</td>';
@@ -3437,7 +3533,7 @@ function renderMarket(){
       return;
     }
     mh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '<em>' + esc(r.unit || '') + '</em></span>'
-      + '<span class="val">' + mkFixed(r.value, 2) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
+      + '<span class="val">' + mkFixed(r.value, r.dec === undefined ? 2 : r.dec) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
   });
   var missing = (mk.rows || []).filter(function(r){ return (r.value === null || r.value === undefined); });
   if(missing.length){
@@ -3460,38 +3556,47 @@ function renderMarket(){
   eh += mkNote(en.note, true);
   document.getElementById('mk-energy').innerHTML = eh;
 
-  /* 7 · 암호화폐 (실시간 값이 있으면 그것을 쓴다) */
-  var cr = S.crypto || {}, B = mkLive.btc;
+  /* 7 · 암호화폐 (비트코인·이더리움·솔라나 — 실시간 값이 있으면 그것을 쓴다) */
+  var cr = S.crypto || {}, CL = mkLive.coins || {};
   var cEl = document.getElementById('mk-crypto-when');
-  if(cEl) cEl.textContent = B ? ('실시간 ' + mkWhen(B.at)) : mkWhen(cr.asOf);
+  var cLiveAt = null;
+  (cr.rows || []).forEach(function(r){ if(CL[r.key] && !cLiveAt) cLiveAt = CL[r.key].at; });
+  if(cEl) cEl.textContent = cLiveAt ? ('실시간 ' + mkWhen(cLiveAt)) : mkWhen(cr.asOf);
   var ch = '';
-  var cRow = (cr.rows || [])[0] || {name:'비트코인'};
-  var cVal = B ? B.price : cRow.value;
-  var cChg = B ? B.change : cRow.change;
-  var cPct = B ? B.pct : cRow.pct;
-  var cUnit = B ? 'USDT' : (cRow.unit || 'USDT');
-  if(cVal === null || cVal === undefined){
-    ch = '<div class="mk-row"><span class="nm">비트코인</span><span class="val">—</span><span class="chg na">미제공</span></div>';
-  }else{
-    ch = '<div class="mk-row"><span class="nm">비트코인<em>' + esc(cUnit) + '</em></span>'
-      + '<span class="val">' + mkFixed(cVal, 2) + '</span>'
+  var cRows = (cr.rows || []);
+  if(!cRows.length) cRows = [{key: 'BTC', name: '비트코인'}];
+  cRows.forEach(function(cRow){
+    var B = CL[cRow.key] || null;
+    var cVal = B ? B.price : cRow.value;
+    var cChg = B ? B.change : cRow.change;
+    var cPct = B ? B.pct : cRow.pct;
+    var cUnit = B ? (B.unit || 'USDT') : (cRow.unit || 'USDT');
+    var cDec = cRow.dec === undefined ? 2 : cRow.dec;
+    if(cVal === null || cVal === undefined){
+      ch += '<div class="mk-row"><span class="nm">' + esc(cRow.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      return;
+    }
+    ch += '<div class="mk-row"><span class="nm">' + esc(cRow.name) + '<em>' + esc(cUnit) + '</em></span>'
+      + '<span class="val">' + mkFixed(cVal, cDec) + '</span>'
       + (cChg === null || cChg === undefined
           ? '<span class="chg flat"><b>' + (B ? '<span style="color:#1d7a4b">실시간</span>' : '—') + '</b></span>'
           : mkBadge(cChg, 2, cPct))
       + '</div>';
-  }
-  ch += '<div class="mk-tfoot"><span>출처</span><b>' + esc(B ? B.src : (cr.src || '—')) + '</b></div>';
+  });
+  ch += '<div class="mk-tfoot"><span>출처</span><b>' + esc(cLiveAt ? '업비트·코인게코 실시간' : (cr.src || '—')) + '</b></div>';
   ch += mkNote(cr.note, false);
   document.getElementById('mk-crypto').innerHTML = ch;
 
-  /* 8 · 환율 (실시간 값이 있으면 그것을 쓴다) */
+  /* 8 · 환율 (USDKRW · USDJPY · EURKRW — 실시간 값이 있으면 그것을 쓴다) */
   var fx = S.fx || {};
   var xEl = document.getElementById('mk-fx-when');
-  var liveOn = !!(mkLive.fx || mkLive.jpy);
-  if(xEl) xEl.textContent = liveOn ? ('실시간 ' + mkWhen((mkLive.fx || mkLive.jpy).fetchedAt || (mkLive.fx || mkLive.jpy).at)) : mkWhen(fx.asOf);
+  var LIVE_FX = { USDKRW: mkLive.fx, USDJPY: mkLive.jpy, EURKRW: mkLive.eur };
+  var anyFx = null;
+  (fx.rows || []).forEach(function(r){ var l = LIVE_FX[r.key]; if(l && !anyFx) anyFx = l; });
+  if(xEl) xEl.textContent = anyFx ? ('실시간 ' + mkWhen(anyFx.fetchedAt || anyFx.at)) : mkWhen(fx.asOf);
   var xh = '';
   (fx.rows || []).forEach(function(r){
-    var live = r.key === 'USDKRW' ? mkLive.fx : (r.key === 'USDJPY' ? mkLive.jpy : null);
+    var live = LIVE_FX[r.key] || null;
     var v = live ? live.rate : r.value;
     if(v === null || v === undefined){
       xh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
@@ -3499,7 +3604,7 @@ function renderMarket(){
     }
     var same = live ? (Math.abs(Number(v) - Number(r.value || 0)) < 0.005) : true;
     xh += '<div class="mk-row"><span class="nm">' + esc(r.name) + (live ? '<em>' + esc(live.label || '실시간') + '</em>' : '<em>원</em>') + '</span>'
-      + '<span class="val">' + mkFixed(v, 2) + '</span>'
+      + '<span class="val">' + mkFixed(v, r.dec === undefined ? 2 : r.dec) + '</span>'
       + (live && !same ? '<span class="chg flat"><b style="color:#1d7a4b">실시간</b></span>'
                        : mkBadge(r.change, 2, r.pct))
       + '</div>';
@@ -3512,12 +3617,15 @@ function renderMarket(){
   if(lv){
     var bits = [];
     if(mkLive.fx && mkLive.fx.rate) bits.push('환율 ' + mkFixed(mkLive.fx.rate, 2) + '원');
+    if(mkLive.eur && mkLive.eur.rate) bits.push('유로 ' + mkFixed(mkLive.eur.rate, 2) + '원');
     if(mkLive.jpy && mkLive.jpy.rate) bits.push('USDJPY ' + mkFixed(mkLive.jpy.rate, 2));
-    if(mkLive.btc && mkLive.btc.price) bits.push('BTC ' + mkFixed(mkLive.btc.price, 2));
+    if(mkLive.coins && mkLive.coins.BTC) bits.push('BTC ' + mkFixed(mkLive.coins.BTC.price, 0));
+    if(mkLive.coins && mkLive.coins.ETH) bits.push('ETH ' + mkFixed(mkLive.coins.ETH.price, 0));
+    if(mkLive.coins && mkLive.coins.SOL) bits.push('SOL ' + mkFixed(mkLive.coins.SOL.price, 2));
     lv.className = 'mk-live' + (bits.length ? ' on' : '');
     lv.innerHTML = '<i></i>' + (bits.length
       ? '실시간 반영 · ' + bits.join(' · ')
-      : '환율·비트코인은 새로고침할 때마다 실시간으로 다시 받습니다');
+      : '환율·코인은 새로고침할 때마다 실시간으로 다시 받습니다');
   }
 }
 /* market.json 읽기 — cache: 'no-store' 로 항상 새 파일 */
@@ -3557,32 +3665,57 @@ function loadMarketFile(){
     return {ok:false, error:marketErr};
   });
 }
-/* 브라우저에서 직접 받는 실시간 값 — USDKRW(마나나→er-api→currency-api), USDJPY(er-api), BTC(업비트→코인게코) */
+/* 브라우저에서 직접 받는 실시간 값 — USDKRW(마나나→er-api→currency-api), USDJPY·EURKRW(er-api 교차환율),
+   BTC·ETH·SOL(코인게코→업비트) */
 function fetchLiveJpy(){
   return mkFetchJson('https://open.er-api.com/v6/latest/USD', 6000).then(function(d){
-    var j = num(d && d.rates && d.rates.JPY);
-    if(!j || !isFinite(j)) throw new Error('값 없음');
-    return { rate: Math.round(j*100)/100, at: d.time_last_update_utc, label: 'exchangerate-api',
-             fetchedAt: new Date().toISOString() };
+    var r = (d && d.rates) || {};
+    var j = num(r.JPY), k = num(r.KRW), e = num(r.EUR);
+    var at = d.time_last_update_utc, fetchedAt = new Date().toISOString();
+    var out = {};
+    if(j && isFinite(j)){
+      out.jpy = { rate: Math.round(j*100)/100, at: at, label: 'exchangerate-api', fetchedAt: fetchedAt };
+    }
+    if(k && e && isFinite(k) && isFinite(e)){
+      out.eur = { rate: Math.round(k/e*100)/100, at: at, label: '교차환율', fetchedAt: fetchedAt,
+                  derived: 'USDKRW ÷ EUR/USD' };
+    }
+    if(!out.jpy && !out.eur) throw new Error('값 없음');
+    return out;
   });
 }
-function fetchLiveBtc(){
+var MK_COINS = [{key:'BTC', id:'bitcoin'}, {key:'ETH', id:'ethereum'}, {key:'SOL', id:'solana'}];
+function fetchLiveCoins(){
   /* 1순위 코인게코(CORS *, 브라우저에서 안정적) → 2순위 업비트(USDT 시세, 호출 제한이 걸리기도 함) */
-  return mkFetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true', 6000).then(function(d){
-    var b = (d && d.bitcoin) || {}, p = num(b.usd);
-    if(!p) throw new Error('값 없음');
-    var at = null;
-    if(b.last_updated_at){ try{ at = new Date(Number(b.last_updated_at)*1000).toISOString(); }catch(e){ at = null; } }
-    return { price:p, change:null, pct:null, src:'코인게코 (USD)', at:at };
-  }).catch(function(){
-    return mkFetchJson('https://api.upbit.com/v1/ticker?markets=USDT-BTC', 6000).then(function(d){
-      var t = d && d[0], p = num(t && t.trade_price);
-      if(!p) throw new Error('값 없음');
-      var prev = num(t.prev_closing_price) || p;
+  var ids = MK_COINS.map(function(c){ return c.id; }).join(',');
+  return mkFetchJson('https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd&include_last_updated_at=true', 6000).then(function(d){
+    var out = {};
+    MK_COINS.forEach(function(c){
+      var it = (d && d[c.id]) || {}, p = num(it.usd);
+      if(!p) return;
       var at = null;
-      try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){ at = null; }
-      return { price:p, change: Math.round((p-prev)*100)/100,
-               pct: prev ? Math.round((p-prev)/prev*10000)/100 : null, src:'업비트 (USDT)', at:at };
+      if(it.last_updated_at){ try{ at = new Date(Number(it.last_updated_at)*1000).toISOString(); }catch(e){ at = null; } }
+      out[c.key] = { price:p, change:null, pct:null, unit:'USD', src:'코인게코 (USD)', at:at };
+    });
+    if(!out.BTC && !out.ETH && !out.SOL) throw new Error('값 없음');
+    return out;
+  }).catch(function(){
+    return mkFetchJson('https://api.upbit.com/v1/ticker?markets=USDT-BTC%2CUSDT-ETH%2CUSDT-SOL', 6000).then(function(d){
+      var lst = (d && d.length) ? d : [], out = {};
+      lst.forEach(function(t){
+        var m = String((t && t.market) || '');
+        var key = m.indexOf('-') >= 0 ? m.split('-')[1].toUpperCase() : '';
+        var p = num(t && t.trade_price);
+        if(!key || !p) return;
+        var prev = num(t.prev_closing_price) || p;
+        var at = null;
+        try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){ at = null; }
+        out[key] = { price:p, change: Math.round((p-prev)*100)/100,
+                     pct: prev ? Math.round((p-prev)/prev*10000)/100 : null,
+                     unit:'USDT', src:'업비트 (USDT)', at:at };
+      });
+      if(!out.BTC && !out.ETH && !out.SOL) throw new Error('값 없음');
+      return out;
     });
   });
 }
@@ -3591,20 +3724,23 @@ function liveMarket(force){
   if(navigator.onLine === false) return Promise.resolve(null);
   if(!force && (Date.now() - marketLiveAt) < 25000) return Promise.resolve(null);
   marketLiveAt = Date.now();
-  var noBtc = !(marketData && marketData.sections && marketData.sections.crypto
+  var noCoin = !(marketData && marketData.sections && marketData.sections.crypto
               && marketData.sections.crypto.ready);
   var jobs = [
     fetchLiveFx().then(function(g){ mkLive.fx = g; }).catch(function(){ mkLive.fx = null; }),
-    fetchLiveJpy().then(function(g){ mkLive.jpy = g; }).catch(function(){ mkLive.jpy = null; })
+    fetchLiveJpy().then(function(g){ mkLive.jpy = g.jpy || null; mkLive.eur = g.eur || null; })
+      .catch(function(){ mkLive.jpy = null; mkLive.eur = null; })
   ];
-  /* 비트코인은 🔄 새로고침(수동)이나 market.json 에 값이 아예 없을 때만 따로 받는다
+  /* 코인은 🔄 새로고침(수동)이나 market.json 에 값이 아예 없을 때만 따로 받는다
      — 앱을 열 때마다 부르면 공개 API 호출 제한(429)에 걸리기 싶고, market.json 값도 종가 갱신 때마다 새것이다. */
-  if(force || noBtc){
-    jobs.push(fetchLiveBtc().then(function(g){ mkLive.btc = g; }).catch(function(){ if(!mkLive.btc) mkLive.btc = null; }));
+  if(force || noCoin){
+    jobs.push(fetchLiveCoins().then(function(g){
+      mkLive.coins = g; mkLive.btc = g.BTC || null;
+    }).catch(function(){ if(!mkLive.coins) mkLive.coins = {}; }));
   }
   return Promise.all(jobs).then(function(){ renderMarket(); return mkLive; });
 }
-/* 🔄 새로고침 — market.json + 실시간 환율/비트코인을 함께 새로 받는다 */
+/* 🔄 새로고침 — market.json + 실시간 환율/코인을 함께 새로 받는다 */
 function refreshMarket(manual){
   if(marketBusy) return;
   marketBusy = true;
@@ -3616,7 +3752,11 @@ function refreshMarket(manual){
     if(!manual) return;
     var f = r[0] || {}, L = r[1] || null, parts = [];
     if(L && L.fx && L.fx.rate) parts.push('환율 ' + mkFixed(L.fx.rate, 2) + '원');
-    if(L && L.btc && L.btc.price) parts.push('BTC ' + mkFixed(L.btc.price, 2));
+    if(L && L.eur && L.eur.rate) parts.push('유로 ' + mkFixed(L.eur.rate, 2) + '원');
+    if(L && L.coins){
+      var ck = ['BTC', 'ETH', 'SOL'].filter(function(k){ return L.coins[k] && L.coins[k].price; });
+      if(ck.length) parts.push(ck.join('·') + ' ' + ck.map(function(k){ return mkFixed(L.coins[k].price, 0); }).join('/'));
+    }
     if(!f.ok && !parts.length){
       toast('시장 데이터를 못 받았습니다 — 인터넷 연결을 확인해 주세요', 3400, 'warn');
       return;
