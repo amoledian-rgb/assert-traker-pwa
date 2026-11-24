@@ -475,35 +475,34 @@
   .mk-tbl.mk-tbl-4 th:first-child{width:30px}
   .mk-tbl.mk-tbl-4 td{font-size:12.5px; letter-spacing:-.03em; padding:8px 0}
   .mk-tbl.mk-tbl-4 td:first-child{font-size:12.5px}
-  /* 미국·국내 지수 6종 — 같은 2열 카드 그리드 · 글자 2배 확대 (2026-11-24 지수 글자 2배)
-     한 칸 안쪽 폭(390px 2열 = 155px)에 '24,089.56' 같은 9자리 지수가 2배 크기로도 한 줄에 들어가도록
-     카드 좌우 여백을 14→10px, 칸 여백을 10→7px 로 줄여 폭을 확보했다. 지수명은 두 줄까지 허용. */
-  #mk-index.card, #mk-us.card{padding-left:8px; padding-right:8px}
+  /* 미국·국내 지수 6종 — 같은 2열 카드 그리드 · 글자 1.5배 (2026-11-24 지수 글자 중간 크기)
+     이전(v21) 글자와 2배 크기의 중간 — 지수명 11.5→17.25 · 숫자 17→25.5 · 전일대비·등락률 11.5→17.25
+     · 날짜·상태 10.5→15.75px. 이 크기에서는 '24,089.56' 9자리도 원래 여백 그대로 한 줄에 들어간다. */
   .mk-us{display:grid; grid-template-columns:1fr 1fr; gap:8px}
-  .mk-us>div{background:#fbfcfe; border:1px solid var(--line); border-radius:12px; padding:10px 7px; min-width:0}
-  .mk-us .n{display:block; font-size:23px; line-height:1.2; font-weight:800; color:#5b6577;
+  .mk-us>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
+  .mk-us .n{display:block; font-size:17.25px; line-height:1.25; font-weight:800; color:#5b6577;
     word-break:keep-all; overflow-wrap:break-word}
-  .mk-us .v{display:block; margin-top:2px; font-size:34px; font-weight:800; letter-spacing:-.035em;
+  .mk-us .v{display:block; margin-top:2px; font-size:25.5px; font-weight:800; letter-spacing:-.03em;
     font-variant-numeric:tabular-nums; white-space:nowrap}
-  .mk-us .c{display:block; margin-top:4px; font-size:23px; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
-  .mk-us .p{display:block; margin-top:1px; font-size:23px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
-  .mk-us .d{display:block; margin-top:6px; font-size:21px; color:#98a1b3; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .mk-us .c{display:block; margin-top:3px; font-size:17.25px; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .mk-us .p{display:block; font-size:17.25px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .mk-us .d{display:block; margin-top:5px; font-size:15.75px; color:#98a1b3; font-variant-numeric:tabular-nums; white-space:nowrap}
   .mk-us .d i{display:inline-block; width:6px; height:6px; border-radius:50%; background:#c3cad6; margin-right:4px; vertical-align:1px}
   .mk-us .d.on i{background:#25a35a}
-  .mk-us .tv{display:block; margin-top:2px; font-size:21px; color:#98a1b3; letter-spacing:-.02em;
+  .mk-us .tv{display:block; margin-top:2px; font-size:15.75px; color:#98a1b3; letter-spacing:-.01em;
     font-variant-numeric:tabular-nums; white-space:nowrap}
   .mk-us .tv b{color:#5b6577; font-weight:700}
-  /* 국내 지수 카드 하단 — 코스피·코스닥 등락종목 (2026-11-24 · 글자 2배 확대)
-     숫자를 25px 로 키우면 '1,389 (10)' 이 한 칸(≈85px)에 안 들어가서, 상한·하한 수는 숫자 아래 줄로 내렸다. */
-  .mk-br{margin-top:12px; padding-top:11px; border-top:1px dashed #e3e8f0}
-  .mk-br .h, .mk-br .r{display:grid; grid-template-columns:84px 1fr 1fr 1fr; gap:2px; align-items:start; padding-right:3px}
-  .mk-br .h span{font-size:21px; font-weight:700; color:#98a1b3; text-align:right; white-space:nowrap}
+  /* 국내 지수 카드 하단 — 코스피·코스닥 등락종목 (2026-11-24 · 글자 1.5배)
+     '1,389 (10)' 은 한 칸에 안 들어가서 상한·하한 수는 숫자 아래 줄로 내렸다. */
+  .mk-br{margin-top:10px; padding-top:9px; border-top:1px dashed #e3e8f0}
+  .mk-br .h, .mk-br .r{display:grid; grid-template-columns:64px 1fr 1fr 1fr; gap:2px; align-items:start; padding-right:3px}
+  .mk-br .h span{font-size:15.75px; font-weight:700; color:#98a1b3; text-align:right; white-space:nowrap}
   .mk-br .h span:first-child{text-align:left}
-  .mk-br .r{margin-top:8px}
-  .mk-br .r span{font-size:25px; font-weight:800; font-variant-numeric:tabular-nums;
+  .mk-br .r{margin-top:6px}
+  .mk-br .r span{font-size:18.75px; font-weight:800; font-variant-numeric:tabular-nums;
     text-align:right; white-space:nowrap; letter-spacing:-.03em}
-  .mk-br .r span.nm{text-align:left; font-size:24px; font-weight:700; color:#5b6577; letter-spacing:-.02em}
-  .mk-br .r i{display:block; font-style:normal; font-size:22px; font-weight:700; letter-spacing:-.02em}
+  .mk-br .r span.nm{text-align:left; font-size:18px; font-weight:700; color:#5b6577; letter-spacing:-.02em}
+  .mk-br .r i{display:block; font-style:normal; font-size:16.5px; font-weight:700; letter-spacing:-.02em}
   .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
   .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
   .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
@@ -800,7 +799,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 지수 글자 2배 확대</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 지수 글자 1.5배</span></div>
     </div>
 
     <div class="sec">초기화</div>
