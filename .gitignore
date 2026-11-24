@@ -47,3 +47,7 @@ tmp_*.py
 
 # 전종목 시세 검증 (2026-11-24)
 test_allprices.py
+
+# 전종목 시세 실배포 검증 (2026-11-24)
+test_live_allprices.py
+shots_allprices/
