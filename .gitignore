@@ -10,3 +10,7 @@ test_local.py
 __pycache__/
 *.pyc
 test_live.py
+fetch_prices.py
+watchlist.json
+test_prices.py
+shots_prices/

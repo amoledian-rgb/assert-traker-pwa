@@ -344,6 +344,15 @@
     display:block; margin:2px 0 0 auto; border:0; background:none; padding:0;
     color:#2f56c8; font-size:11.5px; font-weight:800; text-decoration:underline;
   }
+  /* ---------- 종가 새로고침 버튼 (prices-v1) ---------- */
+  .secright{display:inline-flex; align-items:center; gap:7px; flex:0 0 auto}
+  .px-btn{
+    border:0; border-radius:999px; padding:4px 9px; font-family:inherit; font-size:11.5px; font-weight:800;
+    letter-spacing:-.01em; color:#1B365D; background:rgba(27,54,93,.09); white-space:nowrap;
+  }
+  .px-btn:active{background:rgba(27,54,93,.18)}
+  .px-btn:disabled{opacity:.5}
+  .sec .px-btn{transform:translateY(-1px)}
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
     background:linear-gradient(150deg,#22386b 0%,#16233d 100%); color:#fff;
@@ -422,7 +431,7 @@
 
   <!-- ============ 원화 ============ -->
   <section class="tab" id="tab-krw">
-    <div class="sec">기준일 · 원화자산 <span id="k-share">0.0%</span></div>
+    <div class="sec">기준일 · 원화자산 <span class="secright"><button class="px-btn" type="button" data-prices="1">🔄 종가 새로고침</button><span id="k-share">0.0%</span></span></div>
     <div class="card">
       <label class="f"><span>평가 기준일</span><input class="t txt" id="in-date" type="date"></label>
       <div class="kv" style="margin-top:10px">
@@ -473,7 +482,7 @@
 
   <!-- ============ 달러 ============ -->
   <section class="tab" id="tab-usd">
-    <div class="sec">환율 · 달러자산 <span id="u-fxlabel">—</span></div>
+    <div class="sec">환율 · 달러자산 <span class="secright"><button class="px-btn" type="button" data-prices="1">🔄 종가 새로고침</button><span id="u-fxlabel">—</span></span></div>
     <div class="card">
       <div class="grid2">
         <label class="f"><span>현재 환율 <u>₩/$</u></span><input class="t" id="in-fx" inputmode="decimal"></label>
@@ -557,7 +566,8 @@
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-23 · 원화/달러 분리·보유비중</span></div>
+      <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 종가 자동 반영</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -636,6 +646,8 @@ function normalize(d){
     fx: num(d.fx) || INITIAL.fx,
     /* 기준(매입) 환율 — 선택 입력. 없거나 0 이하면 null(환차익 계산 안 함) (fxgain-v1) */
     fxBase: (d.fxBase == null || d.fxBase === '' || !(num(d.fxBase) > 0)) ? null : num(d.fxBase),
+    /* 종가 자동 반영 이력 — prices.json 의 updatedAt. 같은 파일을 다시 반영하지 않게 한다 (prices-v1) */
+    pricesAppliedAt: (typeof d.pricesAppliedAt === 'string' && d.pricesAppliedAt) ? d.pricesAppliedAt : null,
     accounts: d.accounts.map(function(a){
       return { name:String(a.name||''), type:(a.type==='연금'?'연금':'주식'),
                principal:num(a.principal), cashKrw:num(a.cashKrw), cashUsd:num(a.cashUsd) };
@@ -665,11 +677,12 @@ function loadState(){
   }
   return clone(INITIAL);
 }
-function saveState(){
+function saveState(silent){
   var payload = { app:'자산관리', version:1, savedAt:new Date().toISOString(), data:state };
   try{
     window.localStorage.setItem(KEY, JSON.stringify(payload));
-    memoryOnly = false; lastSaved = new Date();
+    memoryOnly = false;
+    if(!silent) lastSaved = new Date();   /* 종가 자동 반영은 '내가 저장한 시각'이 아니다 */
     /* 이 내용이 '마지막 저장 상태' — 이후 바뀐 것이 있으면 dirty 로 표시한다 (manual-save-v1) */
     baselineText = JSON.stringify(state); dirty = false;
   }catch(e){
@@ -1276,6 +1289,8 @@ function renderBackup(m){
   var curEl = document.getElementById('chk-cur');
   if(curEl) curEl.textContent = kn + '건 / ' + un + '건';
   document.getElementById('chk-saved').textContent = lastSaved ? (lastSaved.getMonth()+1) + '/' + lastSaved.getDate() + ' ' + clockOf(lastSaved) : '—';
+  var pEl = document.getElementById('chk-prices');
+  if(pEl) pEl.textContent = state.pricesAppliedAt ? (priceStampText(state.pricesAppliedAt) + ' 종가') : '—';
 }
 
 /* 데이터가 하나도 없을 때만 첫 실행 안내 배너 */
@@ -1346,6 +1361,85 @@ function toast(msg, ms, kind){
   e.classList.toggle('warn', kind === 'warn');
   e.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(function(){ e.classList.remove('show'); }, ms || 2200);
+}
+
+/* ---------- 종가 자동 채움 (prices-v1) ----------
+   prices.json 에는 종목명·종목코드·현재가·환율만 있다(수량·금액·계좌 없음).
+   앱을 열 때 조용히 한 번 읽어, 파일이 새것이면 종목 현재가와 환율·기준일을 채운다.
+   반영 뒤에는 저장 스냅샷(baseline)까지 함께 갱신해 dirty 가 켜지지 않는다.
+   → 사용자가 직접 입력을 고칠 때만 dirty = true. */
+var PRICES_URL = './prices.json', pricesInfo = null, pricesBusy = false;
+function pnorm(s){ return String(s==null?'':s).replace(/[\s·\.\-_()]+/g,'').toLowerCase(); }
+function priceStampText(iso){
+  var d = new Date(iso);
+  if(!d || isNaN(d.getTime())) return '';
+  return pad2(d.getMonth()+1)+'/'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+/* 반영: 종목명 정규화 매칭(공백·대소문자 무시) → 현재가, 그리고 환율·기준일 */
+function applyPrices(data, force){
+  var res = { matched:0, fx:false, newer:false, names:[] };
+  if(!data || !data.prices || !state || !state.holdings || !state.holdings.length) return res;
+  var stamp = String(data.updatedAt || '');
+  var prev = state.pricesAppliedAt ? String(state.pricesAppliedAt) : '';
+  res.newer = !!stamp && (!prev || stamp > prev);
+  if(!res.newer && !force) return res;
+  var idx = {};
+  Object.keys(data.prices).forEach(function(k){
+    var p = data.prices[k];
+    if(!p) return;
+    [k, p.name, p.naverName].forEach(function(n){ if(n) idx[pnorm(n)] = p; });
+  });
+  state.holdings.forEach(function(h){
+    var p = idx[pnorm(h.name)];
+    if(!p || p.price == null || p.price === '') return;
+    if((p.cur || 'KRW') !== (h.cur || 'KRW')) return;   /* 통화가 다르면 건드리지 않는다 */
+    h.price = num(p.price);
+    res.matched++;
+    if(res.names.indexOf(h.name) < 0) res.names.push(h.name);
+  });
+  if(data.fx != null && num(data.fx) > 0){ state.fx = num(data.fx); res.fx = true; }
+  if(data.date) state.asOf = String(data.date);
+  if(stamp) state.pricesAppliedAt = stamp;
+  else if(!state.pricesAppliedAt) state.pricesAppliedAt = new Date().toISOString();
+  return res;
+}
+/* opts.manual = 사용자가 🔄 종가 새로고침 을 누른 경우(이미 반영된 파일이라도 다시 채운다) */
+function loadPrices(opts){
+  opts = opts || {};
+  if(pricesBusy) return;
+  pricesBusy = true;
+  var btns = document.querySelectorAll('.px-btn');
+  Array.prototype.forEach.call(btns, function(b){ b.disabled = true; });
+  function done(msg, kind){
+    pricesBusy = false;
+    Array.prototype.forEach.call(btns, function(b){ b.disabled = false; });
+    if(msg) toast(msg, 2600, kind);
+  }
+  if(opts.manual && dirty && !confirm('저장 안 된 변경이 있습니다.\n종가를 새로고침하면 지금 화면의 값도 함께 저장됩니다. 계속할까요?')){ done(); return; }
+  var p;
+  try{
+    p = fetch(PRICES_URL + '?t=' + Date.now(), {cache:'no-store'});
+  }catch(err){
+    done(opts.manual ? '종가 파일을 열지 못했습니다 — 인터넷 연결을 확인해 주세요' : '', 'warn');
+    return;
+  }
+  p.then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+   .then(function(data){
+     pricesInfo = data;
+     var res = applyPrices(data, !!opts.manual);
+     if(!res.matched && !res.fx){
+       done(opts.manual ? '지금 종목과 맞는 종가가 파일에 없습니다' : '', 'warn');
+       return;
+     }
+     saveState(true);                 /* 자동 반영도 저장 스냅샷을 갱신 → dirty 가 뜨지 않는다 */
+     renderAll(); renderSavebar(); syncBar();
+     done('최신 종가 반영됨 (' + priceStampText(data.updatedAt || state.pricesAppliedAt) + ')');
+   })
+   .catch(function(err){
+     /* 오프라인·file:// 에서는 조용히 넘어간다 (자동). 수동일 때만 알린다. */
+     if(opts.manual) done('종가를 불러오지 못했습니다 — ' + ((err && err.message) ? err.message : '인터넷 연결을 확인해 주세요'), 'warn');
+     else done();
+   });
 }
 /* ---------- 숫자 입력 포맷 ---------- */
 /* 입력칸 소수 자릿수 (usd4-v1): false → 정수, true·'money' → 2자리, 'usd'·'usdq' → 4자리 */
@@ -1769,11 +1863,17 @@ function boot(){
   dirty = false;
   renderAll();
   renderSavebar();
+  Array.prototype.forEach.call(document.querySelectorAll('.px-btn'), function(b){
+    b.addEventListener('click', function(){ loadPrices({manual:true}); });
+  });
   window.__asset = { get state(){ return state; }, compute:compute, switchTab:switchTab,
                      setFilter:function(c, f){ filters[c] = f; }, save:saveNow,
                      undo:undoAll, get dirty(){ return dirty; }, get baseline(){ return baselineText; },
                      get memoryOnly(){ return memoryOnly; }, get lastSaved(){ return lastSaved; },
-                     get tab(){ return activeTab; } };
+                     get tab(){ return activeTab; }, loadPrices:loadPrices,
+                     get pricesAppliedAt(){ return state.pricesAppliedAt; },
+                     get pricesInfo(){ return pricesInfo; } };
+  loadPrices();   /* 열 때 한 번 — prices.json 이 없거나 오프라인이면 조용히 넘어간다 */
 }
 boot();
 </script>

@@ -1,11 +1,18 @@
 /* 내 자산관리 — 오프라인에서도 앱이 바로 열리도록 껍데기만 캐싱한다.
    사용자가 입력한 자산 데이터는 localStorage 에만 있고 여기로 오지 않는다. */
-var CACHE = 'asset-shell-v9';
-var ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png'];
+var CACHE = 'asset-shell-v10';
+var ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './prices.json'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(
-    caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }).then(function(){ return self.skipWaiting(); })
+    caches.open(CACHE)
+      .then(function(c){
+        /* 하나가 없어도(예: prices.json) 설치는 계속한다 */
+        return Promise.all(ASSETS.map(function(a){
+          return c.add(a).catch(function(){});
+        }));
+      })
+      .then(function(){ return self.skipWaiting(); })
   );
 });
 
@@ -31,6 +38,23 @@ self.addEventListener('fetch', function(e){
   if(req.method !== 'GET') return;
   var url = new URL(req.url);
   if(url.origin !== self.location.origin) return;   /* 이 앱의 파일만 다룬다 */
+
+  if(/(^|\/)prices\.json$/.test(url.pathname)){
+    /* 시세는 네트워크 우선 — 캐시 때문에 옛 종가가 보이면 안 된다.
+       오프라인일 때만 마지막으로 받은 파일을 쓴다. */
+    e.respondWith(
+      fetch(req).then(function(res){
+        if(res && res.ok){
+          var copy = res.clone();
+          caches.open(CACHE).then(function(c){ c.put('./prices.json', copy); }).catch(function(){});
+        }
+        return res;
+      }).catch(function(){
+        return caches.match('./prices.json', {ignoreSearch:true});
+      })
+    );
+    return;
+  }
 
   if(req.mode === 'navigate'){
     /* 화면(index.html)은 인터넷이 있으면 항상 최신 것을 받아 온다.

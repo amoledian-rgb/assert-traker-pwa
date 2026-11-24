@@ -1,0 +1,133 @@
+{
+  "updatedAt": "2026-11-24T13:14:51+09:00",
+  "date": "2026-11-24",
+  "session": "KR",
+  "fx": 1344.3,
+  "fxDate": "2026-11-24",
+  "count": 12,
+  "marketStatus": [
+    "OPEN"
+  ],
+  "prices": {
+    "삼성전자": {
+      "code": "005930",
+      "name": "삼성전자",
+      "naverName": "삼성전자",
+      "cur": "KRW",
+      "price": 192000,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:13:59+09:00"
+    },
+    "삼성전자우": {
+      "code": "005935",
+      "name": "삼성전자우",
+      "naverName": "삼성전자우",
+      "cur": "KRW",
+      "price": 151700,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:19+09:00"
+    },
+    "KODEX 반도체레버리지": {
+      "code": "494310",
+      "name": "KODEX 반도체레버리지",
+      "naverName": "KODEX 반도체레버리지",
+      "cur": "KRW",
+      "price": 32505,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:19+09:00"
+    },
+    "SK하이닉스": {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "naverName": "SK하이닉스",
+      "cur": "KRW",
+      "price": 1182000,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:21+09:00"
+    },
+    "TIGER 반도체TOP10레버리지": {
+      "code": "488080",
+      "name": "TIGER 반도체TOP10레버리지",
+      "naverName": "TIGER 반도체TOP10레버리지",
+      "cur": "KRW",
+      "price": 14895,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:20+09:00"
+    },
+    "ACE KRX금현물": {
+      "code": "411060",
+      "name": "ACE KRX금현물",
+      "naverName": "ACE KRX금현물",
+      "cur": "KRW",
+      "price": 21840,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:21+09:00"
+    },
+    "ACE 미국30년국채액티브": {
+      "code": "476760",
+      "name": "ACE 미국30년국채액티브",
+      "naverName": "ACE 미국30년국채액티브",
+      "cur": "KRW",
+      "price": 8665,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:18+09:00"
+    },
+    "TIGER 기술이전바이오": {
+      "code": "0168K0",
+      "name": "TIGER 기술이전바이오",
+      "naverName": "TIGER 기술이전바이오액티브",
+      "cur": "KRW",
+      "price": 4840,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:21+09:00"
+    },
+    "TIGER 200건설": {
+      "code": "139220",
+      "name": "TIGER 200건설",
+      "naverName": "TIGER 200 건설",
+      "cur": "KRW",
+      "price": 6080,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:20+09:00"
+    },
+    "KODEX 로봇액티브": {
+      "code": "445290",
+      "name": "KODEX 로봇액티브",
+      "naverName": "KODEX 로봇액티브",
+      "cur": "KRW",
+      "price": 26415,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:21+09:00"
+    },
+    "SOL AI반도체TOP2플러스": {
+      "code": "0167A0",
+      "name": "SOL AI반도체TOP2플러스",
+      "naverName": "SOL AI반도체TOP2플러스",
+      "cur": "KRW",
+      "price": 12125,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:20+09:00"
+    },
+    "KODEX 200커버드콜액티브": {
+      "code": "0219E0",
+      "name": "KODEX 200커버드콜액티브",
+      "naverName": "KODEX 200커버드콜액티브",
+      "cur": "KRW",
+      "price": 5855,
+      "market": "KR",
+      "marketStatus": "OPEN",
+      "tradedAt": "2026-11-24T13:14:18+09:00"
+    }
+  }
+}
