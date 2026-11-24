@@ -488,6 +488,16 @@
   .mk-us .tv{display:block; margin-top:2px; font-size:10.5px; color:#98a1b3;
     font-variant-numeric:tabular-nums; white-space:nowrap}
   .mk-us .tv b{color:#5b6577; font-weight:700}
+  /* 국내 지수 카드 하단 — 코스피·코스닥 등락종목 (2026-11-24) */
+  .mk-br{margin-top:9px; padding-top:8px; border-top:1px dashed #e3e8f0}
+  .mk-br .h, .mk-br .r{display:grid; grid-template-columns:54px 1fr 1fr 1fr; gap:2px; align-items:baseline}
+  .mk-br .h span{font-size:10.5px; font-weight:700; color:#98a1b3; text-align:right; white-space:nowrap}
+  .mk-br .h span:first-child{text-align:left}
+  .mk-br .r{margin-top:4px}
+  .mk-br .r span{font-size:12.5px; font-weight:800; font-variant-numeric:tabular-nums;
+    text-align:right; white-space:nowrap; letter-spacing:-.02em}
+  .mk-br .r span.nm{text-align:left; font-size:12px; font-weight:700; color:#5b6577}
+  .mk-br .r i{font-style:normal; font-size:11px; font-weight:700}
   .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
   .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
   .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
@@ -3020,7 +3030,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T23:12:37+09:00",
+ "updatedAt": "2026-11-24T23:14:33+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
@@ -3107,10 +3117,34 @@ var MARKET_INLINE = {
     }
    ],
    "ready": true,
-   "note": "코스피 200은 현물 지수, 코스피 200 선물은 최근월물입니다. 선물 거래대금은 명목가 기준입니다."
+   "note": "코스피 200은 현물 지수, 코스피 200 선물은 최근월물입니다. 선물 거래대금은 명목가 기준입니다.",
+   "breadth": {
+    "rows": [
+     {
+      "key": "KOSPI",
+      "name": "코스피",
+      "rising": 797,
+      "upper": 2,
+      "unchanged": 19,
+      "falling": 94,
+      "lower": 0
+     },
+     {
+      "key": "KOSDAQ",
+      "name": "코스닥",
+      "rising": 1389,
+      "upper": 10,
+      "unchanged": 39,
+      "falling": 322,
+      "lower": 0
+     }
+    ],
+    "ready": true,
+    "note": null
+   }
   },
   "us": {
-   "asOf": "2026-11-24T09:12:31-05:00",
+   "asOf": "2026-11-24T09:14:28-05:00",
    "src": "네이버 증권 해외지수",
    "rows": [
     {
@@ -3119,7 +3153,7 @@ var MARKET_INLINE = {
      "value": 7237.17,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:31-05:00",
+     "asOf": "2026-11-24T09:14:28-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3130,7 +3164,7 @@ var MARKET_INLINE = {
      "value": 24089.56,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:31-05:00",
+     "asOf": "2026-11-24T09:14:28-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3141,7 +3175,7 @@ var MARKET_INLINE = {
      "value": 49595.31,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:32-05:00",
+     "asOf": "2026-11-24T09:14:29-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3152,7 +3186,7 @@ var MARKET_INLINE = {
      "value": 9588.05,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:32-05:00",
+     "asOf": "2026-11-24T09:14:29-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3163,7 +3197,7 @@ var MARKET_INLINE = {
      "value": 26746.1,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:33-05:00",
+     "asOf": "2026-11-24T09:14:30-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3174,7 +3208,7 @@ var MARKET_INLINE = {
      "value": 20054.55,
      "change": 0,
      "pct": 0,
-     "asOf": "2026-11-24T09:12:33-05:00",
+     "asOf": "2026-11-24T09:14:30-05:00",
      "status": "PREOPEN",
      "statusText": "장 개시 전",
      "dec": 2
@@ -3335,43 +3369,43 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T09:02:28-05:00",
+   "asOf": "2026-11-24T09:04:25-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.88,
-     "change": -0.44,
-     "pct": -0.42,
-     "asOf": "2026-11-24T09:02:28-05:00",
+     "value": 103.87,
+     "change": -0.45,
+     "pct": -0.43,
+     "asOf": "2026-11-24T09:04:25-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 29.64,
-     "change": 3.02,
-     "pct": 11.34,
-     "asOf": "2026-11-24T08:57:30-05:00",
+     "value": 29.76,
+     "change": 3.14,
+     "pct": 11.8,
+     "asOf": "2026-11-24T08:59:27-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3619.5,
-     "change": -31.9,
-     "pct": -0.87,
-     "asOf": "2026-11-24T08:02:30-06:00",
+     "value": 3614.5,
+     "change": -36.9,
+     "pct": -1.01,
+     "asOf": "2026-11-24T08:04:27-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.4375,
-     "change": -0.1965,
-     "pct": -3.49,
-     "asOf": "2026-11-24T08:02:30-06:00",
+     "value": 5.429,
+     "change": -0.205,
+     "pct": -3.64,
+     "asOf": "2026-11-24T08:04:27-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3380,25 +3414,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T08:02:30-06:00",
+   "asOf": "2026-11-24T08:04:27-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.89,
-     "change": 0.72,
-     "pct": 0.9,
-     "asOf": "2026-11-24T08:02:30-06:00",
+     "value": 81.06,
+     "change": 0.89,
+     "pct": 1.11,
+     "asOf": "2026-11-24T08:04:27-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.1,
-     "change": 0.73,
-     "pct": 0.82,
-     "asOf": "2026-11-24T14:02:30Z",
+     "value": 90.25,
+     "change": 0.88,
+     "pct": 0.98,
+     "asOf": "2026-11-24T14:04:27Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3441,36 +3475,36 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T23:11:43+09:00",
+   "asOf": "2026-11-24T23:12:43+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343.4,
-     "change": 0.9,
-     "pct": 0.07,
-     "asOf": "2026-11-24T23:11:43+09:00",
+     "value": 1343.6,
+     "change": 1.1,
+     "pct": 0.08,
+     "asOf": "2026-11-24T23:12:43+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.06,
-     "change": -0.33,
-     "pct": -0.04,
-     "asOf": "2026-11-24T23:11:43+09:00",
+     "value": 844.23,
+     "change": -0.16,
+     "pct": -0.02,
+     "asOf": "2026-11-24T23:12:43+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1473.64,
-     "change": 9.91,
-     "pct": 0.68,
-     "asOf": "2026-11-24T23:11:43+09:00",
+     "value": 1473.79,
+     "change": 10.06,
+     "pct": 0.69,
+     "asOf": "2026-11-24T23:12:43+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -3578,7 +3612,24 @@ function renderMarket(){
       + '</div>';
   });
   if(!h) h = '<div><span class="n">—</span><span class="v">—</span><span class="c flat">미제공</span></div>';
-  document.getElementById('mk-index').innerHTML = '<div class="mk-us">' + h + '</div>' + mkNote(ix.note, !ix.ready);
+  /* 등락종목 — 코스피·코스닥 두 줄 (상승·보합·하락, 괄호는 상한가·하한가) */
+  var brh = '';
+  ((ix.breadth || {}).rows || []).forEach(function(r){
+    if(r.rising === null || r.rising === undefined){
+      brh += '<div class="r"><span class="nm">' + esc(r.name) + '</span>'
+        + '<span class="flat">—</span><span class="flat">—</span><span class="flat">—</span></div>';
+      return;
+    }
+    brh += '<div class="r"><span class="nm">' + esc(r.name) + '</span>'
+      + '<span class="up">' + mkFixed(r.rising, 0)
+      + (r.upper === null || r.upper === undefined ? '' : ' <i>(' + mkFixed(r.upper, 0) + ')</i>') + '</span>'
+      + '<span class="flat">' + mkFixed(r.unchanged, 0) + '</span>'
+      + '<span class="down">' + mkFixed(r.falling, 0)
+      + (r.lower === null || r.lower === undefined ? '' : ' <i>(' + mkFixed(r.lower, 0) + ')</i>') + '</span></div>';
+  });
+  var brBlock = brh ? '<div class="mk-br"><div class="h"><span>등락종목</span><span>상승</span>'
+    + '<span>보합</span><span>하락</span></div>' + brh + '</div>' : '';
+  document.getElementById('mk-index').innerHTML = '<div class="mk-us">' + h + '</div>' + brBlock + mkNote(ix.note, !ix.ready);
 
   /* 1-2 · 미국 지수 (S&P500·나스닥 종합·다우존스·필라델피아 반도체·나스닥100·다우운송 — 2열 그리드) */
   var us = S.us || {};
