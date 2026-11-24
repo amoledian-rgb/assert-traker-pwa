@@ -146,6 +146,10 @@
   input.t:focus{border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(59,110,240,.12)}
   input.t.big{font-size:21px; height:46px; color:#0f1c33}
   .grid2>label.f>input.t{height:46px}
+  .gridname{display:grid; grid-template-columns:minmax(0,1fr) 104px; gap:8px; margin-top:7px}
+  .gridname>label.f>input.t{height:42px}
+  .px-miss{display:block; margin-top:7px; padding:7px 9px; border-radius:10px; background:#fff7e8;
+    border:1px solid #f2ddb6; color:#8a5200; font-size:12.5px; font-weight:700; line-height:1.45}
   input.t.txt{text-align:left; font-weight:600; font-size:16.5px}
   input.t::placeholder{color:#c3c9d6; font-weight:600}
   .chips{display:flex; gap:7px; overflow-x:auto; padding:2px 12px 10px; margin:0 -12px; scrollbar-width:none}
@@ -309,6 +313,7 @@
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
   .toast.warn{background:#7a4a11}
+  .toast.long{border-radius:16px; padding:12px 15px; text-align:left; line-height:1.5; max-width:92vw}
   /* ---------- 저장 바 ---------- */
   .savebar{
     position:fixed; left:0; right:0; bottom:0; z-index:29; display:none; gap:9px; align-items:center;
@@ -439,7 +444,7 @@
         <div><span>원화 예수금</span><b id="k-cash">0원</b></div>
         <div class="full"><span>원화 합계</span><b id="k-total">0원</b></div>
       </div>
-      <p class="hint">원화 종목의 현재가만 고치면 됩니다. 달러($) 종목은 <b>달러 탭</b>에서 넣습니다.</p>
+      <p class="hint">종목명이나 <b>티커(예: 005930)</b>와 수량만 넣고 <b>💾 저장하기</b>를 누르면 현재가를 자동으로 채웁니다. 달러($) 종목은 <b>달러 탭</b>에서 넣습니다.</p>
     </div>
 
     <div class="sec">원화 보유 종목 <span id="k-holdn">0건</span></div>
@@ -567,7 +572,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 종가 자동 반영</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 종가 자동 반영 · 티커로 현재가 조회</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -654,6 +659,7 @@ function normalize(d){
     }),
     holdings: d.holdings.map(function(h,i){
       return { id:String(h.id || ('h'+i)), account:String(h.account||''), name:String(h.name||''),
+               code:String(h.code||'').trim(),
                cur:(h.cur==='USD'?'USD':'KRW'),
                price:(h.price===''||h.price==null)?null:num(h.price),
                qty:(h.qty===''||h.qty==null)?null:num(h.qty),
@@ -724,18 +730,92 @@ function syncBar(){
   if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
 }
 /* 💾 저장하기 — 이때만 localStorage 에 쓴다. */
-function saveNow(){
+function doSave(quiet){
   saveState();
   renderSavebar();
   syncBar();
   if(memoryOnly){
     toast('저장 공간이 막혀 있습니다 — 백업 파일로 남겨 주세요', 3200, 'warn');
+    return false;
+  }
+  if(!quiet) toast('저장되었습니다 ✓ (' + nowClockSec() + ')');
+  var b = document.getElementById('btn-save');
+  if(b){ b.classList.remove('done'); void b.offsetWidth; b.classList.add('done'); setTimeout(function(){ b.classList.remove('done'); }, 800); }
+  return true;
+}
+/* ---------- 저장할 때 현재가 자동 조회 (ticker-save-v1) ----------
+   종목명 또는 티커만 넣고 저장하면 prices.json 을 새로 받아 현재가를 채운다.
+   파일에 없는 종목은 현재가를 0으로 두고 상태를 숨기지 않고 알린다. */
+var UNREG_MSG = '미등록 종목은 현재가를 0으로 저장했어요. 톡으로 종목명/티커 알려주시면 시세 목록에 바로 추가해 드려요';
+function needPrice(h){
+  var named = String(h.name || '').trim() !== '' || String(h.code || '').trim() !== '';
+  return named && !(num(h.price) > 0);
+}
+function rerenderAfterPrices(){
+  var m = compute();
+  renderHeader(m);   /* 저장하면서 채운 현재가가 위 총자산에도 반영되게 */
+  if(activeTab === 'krw' || activeTab === 'usd') renderCurrencyTab(curTab(), m);
+  renderSavebar(); syncBar();
+}
+function saveNow(){
+  var lacks = state.holdings.filter(needPrice);
+  if(!lacks.length){ doSave(); return; }
+  if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
+    doSave(true);
+    toast('파일로 연 화면에서는 시세를 못 불러와요 — 홈 화면 앱으로 열면 저장할 때 현재가가 채워집니다', 4400, 'warn');
     return;
   }
-  toast('저장되었습니다 ✓ (' + nowClockSec() + ')');
-  var b = document.getElementById('btn-save');
-  b.classList.remove('done'); void b.offsetWidth; b.classList.add('done');
-  setTimeout(function(){ b.classList.remove('done'); }, 800);
+  var btn = document.getElementById('btn-save');
+  if(btn){ btn.disabled = true; btn.textContent = '시세 확인 중…'; }
+  function finish(){ if(btn){ btn.disabled = false; btn.textContent = '💾 저장하기'; } }
+  fetch(PRICES_URL + '?t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+    .then(function(data){
+      pricesInfo = data; indexPrices(data);
+      var filled = [], missed = [], fresh = [], mism = [];
+      lacks.forEach(function(h){
+        var p = priceFor(h);
+        if(!p){
+          var again = !!pxMiss[h.id];   /* 이전 저장에서도 못 찾은 종목은 긴 안내를 반복하지 않는다 */
+          pxMiss[h.id] = 1;
+          missed.push(String(h.name || h.code || '').trim() || '이름 없는 종목');
+          if(!again) fresh.push(String(h.name || h.code || '').trim());
+          return;
+        }
+        if(p.mismatch){
+          mism.push(String(h.name || h.code || ''));
+          pxMiss[h.id] = 1;
+          return;
+        }
+        fillFromPrice(h, p);
+        filled.push(String(h.name || h.code) + ' ' + (h.cur === 'USD' ? usd(h.price) : won(h.price)));
+      });
+      finish();
+      var ok = doSave(true);
+      rerenderAfterPrices();
+      if(!ok) return;
+      if(missed.length && fresh.length){
+        toast((filled.length ? filled.length + '종목 현재가 자동 입력 · ' : '') + UNREG_MSG, 5600, 'warn');
+      }else if(filled.length){
+        toast(filled.length + '종목 현재가 자동 입력 · ' + filled[0] + ' · 저장되었습니다 ✓'
+              + (missed.length ? ' (미등록 ' + missed.length + '종목은 현재가 0)' : ''), 3400);
+      }else if(missed.length){
+        /* 이미 알린 종목만 남아 있었다 — 카드 안내만으로 충분하다 */
+        toast('저장되었습니다 ✓ — 미등록 ' + missed.length + '종목은 현재가 0입니다', 3000, 'warn');
+      }else if(mism.length){
+        toast('달러·원화 통화가 다른 종목이에요 — 그 통화 탭에서 넣어 주세요 (현재가는 0으로 저장)', 4200, 'warn');
+      }else{
+        toast('저장되었습니다 ✓ (' + nowClockSec() + ')');
+      }
+    })
+    .catch(function(){
+      /* 시세를 못 받아도 저장은 꼭 한다 — 현재가는 비운 채로 */
+      finish();
+      var ok = doSave(true);
+      rerenderAfterPrices();
+      if(!ok) return;
+      toast('시세를 못 불러와 현재가는 비운 채 저장했습니다 — 잠시 뒤 🔄 종가 새로고침을 눌러 보세요', 4200, 'warn');
+    });
 }
 /* ↩️ 되돌리기 — 저장하지 않은 변경을 버리고 마지막 저장 상태로 돌아간다. */
 function undoAll(){
@@ -816,14 +896,15 @@ function compute(){
 
   var sk = {}, skOrder = [];
   rows.forEach(function(r){
-    var nm = (r.h.name || '').trim();
+    var nm = (r.h.name || r.h.code || '').trim();   /* 이름이 비어 있으면 티커로 보여 준다 */
     if(!nm) return;
     var key = nm + '|' + r.h.cur;
     if(!sk[key]){
-      sk[key] = { name:nm, cur:r.h.cur, qty:0, vn:0, vk:0, accts:[], costQty:0, costAmt:0, allCost:true };
+      sk[key] = { name:nm, code:(r.h.code || ''), cur:r.h.cur, qty:0, vn:0, vk:0, accts:[], costQty:0, costAmt:0, allCost:true };
       skOrder.push(key);
     }
     var s = sk[key];
+    if(!s.code && r.h.code) s.code = r.h.code;
     s.qty += r.qty; s.vn += r.vn; s.vk += r.vk;
     if(s.accts.indexOf(r.h.account) < 0) s.accts.push(r.h.account);
     if(r.h.avg == null || num(r.h.avg) <= 0 || r.qty <= 0){ s.allCost = false; }
@@ -1019,7 +1100,11 @@ function holdCard(h, r){
       '<div class="seg"><button class="a-cur' + (h.cur==='KRW'?' on':'') + '" data-cur="KRW">KRW</button>' +
       '<button class="a-cur' + (h.cur==='USD'?' on':'') + '" data-cur="USD">USD</button></div>' +
     '</div>' +
-    '<label class="f"><span>종목명</span><input class="t txt a-name" value="' + esc(h.name) + '" placeholder="예: 배당주 ETF"></label>' +
+    '<div class="gridname">' +
+      '<label class="f"><span>종목명</span><input class="t txt a-name" value="' + esc(h.name) + '" placeholder="예: 배당주 ETF"></label>' +
+      '<label class="f"><span>티커 <u>선택</u></span><input class="t txt a-code" value="' + esc(h.code || '') + '" placeholder="' + (usdCur ? 'NVDA' : '005930') + '" autocomplete="off" autocapitalize="characters"></label>' +
+    '</div>' +
+    (pxMiss[h.id] ? '<div class="px-miss">시세 목록에 없는 종목이에요 — 현재가를 직접 넣거나, 써니에게 종목명·티커를 알려 주세요.</div>' : '') +
     '<div class="grid2" style="margin-top:7px">' +
       '<label class="f"><span>현재가 <u>' + (usdCur?'$':'원') + '</u></span><input type="text" class="t big a-price" inputmode="' + im + '"' + stp + ' value="' + (h.price==null?'':(usdCur?fmtNum2(h.price):fmtInt(h.price))) + '" placeholder="0"></label>' +
       '<label class="f"><span>수량 <u>주</u></span><input type="text" class="t a-qty" inputmode="' + im + '"' + stp + ' value="' + (h.qty==null?'':fmtNum(h.qty, usdCur)) + '" placeholder="0"></label>' +
@@ -1187,7 +1272,7 @@ function renderStocks(m){
     return '<div class="srow">' +
       '<div class="top"><b>' + esc(s.name) + '</b><span class="tag' + (s.cur==='USD'?' usd':'') + '">' + s.cur + '</span>' +
       '<span class="w">' + pct(s.weight) + '</span></div>' +
-      '<div class="meta"><span>' + fmtNum(s.qty, true) + '주 · ' + meta2 + '주식 내 ' + pct(s.stockWeight) + '</span>' +
+      '<div class="meta"><span>' + (s.code ? esc(s.code) + ' · ' : '') + fmtNum(s.qty, true) + '주 · ' + meta2 + '주식 내 ' + pct(s.stockWeight) + '</span>' +
       '<span class="v">' + (s.cur==='USD'? usd(s.vn) : won(s.vk)) + '</span></div>' +
       '<div class="meta"><span>' + s.accts.map(shortName).join(', ') + '</span><span>' + pnl + '</span></div>' +
     '</div>';
@@ -1359,6 +1444,7 @@ function toast(msg, ms, kind){
   var e = document.getElementById('toast');
   e.textContent = msg;
   e.classList.toggle('warn', kind === 'warn');
+  e.classList.toggle('long', String(msg).length > 34);
   e.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(function(){ e.classList.remove('show'); }, ms || 2200);
 }
@@ -1369,31 +1455,91 @@ function toast(msg, ms, kind){
    반영 뒤에는 저장 스냅샷(baseline)까지 함께 갱신해 dirty 가 켜지지 않는다.
    → 사용자가 직접 입력을 고칠 때만 dirty = true. */
 var PRICES_URL = './prices.json', pricesInfo = null, pricesBusy = false;
+var priceIdx = { byName:{}, byCode:{} };
+var pxMiss = {};   /* 이번 화면에서 시세를 못 찾은 종목 id — 카드에 안내를 띄운다 */
 function pnorm(s){ return String(s==null?'':s).replace(/[\s·\.\-_()]+/g,'').toLowerCase(); }
+/* 종목코드 비교용 (ticker-v1)
+   대소문자·공백·점 구분 무시, 숫자코드는 6자리로 (5930 · A005930 → 005930), NVDA.O → NVDA */
+function pcode(s){
+  var t = String(s==null?'':s).replace(/[\s\-_]/g,'').toUpperCase();
+  t = t.replace(/^A(\d{6})$/, '$1').replace(/\.(KS|KQ|O|N)$/, '');
+  if(/^\d{1,6}$/.test(t)) t = ('000000' + t).slice(-6);
+  return t;
+}
+/* prices.json 을 이름·코드 두 가지 색인으로 만든다 */
+function indexPrices(data){
+  var byName = {}, byCode = {};
+  Object.keys((data && data.prices) || {}).forEach(function(k){
+    var p = data.prices[k];
+    if(!p) return;
+    [k, p.name, p.naverName].forEach(function(n){
+      var key = pnorm(n);
+      if(key && !byName[key]) byName[key] = p;
+    });
+    if(p.code){ var c = pcode(p.code); if(c && !byCode[c]) byCode[c] = p; }
+  });
+  priceIdx = { byName: byName, byCode: byCode };
+  return priceIdx;
+}
+/* 종목명 또는 티커로 시세 찾기 — 코드 → 이름 → (종목명 칸에 적힌) 코드 순 */
+function findPrice(name, code){
+  var c = pcode(code);
+  if(c && priceIdx.byCode[c]) return priceIdx.byCode[c];
+  var n = pnorm(name);
+  if(n && priceIdx.byName[n]) return priceIdx.byName[n];
+  if(n && priceIdx.byCode[pcode(name)]) return priceIdx.byCode[pcode(name)];
+  return null;
+}
+/* 이 종목에 채울 시세 — 통화가 다르면 {mismatch:true} 로 돌려준다 */
+function priceFor(h){
+  if(!h) return null;
+  var p = findPrice(h.name, h.code);
+  if(!p) return null;
+  if(p.cur && h.cur && p.cur !== h.cur) return { mismatch:true, entry:p };
+  if(p.price == null || p.price === '') return null;
+  return p;
+}
+/* 시세로 빈 현재가·티커·종목명을 보완한다.
+   종목명 칸에 티커를 적어 둔 경우(005930)에는 찾은 진짜 이름으로 바꾼다. */
+function fillFromPrice(h, p){
+  var changed = false;
+  if(num(h.price) <= 0){ h.price = num(p.price); changed = true; }
+  if(!String(h.code || '').trim() && p.code){ h.code = String(p.code); changed = true; }
+  var nm = String(h.name || '').trim();
+  var asCode = !!nm && /^[A-Za-z0-9.\-]+$/.test(nm) && !priceIdx.byName[pnorm(nm)];
+  if(!nm || asCode){
+    var better = String(p.name || p.naverName || '').trim();
+    if(better && better !== nm){ h.name = better; changed = true; }
+  }
+  if(changed) delete pxMiss[h.id];
+  return changed;
+}
 function priceStampText(iso){
   var d = new Date(iso);
   if(!d || isNaN(d.getTime())) return '';
   return pad2(d.getMonth()+1)+'/'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());
 }
-/* 반영: 종목명 정규화 매칭(공백·대소문자 무시) → 현재가, 그리고 환율·기준일 */
+/* 반영: 종목명·티커 양쪽으로 찾아 현재가를 채우고, 빈 종목명·코드는 보완한다 */
 function applyPrices(data, force){
-  var res = { matched:0, fx:false, newer:false, names:[] };
-  if(!data || !data.prices || !state || !state.holdings || !state.holdings.length) return res;
+  var res = { matched:0, fx:false, newer:false, names:[], mismatch:[] };
+  if(!data || !data.prices){ indexPrices(data); return res; }
+  indexPrices(data);
+  if(!state || !state.holdings || !state.holdings.length) return res;
   var stamp = String(data.updatedAt || '');
   var prev = state.pricesAppliedAt ? String(state.pricesAppliedAt) : '';
   res.newer = !!stamp && (!prev || stamp > prev);
   if(!res.newer && !force) return res;
-  var idx = {};
-  Object.keys(data.prices).forEach(function(k){
-    var p = data.prices[k];
-    if(!p) return;
-    [k, p.name, p.naverName].forEach(function(n){ if(n) idx[pnorm(n)] = p; });
-  });
   state.holdings.forEach(function(h){
-    var p = idx[pnorm(h.name)];
+    if(!String(h.name || '').trim() && !String(h.code || '').trim()) return;
+    var p = findPrice(h.name, h.code);
     if(!p || p.price == null || p.price === '') return;
-    if((p.cur || 'KRW') !== (h.cur || 'KRW')) return;   /* 통화가 다르면 건드리지 않는다 */
+    if(p.cur && h.cur && p.cur !== h.cur){
+      if(res.mismatch.indexOf(h.name || h.code) < 0) res.mismatch.push(String(h.name || h.code));
+      return;
+    }
     h.price = num(p.price);
+    fillFromPrice(h, p);   /* 빈 티커·종목명 보완 (현재가는 위에서 채웠다) */
+    delete pxMiss[h.id];
     res.matched++;
     if(res.names.indexOf(h.name) < 0) res.names.push(h.name);
   });
@@ -1430,9 +1576,13 @@ function loadPrices(opts){
   p.then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
    .then(function(data){
      pricesInfo = data;
+     indexPrices(data);
      var res = applyPrices(data, !!opts.manual);
      if(!res.matched && !res.fx){
-       done(opts.manual ? '지금 종목과 맞는 종가가 파일에 없습니다' : '', 'warn');
+       var why = res.mismatch && res.mismatch.length
+         ? '통화가 다른 종목만 있습니다 — 달러 종목은 달러 탭에서 채워집니다'
+         : '지금 종목과 맞는 종가가 파일에 없습니다';
+       done(opts.manual ? why : '', 'warn');
        return;
      }
      saveState(true);                 /* 자동 반영도 저장 스냅샷을 갱신 → dirty 가 뜨지 않는다 */
@@ -1566,10 +1716,11 @@ function bindHolds(cur){
     var t = e.target;
     var h = holdById(card.getAttribute('data-id'));
     if(!h) return;
-    if(t.classList.contains('a-name')){ h.name = t.value; afterChange(); return; }
+    if(t.classList.contains('a-name')){ h.name = t.value; afterChange(); autoFillOnType(h, card); return; }
+    if(t.classList.contains('a-code')){ h.code = t.value.trim(); afterChange(); autoFillOnType(h, card); return; }
     if(!(t.classList.contains('a-price') || t.classList.contains('a-qty') || t.classList.contains('a-avg'))) return;
     formatLive(t, fieldDec(t, h));
-    if(t.classList.contains('a-price')) h.price = (t.value === '' ? null : num(t.value));
+    if(t.classList.contains('a-price')){ h.price = (t.value === '' ? null : num(t.value)); if(num(h.price) > 0) delete pxMiss[h.id]; }
     else if(t.classList.contains('a-qty')) h.qty = (t.value === '' ? null : num(t.value));
     else h.avg = (t.value === '' ? null : num(t.value));
     afterChange();
@@ -1624,7 +1775,7 @@ bindHolds('KRW'); bindHolds('USD');
 function addHold(cur){
   var f = filters[cur];
   var acc = (f !== 'all') ? f : (state.accounts[0] ? state.accounts[0].name : '');
-  var h = { id:'h' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), account:acc, name:'',
+  var h = { id:'h' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), account:acc, name:'', code:'',
             cur:cur, price:null, qty:null, avg:null };
   state.holdings.push(h);
   filters[cur] = acc;
@@ -1633,7 +1784,27 @@ function addHold(cur){
   var cards = box.querySelectorAll('.card[data-id]');
   var last = cards[cards.length-1];
   if(last){ try{ last.scrollIntoView({block:'center'}); }catch(err){} var nm = last.querySelector('.a-name'); if(nm) nm.focus(); }
-  toast('새 ' + (cur === 'USD' ? '달러' : '원화') + ' 종목을 추가했습니다 — 이름·현재가·수량을 적어 주세요', 2800);
+  toast('새 ' + (cur === 'USD' ? '달러' : '원화') + ' 종목을 추가했습니다 — 종목명이나 티커·수량을 적으면 현재가를 채웁니다', 2800);
+}
+/* 이름·티커를 입력하는 즉시 prices.json 에서 찾아 현재가를 채운다 (저장 전에도) */
+function autoFillOnType(h, card){
+  if(!pricesInfo || num(h.price) > 0) return;
+  var p = priceFor(h);
+  if(!p || p.mismatch) return;
+  fillFromPrice(h, p);
+  afterChange();
+  if(card){
+    var pi = card.querySelector('.a-price');
+    if(pi && document.activeElement !== pi) pi.value = (h.cur === 'USD' ? fmtNum2(h.price) : fmtInt(h.price));
+    var ci = card.querySelector('.a-code');
+    if(ci && ci.value !== (h.code || '')){ ci.value = h.code || ''; }
+    var ni = card.querySelector('.a-name');
+    if(ni && ni.value !== (h.name || '')){
+      ni.value = h.name || '';   /* 종목명 칸에 티커를 적었으면 진짜 이름으로 */
+      if(document.activeElement === ni){ try{ ni.setSelectionRange(ni.value.length, ni.value.length); }catch(err){} }
+    }
+  }
+  toast('"' + (h.name || h.code) + '" 현재가 ' + (h.cur === 'USD' ? usd(h.price) : won(h.price)) + ' 자동 입력', 2200);
 }
 document.getElementById('addh-krw').addEventListener('click', function(){ addHold('KRW'); });
 document.getElementById('addh-usd').addEventListener('click', function(){ addHold('USD'); });

@@ -16,3 +16,6 @@ test_prices.py
 shots_prices/
 update_and_publish.sh
 test_local_file.py
+shots_ticker/
+test_ticker.py
+probe_cors.py
