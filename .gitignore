@@ -19,3 +19,6 @@ test_local_file.py
 shots_ticker/
 test_ticker.py
 probe_cors.py
+test_trend.py
+shots_trend/
+shots_trend_live/

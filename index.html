@@ -297,13 +297,13 @@
     background:#fff; border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px);
     box-shadow:0 -6px 16px -12px rgba(20,27,43,.35);
   }
-  /* 6개 탭: 390px 폭에서 2글자 라벨이 잘리지 않게 (nav-v6) */
+  /* 7개 탭: 390px 폭에서 2글자 라벨이 잘리지 않게 (nav-v7) */
   nav button{
     flex:1 1 0; min-width:0; border:0; background:transparent; padding:7px 0 8px; color:#98a1b3;
     display:flex; flex-direction:column; align-items:center; gap:2px;
-    font-size:11px; font-weight:700; letter-spacing:-.03em; white-space:nowrap;
+    font-size:10.5px; font-weight:700; letter-spacing:-.04em; white-space:nowrap;
   }
-  nav button i{font-style:normal; font-size:19px; line-height:1.15; filter:grayscale(1); opacity:.55}
+  nav button i{font-style:normal; font-size:18px; line-height:1.15; filter:grayscale(1); opacity:.55}
   nav button.on{color:var(--navy)}
   nav button.on i{filter:none; opacity:1}
   .toast{
@@ -358,6 +358,70 @@
   .px-btn:active{background:rgba(27,54,93,.18)}
   .px-btn:disabled{opacity:.5}
   .sec .px-btn{transform:translateY(-1px)}
+  /* ---------- 추이 탭 (trend-v1) ---------- */
+  .tr-seg{display:flex; gap:6px; margin:0 0 10px}
+  .tr-seg button{
+    flex:1; min-width:0; height:36px; border:1px solid var(--line); border-radius:10px; background:#fff;
+    color:#7c869b; font-size:13.5px; font-weight:800; padding:0;
+  }
+  .tr-seg button.on{background:var(--navy); border-color:var(--navy); color:#fff}
+  .tr-chart{margin:0; -webkit-user-select:none; user-select:none}
+  .tr-chart svg{display:block; width:100%; height:auto}
+  .tr-chart .ax{stroke:#e7eaf0; stroke-width:1; stroke-dasharray:3 4}
+  .tr-chart .yl{fill:#98a1b3; font-size:9px; font-weight:700}
+  .tr-chart .xl{fill:#98a1b3; font-size:9px; font-weight:700}
+  .tr-chart .dot{fill:#fff; stroke:#3b6ef0; stroke-width:1.6}
+  .tr-chart .dot.sel{fill:#3b6ef0; stroke:#fff; stroke-width:2}
+  .tr-chart .hit{fill:transparent}
+  .tr-chart .tipbg{fill:rgba(13,23,41,.95)}
+  .tr-chart .tt1{fill:#c7d3e8; font-size:8.5px; font-weight:700}
+  .tr-chart .tt2{fill:#fff; font-size:10px; font-weight:800}
+  .tr-chart .vline{stroke:#c3cbd9; stroke-width:1; stroke-dasharray:2 3}
+  .tr-empty{text-align:center; color:#8b93a4; font-size:13.5px; line-height:1.6; padding:24px 6px}
+  .tr-kg{display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:11px; background:var(--line); border-radius:11px; overflow:hidden}
+  .tr-kg>div{background:#fbfcfe; padding:8px 10px; min-width:0}
+  .tr-kg span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
+  .tr-kg b{display:block; font-size:14px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .tr-kg em{display:block; font-style:normal; font-size:11.5px; font-weight:700; margin-top:1px; font-variant-numeric:tabular-nums}
+  .tr-row{display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px solid var(--line)}
+  .tr-row:last-child{border-bottom:0; padding-bottom:2px}
+  .tr-row:first-child{padding-top:2px}
+  .tr-row .d{flex:1; min-width:0}
+  .tr-row .d b{display:block; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .tr-row .d span{display:block; font-size:12px; font-variant-numeric:tabular-nums; margin-top:1px}
+  .tr-row .a{text-align:right; flex:0 0 auto; max-width:44%}
+  .tr-row .a b{display:block; font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .tr-row .a span{display:block; font-size:11.5px; font-variant-numeric:tabular-nums; margin-top:1px; white-space:nowrap}
+  .tr-go{
+    flex:0 0 auto; height:32px; padding:0 10px; border-radius:9px; border:1px solid #c9d4ef;
+    background:#eef2ff; color:#1f3f8f; font-size:12.5px; font-weight:800; white-space:nowrap;
+  }
+  .tr-go:active{filter:brightness(.96)}
+  .tr-row.on{background:#f4f7ff; border-radius:10px; padding-left:6px; padding-right:6px; margin:0 -6px}
+  .tr-row.on .tr-go{background:#1B365D; border-color:#1B365D; color:#fff}
+  .tr-now{margin-top:9px; display:flex; align-items:center; gap:8px; font-size:12px; color:#8b93a4; line-height:1.45}
+  .tr-now span{flex:1; min-width:0}
+  .tr-now button{
+    flex:0 0 auto; height:32px; padding:0 10px; border-radius:9px; border:1px solid #e2cd9e;
+    background:#fdf6e7; color:#7a4a11; font-size:12px; font-weight:800; white-space:nowrap;
+  }
+  /* ---------- 과거 기록 조회 배너 (trend-v1) ---------- */
+  #view-banner{
+    position:fixed; left:0; right:0; z-index:29; display:none; align-items:center; gap:8px;
+    padding:8px 12px; background:linear-gradient(150deg,#8a5a12,#6b4408); color:#fff;
+    font-size:12.5px; font-weight:800; letter-spacing:-.01em;
+    box-shadow:0 6px 14px -10px rgba(13,23,41,.85);
+  }
+  #view-banner.on{display:flex}
+  #view-banner .vb-t{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  #view-banner button{
+    flex:0 0 auto; height:30px; padding:0 10px; border-radius:9px; border:0;
+    background:#fff; color:#6b4408; font-size:12.5px; font-weight:800; white-space:nowrap;
+  }
+  body.viewing #tab-krw input, body.viewing #tab-usd input{pointer-events:none; color:#8b93a4; background:#f6f7fa}
+  body.viewing #tab-krw .addbtn, body.viewing #tab-usd .addbtn,
+  body.viewing #tab-krw .delbtn, body.viewing #tab-usd .delbtn,
+  body.viewing #tab-krw .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
     background:linear-gradient(150deg,#22386b 0%,#16233d 100%); color:#fff;
@@ -382,6 +446,10 @@
     <div class="h-badge" id="h-badge">—</div>
   </div>
 </header>
+<div id="view-banner">
+  <span class="vb-t" id="vb-text">📅 기록 조회 중</span>
+  <button type="button" id="vb-back">최신으로 돌아가기</button>
+</div>
 
 <main id="main">
   <div class="setup" id="setup">
@@ -544,6 +612,37 @@
     <p class="hint" style="margin:0 16px 18px">비중은 모두 <b>총자산(주식 + 원화 예수금 + 달러 예수금 환산)</b> 대비입니다. 종목 비중 합계 + 예수금 비중 = 100.0%가 됩니다.</p>
   </section>
 
+  <!-- ============ 추이 ============ -->
+  <section class="tab" id="tab-trend">
+    <div class="sec">자산총액 추이 <span id="tr-range">—</span></div>
+    <div class="card">
+      <div class="tr-seg" id="tr-seg">
+        <button type="button" data-range="day" class="on">일</button>
+        <button type="button" data-range="week">주</button>
+        <button type="button" data-range="month">월</button>
+        <button type="button" data-range="year">년</button>
+      </div>
+      <div class="tr-chart" id="tr-chart"></div>
+      <div class="tr-kg">
+        <div><span>기간 변동</span><b id="tr-chg">—</b><em id="tr-chgpct">—</em></div>
+        <div><span>최근 (마지막 기록)</span><b id="tr-last">—</b><em id="tr-lastd">—</em></div>
+        <div><span>최고</span><b id="tr-hi">—</b><em id="tr-hid">—</em></div>
+        <div><span>최저</span><b id="tr-lo">—</b><em id="tr-lod">—</em></div>
+      </div>
+    </div>
+
+    <div class="sec">날짜별 저장 기록 <span id="tr-count">0일</span></div>
+    <div class="card" id="tr-list"></div>
+    <div class="tr-now" id="tr-viewact" style="display:none; margin:0 16px 4px">
+      <span>지금 <b id="tr-vd">—</b> 기록을 보는 중입니다. 이 값으로 현재 데이터를 바꾸려면 오른쪽 버튼을 누르세요.</span>
+      <button type="button" id="tr-use">이 기록 값으로 쓰기</button>
+    </div>
+    <div class="tr-now" id="tr-now" style="margin:0 16px 4px">
+      <span>기록은 💾 저장하기를 누른 날과, 20:10 이후 종가가 반영된 날에 자동으로 쌓입니다. 며칠 앱을 열지 않아도 시세 기록(<b>prices_history.json</b>)에서 그날 보유 수량 기준으로 메워 둡니다.</span>
+    </div>
+    <p class="hint" style="margin:0 16px 18px">주·월·년은 그 주·월·연의 <b>마지막 기록일</b> 값을 씁니다. 과거 기록은 지금 보유 수량·예수금에 그날 시세를 적용해 계산합니다.</p>
+  </section>
+
   <!-- ============ 백업 ============ -->
   <section class="tab" id="tab-backup">
     <div class="sec">저장 방식</div>
@@ -572,7 +671,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 종가 자동 반영 · 티커로 현재가 조회</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 일·주·월·년 추이</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -599,6 +698,7 @@
   <button data-tab="usd"><i>🇺🇸</i>달러</button>
   <button data-tab="stocks"><i>📈</i>종목</button>
   <button data-tab="weights"><i>🥧</i>비중</button>
+  <button data-tab="trend"><i>📉</i>추이</button>
   <button data-tab="backup"><i>💾</i>백업</button>
 </nav>
 <div class="toast" id="toast"></div>
@@ -643,6 +743,46 @@ function setTxt(id, t){ var el = document.getElementById(id); if(el) el.textCont
 function el(sel){ return document.querySelector(sel); }
 
 /* ---------- persistence ---------- */
+function normAccounts(list){
+  return (list || []).map(function(a){
+    return { name:String(a.name||''), type:(a.type==='연금'?'연금':'주식'),
+             principal:num(a.principal), cashKrw:num(a.cashKrw), cashUsd:num(a.cashUsd) };
+  });
+}
+function normHoldings(list){
+  return (list || []).map(function(h,i){
+    return { id:String(h.id || ('h'+i)), account:String(h.account||''), name:String(h.name||''),
+             code:String(h.code||'').trim(),
+             cur:(h.cur==='USD'?'USD':'KRW'),
+             price:(h.price===''||h.price==null)?null:num(h.price),
+             qty:(h.qty===''||h.qty==null)?null:num(h.qty),
+             avg:(h.avg===''||h.avg==null)?null:num(h.avg) };
+  });
+}
+/* 계좌·종목·환율만으로 총자산을 구한다 (스냅샷 하나를 계산할 때) */
+function bodyTotal(body){
+  var fx = num(body.fx), t = 0;
+  normAccounts(body.accounts).forEach(function(a){ t += a.cashKrw + a.cashUsd*fx; });
+  normHoldings(body.holdings).forEach(function(h){ t += (h.cur === 'USD') ? num(h.price)*num(h.qty)*fx : num(h.price)*num(h.qty); });
+  return t;
+}
+/* 날짜별 스냅샷: {'YYYY-MM-DD': {asOf, fx, accounts, holdings, total, savedAt, source}} (snap-v1) */
+function normSnapshots(snaps){
+  var out = {};
+  if(!snaps || typeof snaps !== 'object') return out;
+  Object.keys(snaps).forEach(function(k){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+    var s = snaps[k];
+    if(!s || !Array.isArray(s.accounts) || !Array.isArray(s.holdings)) return;
+    var body = { fx:num(s.fx), accounts:normAccounts(s.accounts), holdings:normHoldings(s.holdings) };
+    out[k] = { asOf:k, fx:body.fx, accounts:body.accounts, holdings:body.holdings,
+               total:num(s.total) || Math.round(bodyTotal(body)),
+               savedAt:(typeof s.savedAt === 'string' ? s.savedAt : null),
+               source:(typeof s.source === 'string' ? s.source : 'save') };
+  });
+  return out;
+}
+function withSnaps(s){ if(s && !s.snapshots) s.snapshots = {}; return s; }
 function normalize(d){
   if(!d || !Array.isArray(d.accounts) || !Array.isArray(d.holdings)) throw new Error('백업 파일 형식이 아닙니다.');
   if(!d.accounts.length) throw new Error('계좌 정보가 없습니다.');
@@ -653,35 +793,26 @@ function normalize(d){
     fxBase: (d.fxBase == null || d.fxBase === '' || !(num(d.fxBase) > 0)) ? null : num(d.fxBase),
     /* 종가 자동 반영 이력 — prices.json 의 updatedAt. 같은 파일을 다시 반영하지 않게 한다 (prices-v1) */
     pricesAppliedAt: (typeof d.pricesAppliedAt === 'string' && d.pricesAppliedAt) ? d.pricesAppliedAt : null,
-    accounts: d.accounts.map(function(a){
-      return { name:String(a.name||''), type:(a.type==='연금'?'연금':'주식'),
-               principal:num(a.principal), cashKrw:num(a.cashKrw), cashUsd:num(a.cashUsd) };
-    }),
-    holdings: d.holdings.map(function(h,i){
-      return { id:String(h.id || ('h'+i)), account:String(h.account||''), name:String(h.name||''),
-               code:String(h.code||'').trim(),
-               cur:(h.cur==='USD'?'USD':'KRW'),
-               price:(h.price===''||h.price==null)?null:num(h.price),
-               qty:(h.qty===''||h.qty==null)?null:num(h.qty),
-               avg:(h.avg===''||h.avg==null)?null:num(h.avg) };
-    })
+    accounts: normAccounts(d.accounts),
+    holdings: normHoldings(d.holdings),
+    snapshots: normSnapshots(d.snapshots)
   };
   return out;
 }
 function loadState(){
   var raw = null;
   try{ raw = window.localStorage.getItem(KEY); }
-  catch(e){ memoryOnly = true; return clone(INITIAL); }
+  catch(e){ memoryOnly = true; return withSnaps(clone(INITIAL)); }
   if(raw){
     try{
       var d = JSON.parse(raw);
       /* 저장된 시각을 되살린다 — 앱을 다시 열어도 '마지막 저장' 시간이 보인다 (manual-save-v1) */
       if(d && d.savedAt){ var t = new Date(d.savedAt); if(!isNaN(t.getTime())) lastSaved = t; }
-      return normalize(d.data || d);
+      return withSnaps(normalize(d.data || d));
     }
-    catch(e){ return clone(INITIAL); }   /* 저장된 값이 깨졌으면 초기 데이터로 */
+    catch(e){ return withSnaps(clone(INITIAL)); }   /* 저장된 값이 깨졌으면 초기 데이터로 */
   }
-  return clone(INITIAL);
+  return withSnaps(clone(INITIAL));
 }
 function saveState(silent){
   var payload = { app:'자산관리', version:1, savedAt:new Date().toISOString(), data:state };
@@ -694,6 +825,363 @@ function saveState(silent){
   }catch(e){
     memoryOnly = true;
   }
+}
+
+/* ---------- 날짜별 스냅샷 (snap-v1) ----------
+   state.snapshots[YYYY-MM-DD] 에 그날의 전체 상태(계좌·종목·수량·가격·예수금·환율·총자산)를 남긴다.
+   · 💾 저장하기            → 평가 기준일(state.asOf) 기록
+   · 20:10 이후 종가 반영   → 그 마감일 기록 자동 저장
+   · prices_history.json    → 비어 있는 날짜를 마지막 저장 보유 수량 기준으로 메운다(autoBackfill) */
+var SNAP_MAX = 1500;
+var viewingDate = null, liveState = null, liveBaseline = null;
+function todayYmd(){ var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+function hasAnyData(){
+  if(state.holdings && state.holdings.length) return true;
+  return (state.accounts || []).some(function(a){ return num(a.principal) || num(a.cashKrw) || num(a.cashUsd); });
+}
+function recordSnapshot(date, source){
+  if(!state || viewingDate) return null;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) return null;
+  if(!hasAnyData()) return null;
+  if(!state.snapshots) state.snapshots = {};
+  var m = compute();
+  state.snapshots[date] = {
+    asOf: date, fx: num(state.fx),
+    accounts: clone(state.accounts), holdings: clone(state.holdings),
+    total: Math.round(m.totalAssets),
+    savedAt: new Date().toISOString(), source: source || 'save'
+  };
+  trimSnapshots();
+  return state.snapshots[date];
+}
+function trimSnapshots(){
+  var keys = Object.keys(state.snapshots || {}).sort();
+  while(keys.length > SNAP_MAX) delete state.snapshots[keys.shift()];
+}
+/* 그날 마감으로 기록해도 되는가 — 지난 날짜의 시세면 늘, 오늘 것이면 20:10 이후 */
+function autoSnapshotOK(dateStr){
+  dateStr = String(dateStr || '');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  var today = todayYmd();
+  if(dateStr < today) return true;
+  if(dateStr > today) return false;
+  var n = new Date();
+  return (n.getHours() > 20) || (n.getHours() === 20 && n.getMinutes() >= 10);
+}
+/* 시세 기록에서 이 종목의 그날 가격 — 이름 먼저, 없으면 코드 */
+function histPrice(entry, h){
+  if(!entry || !entry.prices) return null;
+  var nm = String(h.name || '').trim();
+  if(nm && entry.prices[nm] && entry.prices[nm].price != null) return num(entry.prices[nm].price);
+  var c = pcode(h.code);
+  if(c){
+    var ks = Object.keys(entry.prices);
+    for(var i=0;i<ks.length;i++){
+      var e = entry.prices[ks[i]];
+      if(e && pcode(e.code) === c && e.price != null && (!e.cur || e.cur === h.cur)) return num(e.price);
+    }
+  }
+  return null;
+}
+/* prices_history.json 으로 빠진 날짜를 메운다 — 마지막 저장된 수량·예수금 + 그날 시세·환율 */
+function autoBackfill(hist){
+  hist = hist || pricesHistory;
+  if(!hist || !hist.dates || !state || viewingDate) return 0;
+  if(!hasAnyData()) return 0;
+  if(!state.snapshots) state.snapshots = {};
+  var made = 0;
+  Object.keys(hist.dates).sort().forEach(function(d){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || state.snapshots[d]) return;
+    var e = hist.dates[d];
+    if(!e || !e.prices) return;
+    var fx = num(e.fx) > 0 ? num(e.fx) : num(state.fx);
+    var holdings = state.holdings.map(function(h){
+      var c = clone(h), p = histPrice(e, h);
+      if(p != null) c.price = p;
+      return c;
+    });
+    var accounts = clone(state.accounts);
+    state.snapshots[d] = {
+      asOf: d, fx: fx, accounts: accounts, holdings: holdings,
+      total: Math.round(bodyTotal({ fx:fx, accounts:accounts, holdings:holdings })),
+      savedAt: new Date().toISOString(), source: 'history'
+    };
+    made++;
+  });
+  if(made) trimSnapshots();
+  return made;
+}
+/* 스냅샷만 바뀌었을 때 저장 — 사용자가 입력 중(dirty)이면 저장 때 함께 기록된다 */
+function persistSnapshots(){
+  if(viewingDate) return;
+  if(!dirty){ saveState(true); }
+  renderSavebar(); syncBar();
+  if(activeTab === 'trend') renderTrend();
+}
+
+/* ---------- 시세 기록(prices_history.json) 읽기 ---------- */
+var HISTORY_URL = './prices_history.json', HIST_CACHE = 'asset.history.v1';
+var pricesHistory = null, histBusy = false;
+function cachedHistory(){
+  try{ var raw = window.localStorage.getItem(HIST_CACHE); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function loadHistory(){
+  if(histBusy || viewingDate) return;
+  histBusy = true;
+  function apply(d){
+    histBusy = false;
+    pricesHistory = d || null;
+    if(!pricesHistory) return 0;
+    try{ window.localStorage.setItem(HIST_CACHE, JSON.stringify(pricesHistory)); }catch(e){}
+    var made = autoBackfill(pricesHistory);
+    if(made) persistSnapshots();
+    return made;
+  }
+  if(location.protocol === 'file:'){ histBusy = false; pricesHistory = cachedHistory(); autoBackfill(pricesHistory); persistSnapshots(); return; }
+  try{
+    fetch(HISTORY_URL + '?t=' + Date.now(), {cache:'no-store'})
+      .then(function(r){ if(!r || !r.ok) throw new Error('HTTP ' + (r ? r.status : '?')); return r.json(); })
+      .then(function(d){ apply(d); })
+      .catch(function(){ apply(cachedHistory()); });
+  }catch(err){ apply(cachedHistory()); }
+}
+
+/* ---------- 과거 기록 보기 · 최신으로 돌아가기 (snap-v1) ---------- */
+function setViewing(date){
+  document.body.classList.toggle('viewing', !!date);
+  var vb = document.getElementById('view-banner');
+  if(vb) vb.classList.toggle('on', !!date);
+  if(date) setTxt('vb-text', '📅 ' + date + ' 기록 조회 중');
+  fitFrame();
+}
+function loadSnapshot(date){
+  var snap = state.snapshots && state.snapshots[date];
+  if(!snap){ toast('그 날짜 기록이 없습니다', 2600, 'warn'); return; }
+  if(!viewingDate){ liveState = state; liveBaseline = baselineText; }
+  var view = clone(snap);
+  view.snapshots = state.snapshots;         /* 기록 목록은 그대로 둔다 */
+  view.asOf = snap.asOf; view.fx = snap.fx;
+  view.pricesAppliedAt = state.pricesAppliedAt;
+  state = view;
+  viewingDate = date;
+  baselineText = JSON.stringify(state); dirty = false;
+  setViewing(date);
+  renderAll(); renderSavebar(); syncBar();
+  toast(date + ' 기록으로 화면을 바꿨습니다 — 고치려면 [최신으로 돌아가기]', 3400);
+}
+function backToLatest(quiet){
+  if(!viewingDate) return;
+  state = liveState || state;
+  liveState = null;
+  baselineText = liveBaseline || JSON.stringify(state);
+  liveBaseline = null;
+  viewingDate = null;
+  dirty = (JSON.stringify(state) !== baselineText);
+  setViewing(null);
+  renderAll(); renderSavebar(); syncBar();
+  if(!quiet) toast('최신 데이터로 돌아왔습니다');
+}
+/* 이 기록 값을 지금(최신) 데이터로 삼는다 — 확인을 받고 저장한다 */
+function useSnapshotNow(){
+  var d = viewingDate;
+  if(!d) return;
+  if(!confirm('지금 보고 있는 ' + d + ' 기록 값으로 현재 데이터를 바꿀까요?\n\n최신 데이터는 이 기록의 수량·가격·예수금·환율로 덮어써집니다.')) return;
+  var view = state;
+  state = liveState || state;
+  liveState = null; liveBaseline = null; viewingDate = null;
+  state.asOf = view.asOf; state.fx = num(view.fx);
+  state.accounts = clone(view.accounts); state.holdings = clone(view.holdings);
+  setViewing(null);
+  baselineText = JSON.stringify(state); dirty = true;
+  renderAll(); renderSavebar(); syncBar();
+  doSave();
+  toast(d + ' 기록 값으로 현재 데이터를 바꿨습니다');
+}
+
+/* ---------- 추이 탭: 일·주·월·년 (trend-v1) ---------- */
+var trendRange = 'day', trSel = null, trendSeries = [];
+function isoWeekKey(dstr){
+  var d = new Date(dstr + 'T00:00:00Z');
+  if(isNaN(d.getTime())) return dstr;
+  var wd = (d.getUTCDay() + 6) % 7;            /* 월=0 */
+  d.setUTCDate(d.getUTCDate() - wd + 3);       /* 그 주 목요일 */
+  var y = d.getUTCFullYear();
+  var jan4 = new Date(Date.UTC(y, 0, 4));
+  var jwd = (jan4.getUTCDay() + 6) % 7;
+  jan4.setUTCDate(jan4.getUTCDate() - jwd + 3);
+  return y + '-W' + pad2(1 + Math.round((d - jan4) / (7 * 86400000)));
+}
+function snapList(){
+  var s = state.snapshots || {};
+  return Object.keys(s).sort().map(function(d){
+    return { date:d, total:num(s[d].total), fx:num(s[d].fx), source:(s[d].source || '') };
+  });
+}
+function aggSeries(range, rows){
+  if(range === 'day') return rows.map(function(r){ return { key:r.date, date:r.date, total:r.total }; });
+  var map = {}, order = [];
+  rows.forEach(function(r){
+    var k = range === 'week' ? isoWeekKey(r.date) : (range === 'month' ? r.date.slice(0,7) : r.date.slice(0,4));
+    if(!map[k]){ map[k] = { key:k, date:r.date, total:r.total }; order.push(k); }
+    else { map[k].date = r.date; map[k].total = r.total; }    /* 그 주·월·연의 마지막 기록 */
+  });
+  return order.map(function(k){ return map[k]; });
+}
+function wonShort(n){
+  n = num(n);
+  if(Math.abs(n) >= 1e8) return (n/1e8).toFixed(2) + '억';
+  if(Math.abs(n) >= 1e4) return Math.round(n/1e4).toLocaleString('en-US') + '만';
+  return fmtInt(n);
+}
+function wday(dstr){
+  var d = new Date(dstr + 'T00:00:00');
+  return isNaN(d.getTime()) ? '' : '일월화수목금토'.charAt(d.getDay());
+}
+function mdLabel(dstr, range){
+  if(range === 'year') return dstr.slice(0,4);
+  if(range === 'month') return dstr.slice(2,4) + '.' + dstr.slice(5,7);
+  return dstr.slice(5,7) + '/' + dstr.slice(8,10);
+}
+function smoothPath(pts){
+  if(!pts.length) return '';
+  var d = 'M' + pts[0][0].toFixed(2) + ',' + pts[0][1].toFixed(2);
+  if(pts.length < 3){
+    for(var k=1;k<pts.length;k++) d += ' L' + pts[k][0].toFixed(2) + ',' + pts[k][1].toFixed(2);
+    return d;
+  }
+  for(var i=0;i<pts.length-1;i++){
+    var p0 = pts[i-1] || pts[i], p1 = pts[i], p2 = pts[i+1], p3 = pts[i+2] || p2;
+    var c1x = p1[0] + (p2[0]-p0[0])/6, c1y = p1[1] + (p2[1]-p0[1])/6;
+    var c2x = p2[0] - (p3[0]-p1[0])/6, c2y = p2[1] - (p3[1]-p1[1])/6;
+    d += ' C' + c1x.toFixed(2) + ',' + c1y.toFixed(2) + ' ' + c2x.toFixed(2) + ',' + c2y.toFixed(2) +
+         ' ' + p2[0].toFixed(2) + ',' + p2[1].toFixed(2);
+  }
+  return d;
+}
+function trendChart(series, range){
+  if(!series.length){
+    return '<div class="tr-empty">아직 저장된 기록이 없습니다.<br>원화·달러 탭에서 <b>💾 저장하기</b>를 누르면 그날 기록이 여기에 쌓입니다.</div>';
+  }
+  var W = 320, H = 156, L = 36, R = 8, T = 14, B = 22;
+  var iw = W - L - R, ih = H - T - B;
+  var vals = series.map(function(p){ return p.total; });
+  var mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals);
+  var padV = (mx - mn) * 0.16 || Math.max(1, mx * 0.004);
+  var hi = mx + padV, lo = Math.max(0, mn - padV);
+  if(hi <= lo) hi = lo + 1;
+  function X(i){ return series.length === 1 ? (L + iw/2) : (L + iw * (i / (series.length - 1))); }
+  function Y(v){ return T + ih - ((v - lo) / (hi - lo)) * ih; }
+  var pts = series.map(function(p, i){ return [X(i), Y(p.total)]; });
+  var line = smoothPath(pts);
+  var area = line + ' L' + X(series.length-1).toFixed(2) + ',' + (T+ih).toFixed(2) +
+             ' L' + X(0).toFixed(2) + ',' + (T+ih).toFixed(2) + ' Z';
+  var gid = 'trg_' + range;
+  var out = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="자산총액 추이 그래프">';
+  out += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+         '<stop offset="0%" stop-color="#3b6ef0" stop-opacity=".32"/>' +
+         '<stop offset="100%" stop-color="#3b6ef0" stop-opacity="0"/></linearGradient></defs>';
+  [hi, (hi+lo)/2, lo].forEach(function(v){
+    var y = Y(v);
+    out += '<line class="ax" x1="' + L + '" y1="' + y.toFixed(1) + '" x2="' + (L+iw) + '" y2="' + y.toFixed(1) + '"/>' +
+           '<text class="yl" x="' + (L-4) + '" y="' + (y+3).toFixed(1) + '" text-anchor="end">' + wonShort(v) + '</text>';
+  });
+  /* x축 라벨 — 최대 4개 (양끝은 화면 밖으로 나가지 않게 정렬) */
+  var idx = [];
+  if(series.length <= 4){ for(var a=0;a<series.length;a++) idx.push(a); }
+  else{ idx = [0, Math.round((series.length-1)/3), Math.round(2*(series.length-1)/3), series.length-1]; }
+  idx.filter(function(v, i){ return idx.indexOf(v) === i; }).forEach(function(i){
+    var isFirst = (i === 0), isLast = (i === series.length - 1);
+    var lx = X(i), anchor = 'middle';
+    if(series.length > 1 && isFirst){ lx = L; anchor = 'start'; }
+    if(series.length > 1 && isLast){ lx = L + iw; anchor = 'end'; }
+    out += '<text class="xl" x="' + lx.toFixed(1) + '" y="' + (H-6) + '" text-anchor="' + anchor + '">' + mdLabel(series[i].date, range) + '</text>';
+  });
+  if(series.length === 1){
+    out += '<line class="ax" x1="' + L + '" y1="' + pts[0][1].toFixed(1) + '" x2="' + (L+iw) + '" y2="' + pts[0][1].toFixed(1) + '"/>';
+  }
+  out += '<path d="' + area + '" fill="url(#' + gid + ')"/>';
+  out += '<path d="' + line + '" fill="none" stroke="#3b6ef0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  series.forEach(function(p, i){
+    var sel = (trSel === i);
+    if(series.length <= 40 || sel){
+      out += '<circle class="dot' + (sel ? ' sel' : '') + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(p.total).toFixed(1) + '" r="' + (sel ? 3.6 : 2.4) + '"/>';
+    }
+    out += '<circle class="hit" data-i="' + i + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(p.total).toFixed(1) + '" r="' + (series.length > 28 ? 7 : 11) + '"/>';
+  });
+  if(trSel != null && series[trSel]){
+    var p2 = series[trSel], x = X(trSel), y = Y(p2.total);
+    var tw = 118, th = 31;
+    var tx = (x < W/2) ? Math.min(W - tw - 2, x + 10) : Math.max(2, x - tw - 10);
+    var ty = (y - th - 10 < 2) ? (y + 12) : (y - th - 10);
+    var suffix = (range === 'week') ? ' 주' : (range === 'month' ? ' 월' : (range === 'year' ? ' 년' : ''));
+    out += '<line class="vline" x1="' + x.toFixed(1) + '" y1="' + T + '" x2="' + x.toFixed(1) + '" y2="' + (T+ih).toFixed(1) + '"/>';
+    out += '<g pointer-events="none">' +
+           '<rect class="tipbg" x="' + tx.toFixed(1) + '" y="' + ty.toFixed(1) + '" width="' + tw + '" height="' + th + '" rx="7"/>' +
+           '<text class="tt1" x="' + (tx+7).toFixed(1) + '" y="' + (ty+12).toFixed(1) + '">' + p2.date + suffix + (suffix ? ' 마감' : '') + '</text>' +
+           '<text class="tt2" x="' + (tx+7).toFixed(1) + '" y="' + (ty+24).toFixed(1) + '">' + won(p2.total) + '</text></g>';
+  }
+  out += '</svg>';
+  return out;
+}
+function renderTrend(m){
+  var rows = snapList();
+  var series = aggSeries(trendRange, rows);
+  trendSeries = series;
+  if(trSel != null && !series[trSel]) trSel = null;
+  Array.prototype.forEach.call(document.querySelectorAll('#tr-seg button'), function(b){
+    b.classList.toggle('on', b.getAttribute('data-range') === trendRange);
+  });
+  document.getElementById('tr-chart').innerHTML = trendChart(series, trendRange);
+  var first = series[0], last = series[series.length-1];
+  setTxt('tr-range', series.length ? (series.length > 1 ? first.date + ' ~ ' + last.date + ' · ' + series.length + '개' : first.date + ' · 1개') : '기록 없음');
+  var chg = (series.length > 1) ? last.total - first.total : 0;
+  setTxt('tr-chg', series.length > 1 ? signed(chg) : '—');
+  var ce = document.getElementById('tr-chgpct');
+  ce.className = (series.length > 1) ? cls(chg) : 'flat';
+  ce.textContent = (series.length > 1) ? (pctS(first.total ? chg / first.total : 0) + ' · ' + series.length + '개 기록') : '기록이 1건';
+  var hiP = series[0], loP = series[0];
+  series.forEach(function(p){ if(p.total > hiP.total) hiP = p; if(p.total < loP.total) loP = p; });
+  setTxt('tr-last', series.length ? won(last.total) : '—');
+  setTxt('tr-lastd', series.length ? last.date + ' (' + wday(last.date) + ')' : '—');
+  setTxt('tr-hi', series.length ? won(hiP.total) : '—');
+  setTxt('tr-hid', series.length ? hiP.date : '—');
+  setTxt('tr-lo', series.length ? won(loP.total) : '—');
+  setTxt('tr-lod', series.length ? loP.date : '—');
+  renderTrendList(rows);
+  var va = document.getElementById('tr-viewact');
+  if(va){
+    va.style.display = viewingDate ? 'flex' : 'none';
+    if(viewingDate) setTxt('tr-vd', viewingDate);
+  }
+}
+function renderTrendList(rows){
+  var box = document.getElementById('tr-list');
+  if(!box) return;
+  setTxt('tr-count', rows.length + '일');
+  if(!rows.length){
+    box.innerHTML = '<div class="tr-empty">저장된 날짜가 없습니다.<br>💾 저장하기를 누르면 오늘이 첫 기록이 됩니다.</div>';
+    return;
+  }
+  var html = '';
+  for(var j = rows.length - 1; j >= 0; j--){
+    var r = rows[j], prev = rows[j-1];
+    var diff = prev ? r.total - prev.total : null;
+    var gap = 0;
+    if(prev){
+      var t1 = new Date(prev.date + 'T00:00:00').getTime(), t2 = new Date(r.date + 'T00:00:00').getTime();
+      gap = Math.round((t2 - t1) / 86400000);
+    }
+    var diffTxt = prev ? (Math.round(diff) === 0 ? '변동 없음' : (gap === 1 ? '전일 ' : '이전 기록 ') + signed(diff)) : '첫 기록';
+    var pctTxt = (prev && prev.total) ? ' ' + pctS(diff / prev.total) : '';
+    html += '<div class="tr-row' + (viewingDate === r.date ? ' on' : '') + '">' +
+      '<div class="d"><b>' + r.date + ' (' + wday(r.date) + ')</b>' +
+        '<span class="' + (prev ? cls(diff) : 'flat') + '">' + diffTxt + pctTxt + '</span></div>' +
+      '<div class="a"><b>' + won(r.total) + '</b>' +
+        '<span class="flat">' + (r.source === 'history' ? '시세로 자동 기록' : '저장 기록') + '</span></div>' +
+      '<button type="button" class="tr-go" data-load="' + r.date + '">불러오기</button>' +
+    '</div>';
+  }
+  box.innerHTML = html;
 }
 
 /* ---------- 저장 바: 수동 저장 (manual-save-v1) ----------
@@ -725,12 +1213,17 @@ var barShown = null, barDirty = null;
 function syncBar(){
   var bar = document.getElementById('savebar');
   if(!bar) return;
-  var want = (activeTab === 'krw' || activeTab === 'usd' || dirty);
+  var want = !viewingDate && (activeTab === 'krw' || activeTab === 'usd' || dirty);
   if(bar.classList.contains('on') !== want) bar.classList.toggle('on', want);
   if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
 }
 /* 💾 저장하기 — 이때만 localStorage 에 쓴다. */
 function doSave(quiet){
+  if(viewingDate){
+    toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3400, 'warn');
+    return false;
+  }
+  recordSnapshot(state.asOf, 'save');   /* 그날 기록 남기기 (snap-v1) */
   saveState();
   renderSavebar();
   syncBar();
@@ -938,8 +1431,11 @@ var hd = document.getElementById('hd'), mainEl = document.getElementById('main')
 function fitFrame(){
   var navH = navEl.offsetHeight;
   var barH = savebar.classList.contains('on') ? savebar.offsetHeight : 0;
+  var vb = document.getElementById('view-banner');
+  var vbH = (vb && vb.classList.contains('on')) ? vb.offsetHeight : 0;
+  if(vb) vb.style.top = hd.offsetHeight + 'px';
   savebar.style.bottom = navH + 'px';
-  mainEl.style.paddingTop = (hd.offsetHeight + 2) + 'px';
+  mainEl.style.paddingTop = (hd.offsetHeight + vbH + 2) + 'px';
   mainEl.style.paddingBottom = (navH + barH + 16) + 'px';
   var tEl = document.getElementById('toast');
   if(tEl) tEl.style.bottom = (navH + barH + 14) + 'px';
@@ -1398,6 +1894,7 @@ function renderAll(){
   if(activeTab === 'summary') renderSummary(m);
   else if(activeTab === 'stocks') renderStocks(m);
   else if(activeTab === 'weights') renderWeights(m);
+  else if(activeTab === 'trend') renderTrend(m);
   else if(activeTab === 'backup') renderBackup(m);
   else if(activeTab === 'krw') renderCurrencyTab('KRW', m);
   else if(activeTab === 'usd') renderCurrencyTab('USD', m);
@@ -1412,6 +1909,7 @@ function afterChange(opts){
   if(activeTab === 'summary') renderSummary(m);
   else if(activeTab === 'stocks') renderStocks(m);
   else if(activeTab === 'weights') renderWeights(m);
+  else if(activeTab === 'trend') renderTrend(m);
   else if(activeTab === 'backup') renderBackup(m);
   else if(activeTab === 'krw' || activeTab === 'usd'){
     var cur = curTab();
@@ -1436,6 +1934,7 @@ function switchTab(t){
   if(t === 'usd') renderCurrencyTab('USD', m);
   if(t === 'stocks') renderStocks(m);
   if(t === 'weights') renderWeights(m);
+  if(t === 'trend') renderTrend(m);
   if(t === 'backup') renderBackup(m);
   window.scrollTo(0,0);
 }
@@ -1552,7 +2051,7 @@ function applyPrices(data, force){
 /* opts.manual = 사용자가 🔄 종가 새로고침 을 누른 경우(이미 반영된 파일이라도 다시 채운다) */
 function loadPrices(opts){
   opts = opts || {};
-  if(pricesBusy) return;
+  if(viewingDate || pricesBusy) return;
   pricesBusy = true;
   var btns = document.querySelectorAll('.px-btn');
   Array.prototype.forEach.call(btns, function(b){ b.disabled = true; });
@@ -1585,9 +2084,13 @@ function loadPrices(opts){
        done(opts.manual ? why : '', 'warn');
        return;
      }
+     var snapDate = String(data.date || state.asOf);
+     var snapped = autoSnapshotOK(snapDate) ? recordSnapshot(snapDate, 'auto') : null;
+     var filled = autoBackfill(pricesHistory);
      saveState(true);                 /* 자동 반영도 저장 스냅샷을 갱신 → dirty 가 뜨지 않는다 */
      renderAll(); renderSavebar(); syncBar();
-     done('최신 종가 반영됨 (' + priceStampText(data.updatedAt || state.pricesAppliedAt) + ')');
+     done('최신 종가 반영됨 (' + priceStampText(data.updatedAt || state.pricesAppliedAt) + ')'
+          + (snapped ? ' · ' + snapDate + ' 기록 저장' : (filled ? ' · ' + filled + '일 기록 보충' : '')));
    })
    .catch(function(err){
      /* 오프라인·file:// 에서는 조용히 넘어간다 (자동). 수동일 때만 알린다. */
@@ -1646,6 +2149,29 @@ document.querySelector('nav').addEventListener('click', function(e){
   var b = e.target.closest('button[data-tab]');
   if(b) switchTab(b.getAttribute('data-tab'));
 });
+
+/* ---------- 추이 탭 조작: 기간 전환 · 포인트 터치 · 기록 불러오기 (trend-v1) ---------- */
+document.getElementById('tr-seg').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-range]');
+  if(!b) return;
+  trendRange = b.getAttribute('data-range');
+  trSel = null;
+  renderTrend();
+});
+document.getElementById('tr-chart').addEventListener('click', function(e){
+  var h = e.target.closest('[data-i]');
+  if(!h) return;
+  var i = Number(h.getAttribute('data-i'));
+  trSel = (trSel === i) ? null : i;
+  document.getElementById('tr-chart').innerHTML = trendChart(trendSeries, trendRange);
+});
+document.getElementById('tr-list').addEventListener('click', function(e){
+  var b = e.target.closest('[data-load]');
+  if(!b) return;
+  loadSnapshot(b.getAttribute('data-load'));
+});
+document.getElementById('vb-back').addEventListener('click', function(){ backToLatest(); });
+document.getElementById('tr-use').addEventListener('click', useSnapshotNow);
 
 document.getElementById('h-date').addEventListener('change', function(){
   var v = this.value;
@@ -1994,7 +2520,10 @@ document.getElementById('btn-export').addEventListener('click', function(){
   toast('백업 파일을 저장했습니다');
 });
 var fileIn = document.getElementById('file-in');
-document.getElementById('btn-import').addEventListener('click', function(){ fileIn.click(); });
+document.getElementById('btn-import').addEventListener('click', function(){
+  if(viewingDate){ toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3200, 'warn'); return; }
+  fileIn.click();
+});
 fileIn.addEventListener('change', function(){
   var f = fileIn.files && fileIn.files[0];
   if(!f) return;
@@ -2002,12 +2531,15 @@ fileIn.addEventListener('change', function(){
   rd.onload = function(){
     try{
       var parsed = JSON.parse(String(rd.result));
-      var next = normalize(parsed.data || parsed);
+      var next = withSnaps(normalize(parsed.data || parsed));
       if(!confirm('지금 화면을 백업 파일 내용으로 바꿀까요?\n(계좌 ' + next.accounts.length + '개 · 종목 ' + next.holdings.length + '건)')) return;
       state = next; filters = { KRW:'all', USD:'all' };
+      recordSnapshot(state.asOf, 'import');     /* 불러온 파일의 기준일도 기록으로 남긴다 */
       saveState();          /* 불러오기는 명시적 동작 — 그대로 저장한다 (dirty 해제) */
       renderAll();
       renderSavebar(); syncBar();
+      loadPrices();         /* 더 새로운 시세가 있으면 반영하며 그날 기록도 남긴다 */
+      loadHistory();        /* 시세 기록에만 있는 날짜는 지금 수량 기준으로 보충 */
       toast('백업을 불러왔습니다');
     }catch(err){
       alert('불러오지 못했습니다.\n' + (err && err.message ? err.message : '파일을 확인해 주세요.'));
@@ -2017,8 +2549,9 @@ fileIn.addEventListener('change', function(){
   fileIn.value = '';
 });
 document.getElementById('btn-reset').addEventListener('click', function(){
+  if(viewingDate){ toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3200, 'warn'); return; }
   if(!confirm('모든 계좌·종목 데이터를 지우고 빈 앱으로 되돌립니다.\n지금 입력한 내용은 모두 사라집니다. 계속할까요?')) return;
-  state = clone(INITIAL); filters = { KRW:'all', USD:'all' };
+  state = withSnaps(clone(INITIAL)); filters = { KRW:'all', USD:'all' };
   saveState();          /* 초기화도 명시적 동작 — 그대로 저장한다 (dirty 해제) */
   renderAll();
   renderSavebar(); syncBar();
@@ -2047,8 +2580,15 @@ function boot(){
                      get memoryOnly(){ return memoryOnly; }, get lastSaved(){ return lastSaved; },
                      get tab(){ return activeTab; }, loadPrices:loadPrices,
                      get pricesAppliedAt(){ return state.pricesAppliedAt; },
-                     get pricesInfo(){ return pricesInfo; } };
+                     get pricesInfo(){ return pricesInfo; },
+                     get history(){ return pricesHistory; }, loadHistory:loadHistory,
+                     get snapshots(){ return state.snapshots || {}; }, loadSnapshot:loadSnapshot,
+                     backToLatest:backToLatest, get viewing(){ return viewingDate; },
+                     setTrend:function(r){ trendRange = r; trSel = null; renderTrend(); },
+                     get trendRange(){ return trendRange; },
+                     get records(){ return snapList(); } };
   loadPrices();   /* 열 때 한 번 — prices.json 이 없거나 오프라인이면 조용히 넘어간다 */
+  loadHistory();  /* 시세 기록으로 빠진 날짜 보충 + 추이 탭 준비 */
 }
 boot();
 </script>
