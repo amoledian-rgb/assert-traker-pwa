@@ -3168,11 +3168,18 @@ function liveMarket(force){
   if(navigator.onLine === false) return Promise.resolve(null);
   if(!force && (Date.now() - marketLiveAt) < 25000) return Promise.resolve(null);
   marketLiveAt = Date.now();
-  return Promise.all([
+  var noBtc = !(marketData && marketData.sections && marketData.sections.crypto
+              && marketData.sections.crypto.ready);
+  var jobs = [
     fetchLiveFx().then(function(g){ mkLive.fx = g; }).catch(function(){ mkLive.fx = null; }),
-    fetchLiveJpy().then(function(g){ mkLive.jpy = g; }).catch(function(){ mkLive.jpy = null; }),
-    fetchLiveBtc().then(function(g){ mkLive.btc = g; }).catch(function(){ mkLive.btc = null; })
-  ]).then(function(){ renderMarket(); return mkLive; });
+    fetchLiveJpy().then(function(g){ mkLive.jpy = g; }).catch(function(){ mkLive.jpy = null; })
+  ];
+  /* 비트코인은 🔄 새로고침(수동)이나 market.json 에 값이 아예 없을 때만 따로 받는다
+     — 앱을 열 때마다 부르면 공개 API 호출 제한(429)에 걸리기 싶고, market.json 값도 종가 갱신 때마다 새것이다. */
+  if(force || noBtc){
+    jobs.push(fetchLiveBtc().then(function(g){ mkLive.btc = g; }).catch(function(){ if(!mkLive.btc) mkLive.btc = null; }));
+  }
+  return Promise.all(jobs).then(function(){ renderMarket(); return mkLive; });
 }
 /* 🔄 새로고침 — market.json + 실시간 환율/비트코인을 함께 새로 받는다 */
 function refreshMarket(manual){
@@ -3232,8 +3239,8 @@ function boot(){
                      refreshMarket:refreshMarket, liveMarket:liveMarket,
                      get marketLive(){ return mkLive; } };
   loadPrices();   /* 열 때 한 번 — prices.json 이 없거나 오프라인이면 조용히 넘어간다 */
-  loadMarketFile();   /* 오늘 첫 화면인 🌐 시장 탭의 시장종합 */
-  liveMarket(true);   /* 환율·USDJPY·비트코인 실시간 */
+  loadMarketFile();   /* 첫 화면인 🌐 시장 탭의 시장종합 */
+  liveMarket(false);   /* 환율·USDJPY 실시간 (비트코인은 🔄 새로고침 때) */
   loadLiveFx();   /* 실시간 원/달러 환율 — 실패하면 종가 파일 환율을 그대로 둔다(안내는 환율 칸 아래 줄에서) */
   loadHistory();  /* 시세 기록으로 빠진 날짜 보충 + 추이 탭 준비 */
   window.addEventListener('online', function(){ loadLiveFx(); if(activeTab === 'market') liveMarket(true); });   /* 끊겼던 연결이 돌아오면 환율도 새로 */
