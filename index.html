@@ -2138,7 +2138,7 @@ function indexPrices(data){
     if(!Object.prototype.hasOwnProperty.call(src, k)) continue;
     var v = src[k];
     if(!v) continue;
-    var code = String(v.code || v.c || '');
+    var code = String(v.code || v.c || (/^[A-Za-z][A-Za-z0-9.\-]{0,9}$/.test(k) ? k : ''));   /* 미국은 키가 곧 티커 */
     var name = String(v.name || v.n || k);
     var e = {
       name: name, code: code,
