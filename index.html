@@ -2866,6 +2866,299 @@ document.getElementById('btn-reset').addEventListener('click', function(){
    환율·비트코인은 브라우저에서 CORS 가 되는 공개 API 로 새로고침할 때마다 다시 받아 덮어쓴다.
    받지 못한 값은 지어내지 않고 '—' + 미제공 안내로 둔다. */
 var MARKET_URL = './market.json';
+/* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
+var MARKET_INLINE = {
+ "updatedAt": "2026-11-24T16:53:46+09:00",
+ "bizdate": "20261124",
+ "sections": {
+  "index": {
+   "asOf": "2026-11-24T16:15:00+09:00",
+   "src": "네이버 증권",
+   "rows": [
+    {
+     "key": "KOSPI",
+     "name": "코스피",
+     "value": 5006.03,
+     "change": 297.49,
+     "pct": 6.32,
+     "tradingValue": 14558877000000,
+     "asOf": "2026-11-24T16:15:00+09:00",
+     "marketStatus": "CLOSE"
+    },
+    {
+     "key": "KOSDAQ",
+     "name": "코스닥",
+     "value": 665.88,
+     "change": 30.43,
+     "pct": 4.79,
+     "tradingValue": 5403155000000,
+     "asOf": "2026-11-24T16:15:00+09:00",
+     "marketStatus": "CLOSE"
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "funds": {
+   "asOf": "2026-11-20",
+   "src": "네이버 증권 증시자금동향",
+   "unit": "억원",
+   "rows": [
+    {
+     "key": "deposit",
+     "name": "고객예탁금",
+     "value": 829846,
+     "change": 14176
+    },
+    {
+     "key": "credit",
+     "name": "신용잔고",
+     "value": 255500,
+     "change": -1225
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "program": {
+   "asOf": "2026-11-24",
+   "src": "네이버 증권",
+   "unit": "백만원",
+   "rows": [
+    {
+     "key": "KOSPI",
+     "name": "코스피",
+     "arb": 46168.1,
+     "nonArb": 316238.7,
+     "total": 362406.8
+    },
+    {
+     "key": "KOSDAQ",
+     "name": "코스닥",
+     "arb": 9704.6,
+     "nonArb": 166941.5,
+     "total": 176646.2
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "investors": {
+   "asOf": "2026-11-24",
+   "src": "네이버 증권 투자자별 매매동향",
+   "cols": [
+    {
+     "key": "KOSPI",
+     "name": "코스피",
+     "unit": "억원"
+    },
+    {
+     "key": "KOSDAQ",
+     "name": "코스닥",
+     "unit": "억원"
+    },
+    {
+     "key": "FUT",
+     "name": "선물",
+     "unit": "계약"
+    },
+    {
+     "key": "SFUT",
+     "name": "주식선물",
+     "unit": "억원"
+    }
+   ],
+   "rows": [
+    {
+     "key": "individual",
+     "name": "개인",
+     "values": [
+      -20605,
+      -3081,
+      -137,
+      -23686
+     ]
+    },
+    {
+     "key": "foreign",
+     "name": "외인",
+     "values": [
+      7560,
+      1124,
+      3450,
+      8683
+     ]
+    },
+    {
+     "key": "inst",
+     "name": "기관",
+     "values": [
+      8703,
+      2122,
+      -3332,
+      10825
+     ]
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "bonds": {
+   "asOf": "2026-11-24T16:13:20+09:00",
+   "src": "네이버 증권",
+   "cols": [
+    "10년",
+    "2년"
+   ],
+   "rows": [
+    {
+     "key": "KR",
+     "name": "한국",
+     "y10": 3.823,
+     "c10": -0.012,
+     "y2": 3.655,
+     "c2": 0,
+     "asOf": "2026-11-24T16:13:20+09:00"
+    },
+    {
+     "key": "JP",
+     "name": "일본",
+     "y10": 2.708,
+     "c10": -0.079,
+     "y2": 1.78,
+     "c2": -0.049,
+     "asOf": "2026-11-24T14:44:19+09:00"
+    },
+    {
+     "key": "US",
+     "name": "미국",
+     "y10": 4.94,
+     "c10": 0.0197,
+     "y2": 4.689,
+     "c2": 0.0231,
+     "asOf": "2026-11-24T02:49:06-05:00"
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "market": {
+   "asOf": "2026-11-24T02:43:40-05:00",
+   "src": "네이버 증권",
+   "rows": [
+    {
+     "key": "DXY",
+     "name": "달러인덱스",
+     "value": 104.33,
+     "change": 0.01,
+     "pct": 0.01,
+     "asOf": "2026-11-24T02:43:40-05:00",
+     "unit": "pt"
+    },
+    {
+     "key": "VIX",
+     "name": "VIX",
+     "value": 26.62,
+     "change": -9.27,
+     "pct": -25.83,
+     "asOf": "2026-11-23T16:15:01-05:00",
+     "unit": "pt"
+    },
+    {
+     "key": "VKOSPI",
+     "name": "VKOSPI",
+     "value": null,
+     "change": null,
+     "pct": null,
+     "asOf": null,
+     "unit": "pt",
+     "why": "거래소 공개 API 없음"
+    },
+    {
+     "key": "GOLD",
+     "name": "금",
+     "value": 3624.1,
+     "change": -27.3,
+     "pct": -0.75,
+     "asOf": "2026-11-24T01:43:42-06:00",
+     "unit": "USD/t.oz"
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "energy": {
+   "asOf": "2026-11-24T01:43:42-06:00",
+   "src": "네이버 증권",
+   "rows": [
+    {
+     "key": "WTI",
+     "name": "WTI",
+     "value": 80.17,
+     "change": 0,
+     "pct": 0,
+     "asOf": "2026-11-24T01:43:42-06:00",
+     "unit": "USD/Bbl"
+    },
+    {
+     "key": "BRENT",
+     "name": "브렌트",
+     "value": 89.3,
+     "change": -0.07,
+     "pct": -0.08,
+     "asOf": "2026-11-24T07:43:42Z",
+     "unit": "USD/Bbl"
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "crypto": {
+   "asOf": "2026-11-24T16:40:45+09:00",
+   "src": "업비트 (USDT 마켓)",
+   "rows": [
+    {
+     "key": "BTC",
+     "name": "비트코인",
+     "value": 60496.5,
+     "change": -393.72,
+     "pct": -0.65,
+     "unit": "USDT"
+    }
+   ],
+   "ready": true,
+   "note": null
+  },
+  "fx": {
+   "asOf": "2026-11-24T16:50:23+09:00",
+   "src": "네이버 증권",
+   "rows": [
+    {
+     "key": "USDKRW",
+     "name": "USDKRW",
+     "value": 1343.6,
+     "change": 1.1,
+     "pct": 0.08,
+     "asOf": "2026-11-24T16:50:23+09:00",
+     "dec": 2
+    },
+    {
+     "key": "USDJPY",
+     "name": "USDJPY",
+     "value": 159.38,
+     "change": null,
+     "pct": null,
+     "asOf": "2026-11-24T16:50:23+09:00",
+     "dec": 2,
+     "derived": "USDKRW ÷ (원/100엔) × 100"
+    }
+   ],
+   "ready": true,
+   "note": null
+  }
+ }
+};
+var marketInline = false;
 var marketData = null, marketBusy = false, marketErr = null, marketLiveAt = 0;
 var mkLive = { fx:null, jpy:null, btc:null };
 var MK_IDS = ['mk-index','mk-funds','mk-investors','mk-bonds','mk-market','mk-energy','mk-crypto','mk-fx'];
@@ -2922,7 +3215,7 @@ function renderMarket(){
     return;
   }
   var S = marketData.sections || {};
-  if(top) top.textContent = mkWhen(marketData.updatedAt) + ' 갱신';
+  if(top) top.textContent = mkWhen(marketData.updatedAt) + ' 갱신' + (marketInline ? ' (앱에 담긴 값)' : '');
   if(when) when.textContent = mkWhen((S.index || {}).asOf);
 
   /* 1 · 국내 지수 */
@@ -3121,16 +3414,24 @@ function mkFetchJson(url, ms){
   });
 }
 function loadMarketFile(){
-  if(location.protocol === 'file:'){        /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
+  if(location.protocol === 'file:'){        /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 — 빌드에 넣은 값을 쓴다 */
+    if(MARKET_INLINE && MARKET_INLINE.sections){
+      marketData = MARKET_INLINE; marketInline = true; marketErr = null; renderMarket();
+      return Promise.resolve({ok:true, inline:true});
+    }
     marketErr = 'local'; renderMarket();
     return Promise.resolve({ok:false, local:true});
   }
   return mkFetchJson(MARKET_URL + '?t=' + Date.now(), 9000).then(function(d){
     if(!d || !d.sections) throw new Error('형식이 다릅니다');
-    marketData = d; marketErr = null; renderMarket();
+    marketData = d; marketErr = null; marketInline = false; renderMarket();
     return {ok:true, when: mkWhen(d.updatedAt)};
   }).catch(function(e){
     marketErr = String((e && e.message) || e);
+    if(!marketData && MARKET_INLINE && MARKET_INLINE.sections){   /* 네트워크가 막혔으면 빌드에 넣은 값으로 */
+      marketData = MARKET_INLINE; marketInline = true; renderMarket();
+      return {ok:false, inline:true};
+    }
     renderMarket();                       /* 이미 받은 자료가 있으면 그대로 둔다 */
     return {ok:false, error:marketErr};
   });
