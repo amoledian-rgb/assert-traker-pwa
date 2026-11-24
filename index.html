@@ -2098,7 +2098,7 @@ function pnorm(s){
    대소문자·공백·점 구분 무시, 숫자코드는 6자리로 (5930 · A005930 → 005930), NVDA.O → NVDA */
 function pcode(s){
   var t = String(s==null?'':s).replace(/[\s\-_]/g,'').toUpperCase();
-  t = t.replace(/^A(\d{6})$/, '$1').replace(/\.(KS|KQ|O|N)$/, '');
+  t = t.replace(/^A(\d{6})$/, '$1').replace(/\.(KS|KQ|O|N)$/, '').replace(/\./g, '');   /* BRK.B · BRK B → BRKB */
   if(/^\d{1,6}$/.test(t)) t = ('000000' + t).slice(-6);
   return t;
 }
@@ -2114,12 +2114,26 @@ function engCore(s){
   var t = String(s||'').replace(/[,()]/g, ' ').replace(ENG_WORDS, ' ').replace(/\s+/g,' ').trim();
   return t.length >= 3 ? t : '';
 }
+/* 이름의 첫머리 — '팔란티어 테크놀로지스' → '팔란티어', 'Palantir Technologies Inc.' → 'Palantir'
+   한 종목에만 쓰이는 첫머리만 색인해서 '팔란티어'·'코스트코' 같은 짧은 이름으로도 찾게 한다. */
+function nameLead(s, minLen){
+  var t = String(s||'').replace(/\([^)]*\)/g, ' ').replace(/[,]/g, ' ').trim().split(/\s+/)[0] || '';
+  return t.length >= (minLen || 2) ? t : '';
+}
 /* prices.json 을 이름·코드 두 가지 색인으로 만든다.
    v2 파일은 국내·미국 전 종목(1만 7천여 건)을 담아 항목마다 꼭 필요한 값만 쓴다:
      보유·관심 종목 {code,name,naverName,aliases,cur,price,market}  ·  그 밖 {c:코드, p:현재가, n:이름, e:영문명, u:통화}
    두 형식을 여기서 하나로 펴서 이름·코드로 찾을 수 있게 한다. */
 function indexPrices(data){
-  var byName = {}, byCode = {}, src = (data && data.prices) || {}, n = 0;
+  var byName = {}, byCode = {}, src = (data && data.prices) || {}, n = 0, kk;
+  /* 미국 종목 이름 첫머리가 여러 종목에 겹치는지 먼저 세어 둔다 (겹치면 색인하지 않는다) */
+  var leadCnt = {};
+  for(kk in src){
+    var vv = src[kk];
+    if(!vv || !vv.e) continue;
+    var la = pnorm(nameLead(vv.n || vv.name, 2)); if(la) leadCnt['k' + la] = (leadCnt['k' + la] || 0) + 1;
+    var lb = pnorm(nameLead(vv.e, 4)); if(lb) leadCnt['e' + lb] = (leadCnt['e' + lb] || 0) + 1;
+  }
   for(var k in src){
     if(!Object.prototype.hasOwnProperty.call(src, k)) continue;
     var v = src[k];
@@ -2142,6 +2156,8 @@ function indexPrices(data){
     if(v.e){   /* 미국 종목 영문명 — 전체 이름과 꼬리말을 뗀 이름 둘 다 */
       var e1 = pnorm(v.e); if(e1 && !byName[e1]) byName[e1] = e;
       var e2 = pnorm(engCore(v.e)); if(e2 && !byName[e2]) byName[e2] = e;
+      var e3 = pnorm(nameLead(v.e, 4)); if(e3 && leadCnt['e' + e3] === 1 && !byName[e3]) byName[e3] = e;
+      var e4 = pnorm(nameLead(v.n || '', 2)); if(e4 && leadCnt['k' + e4] === 1 && !byName[e4]) byName[e4] = e;
     }
     if(v.aliases){ for(var i = 0; i < v.aliases.length; i++){
       var a1 = pnorm(v.aliases[i]); if(a1 && !byName[a1]) byName[a1] = e;
@@ -2983,7 +2999,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T20:38:03+09:00",
+ "updatedAt": "2026-11-24T21:00:55+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
@@ -3138,54 +3154,54 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.722,
-     "c10": 0.003,
-     "y2": 1.779,
-     "c2": -0.004,
-     "asOf": "2026-11-24T18:29:43+09:00"
+     "y10": 2.71,
+     "c10": -0.009,
+     "y2": 1.784,
+     "c2": 0.001,
+     "asOf": "2026-11-24T18:59:36+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.896,
-     "c10": -0.0242,
-     "y2": 4.641,
-     "c2": -0.0245,
-     "asOf": "2026-11-24T06:29:14-05:00"
+     "y10": 4.904,
+     "c10": -0.0162,
+     "y2": 4.65,
+     "c2": -0.0162,
+     "asOf": "2026-11-24T06:58:37-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T06:27:55-05:00",
+   "asOf": "2026-11-24T06:50:49-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 104.01,
-     "change": -0.3,
-     "pct": -0.29,
-     "asOf": "2026-11-24T06:27:55-05:00",
+     "value": 104,
+     "change": -0.32,
+     "pct": -0.31,
+     "asOf": "2026-11-24T06:50:49-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 29.06,
-     "change": 2.44,
-     "pct": 9.17,
-     "asOf": "2026-11-24T06:22:59-05:00",
+     "value": 28.36,
+     "change": 1.74,
+     "pct": 6.54,
+     "asOf": "2026-11-24T06:45:51-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3629.1,
-     "change": -22.3,
-     "pct": -0.61,
-     "asOf": "2026-11-24T05:27:59-06:00",
+     "value": 3633.3,
+     "change": -18.1,
+     "pct": -0.5,
+     "asOf": "2026-11-24T05:50:51-06:00",
      "unit": "USD/t.oz"
     }
    ],
@@ -3193,25 +3209,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T05:27:59-06:00",
+   "asOf": "2026-11-24T05:50:51-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.03,
-     "change": -0.14,
-     "pct": -0.17,
-     "asOf": "2026-11-24T05:27:59-06:00",
+     "value": 80.24,
+     "change": 0.07,
+     "pct": 0.09,
+     "asOf": "2026-11-24T05:50:51-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 89.3,
-     "change": -0.07,
-     "pct": -0.08,
-     "asOf": "2026-11-24T11:27:59Z",
+     "value": 89.5,
+     "change": 0.13,
+     "pct": 0.15,
+     "asOf": "2026-11-24T11:50:51Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3219,15 +3235,15 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T20:33:09+09:00",
+   "asOf": "2026-11-24T21:00:11+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59838.39,
-     "change": -1051.83,
-     "pct": -1.73,
+     "value": 60200,
+     "change": -690.22,
+     "pct": -1.13,
      "unit": "USDT"
     }
    ],
@@ -3235,25 +3251,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T20:36:34+09:00",
+   "asOf": "2026-11-24T20:57:44+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343.6,
-     "change": 1.1,
-     "pct": 0.08,
-     "asOf": "2026-11-24T20:36:34+09:00",
+     "value": 1343.3,
+     "change": 0.8,
+     "pct": 0.06,
+     "asOf": "2026-11-24T20:57:44+09:00",
      "dec": 2
     },
     {
      "key": "USDJPY",
      "name": "USDJPY",
-     "value": 159.21,
+     "value": 159.24,
      "change": null,
      "pct": null,
-     "asOf": "2026-11-24T20:36:34+09:00",
+     "asOf": "2026-11-24T20:57:44+09:00",
      "dec": 2,
      "derived": "USDKRW ÷ (원/100엔) × 100"
     }
