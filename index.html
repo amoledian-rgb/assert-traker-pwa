@@ -1524,12 +1524,12 @@ function applyPrices(data, force){
   var res = { matched:0, fx:false, newer:false, names:[], mismatch:[] };
   if(!data || !data.prices){ indexPrices(data); return res; }
   indexPrices(data);
-  if(!state || !state.holdings || !state.holdings.length) return res;
+  if(!state) return res;
   var stamp = String(data.updatedAt || '');
   var prev = state.pricesAppliedAt ? String(state.pricesAppliedAt) : '';
   res.newer = !!stamp && (!prev || stamp > prev);
   if(!res.newer && !force) return res;
-  state.holdings.forEach(function(h){
+  (state.holdings || []).forEach(function(h){
     if(!String(h.name || '').trim() && !String(h.code || '').trim()) return;
     var p = findPrice(h.name, h.code);
     if(!p || p.price == null || p.price === '') return;
