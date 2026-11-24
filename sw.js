@@ -1,6 +1,6 @@
 /* 내 자산관리 — 오프라인에서도 앱이 바로 열리도록 껍데기만 캐싱한다.
    사용자가 입력한 자산 데이터는 localStorage 에만 있고 여기로 오지 않는다. */
-var CACHE = 'asset-shell-v24';
+var CACHE = 'asset-shell-v25';
 var ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png', './prices.json', './prices_history.json', './market.json'];
 
 self.addEventListener('install', function(e){

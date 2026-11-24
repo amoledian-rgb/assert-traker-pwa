@@ -427,15 +427,17 @@
   body.viewing #tab-krw .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
   body.viewing .px-btn{display:none}
   /* ---------- 🌐 시장 탭 (market-v1) ---------- */
+  /* 2026-11-25 · 시장 탭 전체 글자를 등락종목 기준으로 통일 (기존 대비 1.5배 · 작은 글자만 1.2배)
+     라벨 17.25 · 숫자 18.75 · 보조/표 머리글 15.75~16.5 · 안내문 14.5px. 390px 에서 넘치지 않게 여백도 함께 조정. */
   .mk-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
   .mk-when{min-width:0}
-  .mk-when span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
-  .mk-when b{font-size:13.5px; font-variant-numeric:tabular-nums}
-  .mk-btn{flex:0 0 auto; height:36px; padding:0 13px; border:0; border-radius:10px;
-    background:#16233d; color:#fff; font-size:13.5px; font-weight:800}
+  .mk-when span{display:block; font-size:15.75px; color:#8b93a4; margin-bottom:2px}
+  .mk-when b{font-size:17.25px; font-variant-numeric:tabular-nums}
+  .mk-btn{flex:0 0 auto; height:40px; padding:0 12px; border:0; border-radius:10px;
+    background:#16233d; color:#fff; font-size:16.5px; font-weight:800}
   .mk-btn:active{filter:brightness(1.25)}
   .mk-btn[disabled]{opacity:.5}
-  .mk-live{margin-top:9px; font-size:11.5px; color:#8b93a4; line-height:1.45}
+  .mk-live{margin-top:9px; font-size:14.5px; color:#8b93a4; line-height:1.5}
   .mk-live.on{color:#1d7a4b}
   .mk-live i{display:inline-block; width:7px; height:7px; border-radius:50%; background:#c3cad6; margin-right:5px; vertical-align:1px}
   .mk-live.on i{background:#25a35a}
@@ -447,34 +449,38 @@
   .mk-idx .l2 .v{font-size:23px; font-weight:800; letter-spacing:-.025em; font-variant-numeric:tabular-nums}
   .mk-idx .l2 .t{font-size:11.5px; color:#8b93a4; font-variant-numeric:tabular-nums; text-align:right}
   .mk-idx .l2 .t b{color:#5b6577; font-weight:700}
-  .mk-tbl-h{display:flex; justify-content:space-between; align-items:baseline; font-size:12px; font-weight:800; color:#5b6577; margin:0 0 5px}
-  .mk-tbl-h span{font-size:11px; font-weight:600; color:#98a1b3}
+  .mk-tbl-h{display:flex; justify-content:space-between; align-items:baseline; font-size:16.5px; font-weight:800; color:#5b6577; margin:0 0 6px}
+  .mk-tbl-h span{font-size:15.75px; font-weight:600; color:#98a1b3}
   .mk-row{display:flex; align-items:baseline; gap:8px; padding:9px 0; border-bottom:1px solid #eef1f6}
   .mk-row:first-child{padding-top:1px}
   .mk-row:last-child{border-bottom:0; padding-bottom:1px}
-  .mk-row .nm{flex:0 0 auto; min-width:56px; font-size:13.5px; font-weight:700; color:#141b2b; white-space:nowrap}
-  .mk-row .nm em{display:block; font-style:normal; font-size:11px; font-weight:600; color:#98a1b3; margin-top:1px}
-  .mk-row .val{flex:1 1 auto; text-align:right; font-size:18px; font-weight:800; letter-spacing:-.02em;
+  .mk-row .nm{flex:0 0 auto; min-width:56px; font-size:17.25px; font-weight:700; color:#141b2b; white-space:nowrap}
+  .mk-row .nm em{display:block; font-style:normal; font-size:15.75px; font-weight:600; color:#98a1b3; margin-top:2px}
+  .mk-row .val{flex:1 1 auto; text-align:right; font-size:18.75px; font-weight:800; letter-spacing:-.02em;
     font-variant-numeric:tabular-nums; white-space:nowrap}
-  .mk-row .chg{flex:0 0 78px; text-align:right; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums}
+  .mk-row .chg{flex:0 0 84px; text-align:right; font-size:17.25px; font-weight:700; font-variant-numeric:tabular-nums}
   .mk-row .chg b{display:block; white-space:nowrap}
-  .mk-row .chg span{display:block; font-size:11.5px}
+  .mk-row .chg span{display:block; font-size:16.5px}
+  /* 실시간 표시는 숫자가 아니므로 보조 크기로 */
+  .mk-row .chg b.live{font-size:15.75px; letter-spacing:0}
   .mk-row .chg.na{color:#b7bec9}
-  .mk-tfoot{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-top:8px;
-    font-size:11.5px; color:#8b93a4; font-variant-numeric:tabular-nums}
+  .mk-tfoot{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:2px 8px; margin-top:9px;
+    font-size:15.75px; color:#8b93a4; font-variant-numeric:tabular-nums; line-height:1.4}
   .mk-tfoot b{color:#5b6577; font-weight:700}
   .mk-tbl{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; table-layout:fixed}
-  .mk-tbl th{font-size:11px; color:#8b93a4; font-weight:700; padding:0 0 5px; text-align:right; white-space:nowrap}
-  .mk-tbl th:first-child{text-align:left; width:38px}
-  .mk-tbl td{font-size:12.5px; font-weight:700; padding:7px 0; text-align:right; border-top:1px solid #eef1f6; white-space:nowrap}
+  .mk-tbl th{font-size:15.75px; color:#8b93a4; font-weight:700; padding:0 0 6px; text-align:right; white-space:nowrap}
+  .mk-tbl th:first-child{text-align:left; width:62px}
+  .mk-tbl td{font-size:18.75px; font-weight:700; padding:8px 0; text-align:right; border-top:1px solid #eef1f6; white-space:nowrap}
   .mk-tbl td:first-child{text-align:left; color:#141b2b}
-  .mk-tbl td em{display:block; font-style:normal; font-size:10.5px; font-weight:700; margin-top:1px}
+  /* 숫자끼리 닿지 않게 열 사이에 최소한의 틈 (390px 에서 잘리지 않는 범위) */
+  .mk-tbl th + th, .mk-tbl td + td{padding-left:6px}
+  .mk-tbl td em{display:block; font-style:normal; font-size:15.75px; font-weight:700; margin-top:1px; letter-spacing:-.01em}
   .mk-tbl td.na{color:#c0c6d0; font-weight:600}
-  /* 4열(코스피·코스닥·선물·주식선물) — 390px 에서 잘리지 않게 글자를 줄인다 */
-  .mk-tbl.mk-tbl-4 th{font-size:10.5px; letter-spacing:-.03em; line-height:1.15; padding:0 0 5px}
-  .mk-tbl.mk-tbl-4 th:first-child{width:30px}
-  .mk-tbl.mk-tbl-4 td{font-size:12.5px; letter-spacing:-.03em; padding:8px 0}
-  .mk-tbl.mk-tbl-4 td:first-child{font-size:12.5px}
+  /* 4열(코스피·코스닥·선물·주식선물) — 390px 에서 숫자가 잘리지 않게 첫 칸 폭과 자간만 조정 */
+  .mk-tbl.mk-tbl-4 th{font-size:15.75px; letter-spacing:-.03em; line-height:1.15; padding:0 0 6px}
+  .mk-tbl.mk-tbl-4 th:first-child{width:44px}
+  .mk-tbl.mk-tbl-4 td{font-size:18.75px; letter-spacing:-.03em; padding:9px 0}
+  .mk-tbl.mk-tbl-4 td:first-child{font-size:18.75px}
   /* 미국·국내 지수 6종 — 같은 2열 카드 그리드 · 글자 1.5배 (2026-11-24 지수 글자 중간 크기)
      이전(v21) 글자와 2배 크기의 중간 — 지수명 11.5→17.25 · 숫자 17→25.5 · 전일대비·등락률 11.5→17.25
      · 날짜·상태 10.5→15.75px. 이 크기에서는 '24,089.56' 9자리도 원래 여백 그대로 한 줄에 들어간다. */
@@ -505,12 +511,13 @@
   .mk-br .r i{display:block; font-style:normal; font-size:16.5px; font-weight:700; letter-spacing:-.02em}
   .mk-duo{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:2px}
   .mk-duo>div{background:#fbfcfe; border:1px solid var(--line); border-radius:11px; padding:9px 10px; min-width:0}
-  .mk-duo span{display:block; font-size:11.5px; color:#8b93a4; margin-bottom:2px}
-  .mk-duo b{display:block; font-size:16px; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
-  .mk-duo em{display:block; font-style:normal; font-size:11.5px; margin-top:2px; font-variant-numeric:tabular-nums; font-weight:700}
-  .mk-duo span i{font-style:normal; font-size:10.5px; color:#b4bbc9; font-weight:600}
+  .mk-duo span{display:block; font-size:17.25px; color:#8b93a4; margin-bottom:3px; line-height:1.25}
+  .mk-duo b{display:block; font-size:18.75px; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .mk-duo em{display:block; font-style:normal; font-size:16.5px; margin-top:3px; font-variant-numeric:tabular-nums; font-weight:700}
+  .mk-duo span i{font-style:normal; font-size:15.75px; color:#b4bbc9; font-weight:600}
   .mk-mini{margin-top:9px; padding-top:8px; border-top:1px dashed #e3e8f0}
-  .mk-note{margin:7px 2px 0; font-size:11.5px; color:#8b93a4; line-height:1.45}
+  .mk-note{margin:8px 2px 0; font-size:14.5px; color:#8b93a4; line-height:1.5}
+  #tab-market .hint{font-size:14.5px; line-height:1.5}
   .mk-note.warn{color:#a06a14}
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
@@ -799,7 +806,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 지수 글자 1.5배 · 탭 스와이프</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-25 · 시장탭 글자 통일</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -3073,7 +3080,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-24T23:31:10+09:00",
+ "updatedAt": "2026-11-25T00:31:05+09:00",
  "bizdate": "20261124",
  "sections": {
   "index": {
@@ -3187,16 +3194,16 @@ var MARKET_INLINE = {
    }
   },
   "us": {
-   "asOf": "2026-11-24T09:31:03-05:00",
+   "asOf": "2026-11-24T10:30:58-05:00",
    "src": "네이버 증권 해외지수",
    "rows": [
     {
      "key": "INX",
      "name": "S&P 500",
-     "value": 7164.97,
-     "change": -72.2,
+     "value": 7165.04,
+     "change": -72.13,
      "pct": -1,
-     "asOf": "2026-11-24T09:31:03-05:00",
+     "asOf": "2026-11-24T10:30:58-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3204,10 +3211,10 @@ var MARKET_INLINE = {
     {
      "key": "IXIC",
      "name": "나스닥 종합",
-     "value": 24089.56,
-     "change": 0,
-     "pct": 0,
-     "asOf": "2026-11-24T09:31:04-05:00",
+     "value": 23605.63,
+     "change": -483.93,
+     "pct": -2.01,
+     "asOf": "2026-11-24T10:30:59-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3215,10 +3222,10 @@ var MARKET_INLINE = {
     {
      "key": "DJI",
      "name": "다우존스",
-     "value": 49348.13,
-     "change": -247.18,
-     "pct": -0.5,
-     "asOf": "2026-11-24T09:31:04-05:00",
+     "value": 49618.25,
+     "change": 22.94,
+     "pct": 0.05,
+     "asOf": "2026-11-24T10:30:59-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3226,10 +3233,10 @@ var MARKET_INLINE = {
     {
      "key": "SOX",
      "name": "필라델피아 반도체",
-     "value": 9588.05,
-     "change": 0,
-     "pct": 0,
-     "asOf": "2026-11-24T09:31:05-05:00",
+     "value": 8829.38,
+     "change": -758.67,
+     "pct": -7.91,
+     "asOf": "2026-11-24T10:31:00-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3237,10 +3244,10 @@ var MARKET_INLINE = {
     {
      "key": "NDX",
      "name": "나스닥 100",
-     "value": 26746.1,
-     "change": 0,
-     "pct": 0,
-     "asOf": "2026-11-24T09:31:05-05:00",
+     "value": 26117.58,
+     "change": -628.52,
+     "pct": -2.35,
+     "asOf": "2026-11-24T10:31:00-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3248,10 +3255,10 @@ var MARKET_INLINE = {
     {
      "key": "DJT",
      "name": "다우운송",
-     "value": 19891.8,
-     "change": -162.75,
-     "pct": -0.81,
-     "asOf": "2026-11-24T09:31:06-05:00",
+     "value": 19653.24,
+     "change": -401.31,
+     "pct": -2,
+     "asOf": "2026-11-24T10:31:01-05:00",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
@@ -3388,67 +3395,67 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.699,
-     "c10": -0.02,
-     "y2": 1.781,
-     "c2": -0.002,
-     "y30": 3.915,
-     "c30": -0.024,
-     "asOf": "2026-11-24T21:29:57+09:00"
+     "y10": 2.707,
+     "c10": -0.012,
+     "y2": 1.783,
+     "c2": 0,
+     "y30": 3.929,
+     "c30": -0.01,
+     "asOf": "2026-11-24T22:29:50+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.908,
-     "c10": -0.0122,
-     "y2": 4.668,
-     "c2": 0.0024,
-     "y30": 5.292,
-     "c30": -0.0027,
-     "asOf": "2026-11-24T09:29:54-05:00"
+     "y10": 4.902,
+     "c10": -0.0182,
+     "y2": 4.66,
+     "c2": -0.0058,
+     "y30": 5.291,
+     "c30": -0.0037,
+     "asOf": "2026-11-24T10:29:54-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T09:20:05-05:00",
+   "asOf": "2026-11-24T10:20:54-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.81,
-     "change": -0.51,
-     "pct": -0.49,
-     "asOf": "2026-11-24T09:20:05-05:00",
+     "value": 103.85,
+     "change": -0.47,
+     "pct": -0.45,
+     "asOf": "2026-11-24T10:20:54-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 29.17,
-     "change": 2.55,
-     "pct": 9.58,
-     "asOf": "2026-11-24T09:16:02-05:00",
+     "value": 27.35,
+     "change": 0.73,
+     "pct": 2.74,
+     "asOf": "2026-11-24T10:15:58-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3613.3,
-     "change": -38.1,
-     "pct": -1.04,
-     "asOf": "2026-11-24T08:21:02-06:00",
+     "value": 3588.5,
+     "change": -62.9,
+     "pct": -1.72,
+     "asOf": "2026-11-24T09:20:58-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.444,
-     "change": -0.19,
-     "pct": -3.37,
-     "asOf": "2026-11-24T08:21:02-06:00",
+     "value": 5.3815,
+     "change": -0.2525,
+     "pct": -4.48,
+     "asOf": "2026-11-24T09:20:58-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3457,25 +3464,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T08:21:02-06:00",
+   "asOf": "2026-11-24T09:20:58-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 81.13,
-     "change": 0.96,
-     "pct": 1.2,
-     "asOf": "2026-11-24T08:21:02-06:00",
+     "value": 80.92,
+     "change": 0.75,
+     "pct": 0.94,
+     "asOf": "2026-11-24T09:20:58-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.38,
-     "change": 1.01,
-     "pct": 1.13,
-     "asOf": "2026-11-24T14:21:02Z",
+     "value": 90.25,
+     "change": 0.88,
+     "pct": 0.98,
+     "asOf": "2026-11-24T15:20:58Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3483,17 +3490,17 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-24T23:30:58+09:00",
+   "asOf": "2026-11-25T00:04:10+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60509.89,
-     "change": -380.33,
-     "pct": -0.62,
+     "value": 60518.41,
+     "change": -371.81,
+     "pct": -0.61,
      "unit": "USDT",
-     "asOf": "2026-11-24T23:30:58+09:00"
+     "asOf": "2026-11-25T00:04:10+09:00"
     },
     {
      "key": "ETH",
@@ -3502,52 +3509,52 @@ var MARKET_INLINE = {
      "change": -34.8,
      "pct": -2.02,
      "unit": "USDT",
-     "asOf": "2026-11-24T22:13:12+09:00"
+     "asOf": "2026-11-25T00:07:11+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 69.72,
-     "change": -2.04,
-     "pct": -2.84,
+     "value": 68.98,
+     "change": -2.78,
+     "pct": -3.87,
      "unit": "USDT",
-     "asOf": "2026-11-24T22:51:10+09:00"
+     "asOf": "2026-11-25T00:18:46+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-24T23:29:03+09:00",
+   "asOf": "2026-11-25T00:29:03+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343.5,
-     "change": 1,
-     "pct": 0.07,
-     "asOf": "2026-11-24T23:29:03+09:00",
+     "value": 1343.1,
+     "change": 0.6,
+     "pct": 0.04,
+     "asOf": "2026-11-25T00:29:03+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 843.83,
-     "change": -0.56,
+     "value": 843.81,
+     "change": -0.58,
      "pct": -0.07,
-     "asOf": "2026-11-24T23:29:03+09:00",
+     "asOf": "2026-11-25T00:29:03+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1474.09,
-     "change": 10.36,
-     "pct": 0.71,
-     "asOf": "2026-11-24T23:29:03+09:00",
+     "value": 1473.45,
+     "change": 9.72,
+     "pct": 0.66,
+     "asOf": "2026-11-25T00:29:03+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -3830,7 +3837,7 @@ function renderMarket(){
     ch += '<div class="mk-row"><span class="nm">' + esc(cRow.name) + '<em>' + esc(cUnit) + '</em></span>'
       + '<span class="val">' + mkFixed(cVal, cDec) + '</span>'
       + (cChg === null || cChg === undefined
-          ? '<span class="chg flat"><b>' + (B ? '<span style="color:#1d7a4b">실시간</span>' : '—') + '</b></span>'
+          ? '<span class="chg flat"><b' + (B ? ' class="live" style="color:#1d7a4b"' : '') + '>' + (B ? '실시간' : '—') + '</b></span>'
           : mkBadge(cChg, 2, cPct))
       + '</div>';
   });
@@ -3857,7 +3864,7 @@ function renderMarket(){
     xh += '<div class="mk-row"><span class="nm">' + esc(r.name)
       + (live ? '<em>' + esc(live.label || '실시간') + '</em>' : '<em>' + esc(r.unit || '원') + '</em>') + '</span>'
       + '<span class="val">' + mkFixed(v, r.dec === undefined ? 2 : r.dec) + '</span>'
-      + (live && !same ? '<span class="chg flat"><b style="color:#1d7a4b">실시간</b></span>'
+      + (live && !same ? '<span class="chg flat"><b class="live" style="color:#1d7a4b">실시간</b></span>'
                        : mkBadge(r.change, 2, r.pct))
       + '</div>';
   });
