@@ -51,3 +51,6 @@ test_allprices.py
 # 전종목 시세 실배포 검증 (2026-11-24)
 test_live_allprices.py
 shots_allprices/
+
+# 탭 좌우 스와이프 검증 (2026-11-24)
+test_swipe.py

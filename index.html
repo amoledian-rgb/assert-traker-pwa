@@ -799,7 +799,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 지수 글자 1.5배</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:12.5px">2026-11-24 · 지수 글자 1.5배 · 탭 스와이프</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -2602,6 +2602,44 @@ document.querySelector('nav').addEventListener('click', function(e){
   var b = e.target.closest('button[data-tab]');
   if(b) switchTab(b.getAttribute('data-tab'));
 });
+
+/* ---------- 탭 좌우 스와이프 (2026-11-24) — 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭 ---------- */
+var TAB_ORDER = ['market', 'summary', 'krw', 'usd', 'stocks', 'trend', 'backup'];
+var swipeStart = null;
+
+/* 입력 칸·선택 상자·텍스트영역, 가로로 스크롤되는 표·영역, 하단 탭바 위에서 시작한 터치는 건너뜁니다
+   (숫자를 고치거나 표를 옆으로 밀어 보는 동작이 탭 이동으로 새지 않게). */
+function swipeBlocked(el){
+  for(var n = el; n && n.nodeType === 1 && n !== document.body && n !== document.documentElement; n = n.parentNode){
+    if(n.tagName === 'INPUT' || n.tagName === 'SELECT' || n.tagName === 'TEXTAREA') return true;
+    if(n.tagName === 'NAV') return true;
+    if(n.isContentEditable) return true;
+    if(n.scrollWidth > n.clientWidth + 2) return true;
+  }
+  return false;
+}
+document.addEventListener('touchstart', function(e){
+  swipeStart = null;
+  if(!e.touches || e.touches.length !== 1) return;      /* 두 손가락(확대 등)은 그대로 둡니다 */
+  if(swipeBlocked(e.target)) return;
+  var t = e.touches[0];
+  swipeStart = { x: t.clientX, y: t.clientY, at: Date.now() };
+}, {passive:true});
+document.addEventListener('touchcancel', function(){ swipeStart = null; }, {passive:true});
+document.addEventListener('touchend', function(e){
+  var s = swipeStart; swipeStart = null;
+  if(!s || !e.changedTouches || !e.changedTouches.length) return;
+  var t = e.changedTouches[0];
+  var dx = t.clientX - s.x, dy = t.clientY - s.y;
+  if(Date.now() - s.at > 1200) return;                  /* 길게 누른 뒤 끌기는 탭 이동이 아닙니다 */
+  if(Math.abs(dx) < 55) return;                         /* 짧은 움직임은 탭으로 봅니다 */
+  if(Math.abs(dx) <= Math.abs(dy) * 1.6) return;        /* 세로 스크롤이 우세하면 그대로 둡니다 */
+  var i = TAB_ORDER.indexOf(activeTab);
+  if(i < 0) return;
+  var j = dx < 0 ? i + 1 : i - 1;                       /* 왼쪽으로 밀기 = 다음, 오른쪽으로 밀기 = 이전 */
+  if(j < 0 || j >= TAB_ORDER.length) return;            /* 첫 탭에서 오른쪽 / 끝 탭에서 왼쪽은 그대로 */
+  switchTab(TAB_ORDER[j]);
+}, {passive:true});
 
 /* ---------- 추이 탭 조작: 기간 전환 · 포인트 터치 · 기록 불러오기 (trend-v1) ---------- */
 document.getElementById('tr-seg').addEventListener('click', function(e){
