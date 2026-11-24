@@ -3495,13 +3495,12 @@ function refreshMarket(manual){
     if(!manual) return;
     var f = r[0] || {}, L = r[1] || null, parts = [];
     if(L && L.fx && L.fx.rate) parts.push('환율 ' + mkFixed(L.fx.rate, 2) + '원');
-    if(L && L.jpy && L.jpy.rate) parts.push('USDJPY ' + mkFixed(L.jpy.rate, 2));
     if(L && L.btc && L.btc.price) parts.push('BTC ' + mkFixed(L.btc.price, 2));
     if(!f.ok && !parts.length){
       toast('시장 데이터를 못 받았습니다 — 인터넷 연결을 확인해 주세요', 3400, 'warn');
       return;
     }
-    toast(parts.length ? '실시간 반영 · ' + parts.join(' · ') : '시장 데이터를 새로 받았습니다', 3000);
+    toast(parts.length ? '실시간 반영 · ' + parts.join(' · ') : '시장 데이터를 새로 받았습니다', 2800);
   });
 }
 
