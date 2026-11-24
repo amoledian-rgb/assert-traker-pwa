@@ -1410,13 +1410,10 @@ function saveNow(){
       }else if(missed.length){
         /* 이미 알린 종목만 남아 있었다 — 카드 안내만으로 충분하다 */
         toast('저장되었습니다 ✓ — 미등록 ' + missed.length + '종목은 현재가 0입니다', 3000, 'warn');
-      }else if(missKept){
-        toast(head + '저장되었습니다 ✓ · 미등록 ' + missKept + '종목은 입력값 유지', 3400);
       }else if(mism.length){
         toast('달러·원화 통화가 다른 종목이에요 — 그 통화 탭에서 넣어 주세요' + (changed ? ' (최신 현재가 ' + changed + '종목 반영)' : ''), 4200, 'warn');
-      }else if(mismKept){
-        toast(head + '저장되었습니다 ✓ · 통화가 다른 ' + mismKept + '종목은 입력값 유지', 3400);
       }else if(changed){
+        /* 직접 넣은 미등록·통화불일치 가격은 조용히 지키고, 확인 문구만 짧게 */
         toast(head + '저장되었습니다 ✓', 3000);
       }else{
         toast('저장되었습니다 ✓ (' + nowClockSec() + ')');
