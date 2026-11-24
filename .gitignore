@@ -14,3 +14,5 @@ fetch_prices.py
 watchlist.json
 test_prices.py
 shots_prices/
+update_and_publish.sh
+test_local_file.py
