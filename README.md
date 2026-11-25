@@ -33,7 +33,7 @@
 | `prices.json` | 종목별 현재가(마감 뒤에는 종가)와 원/달러 환율 — 네이버 증권에서 받아 만든 시세 파일(국내 12종목 + 미국 5종목). 수량·금액·계좌 정보는 없습니다. |
 | `prices_history.json` | 날짜별(`YYYY-MM-DD`) 종목가·환율 기록. 추이 그래프와 빠진 날짜 보충에 씁니다. 첫 기록 2026-11-16. |
 | `manifest.json` | 설치형 앱 설정 |
-| `sw.js` | 오프라인 캐시 (현재 `asset-shell-v31`) — `prices.json`·`prices_history.json`·`market.json` 은 네트워크 우선 |
+| `sw.js` | 오프라인 캐시 (현재 `asset-shell-v33`) — `prices.json`·`prices_history.json`·`market.json` 은 네트워크 우선 |
 | `icon-192.png`, `icon-512.png`, `icon-180.png` | 앱 아이콘 |
 | `tools/make_icons.py` | 아이콘 생성 스크립트 |
 
