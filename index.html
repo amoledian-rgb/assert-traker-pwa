@@ -65,15 +65,29 @@
   .sec>span{margin-left:auto}
   .sec .secright{margin-left:auto}
   .card{background:var(--card); border-radius:16px; margin:0 12px 10px; padding:13px 14px; box-shadow:0 1px 2px rgba(20,27,43,.05), 0 6px 16px -12px rgba(20,27,43,.18)}
-  /* ---------- 원화·달러 탭: 종목·계좌 카드 사이 진한 구분선 (divider-v2) ---------- */
-  #holds-krw > .card, #holds-usd > .card, #accs-krw > .card, #accs-usd > .card{border:1px solid #d5dde9}
+  /* ---------- 입력·예수금 탭: 종목·계좌 카드 사이 진한 구분선 (divider-v2) ---------- */
+  #holds-krw > .card, #holds-usd > .card, #accs-cash > .card{border:1px solid #d5dde9}
   #holds-krw > .card + .card, #holds-usd > .card + .card,
-  #accs-krw > .card + .card, #accs-usd > .card + .card{position:relative; margin-top:28px}
+  #accs-cash > .card + .card{position:relative; margin-top:28px}
   #holds-krw > .card + .card::before, #holds-usd > .card + .card::before,
-  #accs-krw > .card + .card::before, #accs-usd > .card + .card::before{
+  #accs-cash > .card + .card::before{
     content:""; position:absolute; left:0; right:0; top:-15px; height:2px;
     background:#1e293b; border-radius:2px;
   }
+  /* ---------- 입력 탭: 원화·달러 구역 머리글 (curset-v1 · 2026-11-25) ----------
+     한 탭 안에서 통화가 헷갈리지 않게 통화 뱃지 + 구역 이름을 진하게 두고, 두 구역 사이에 진한 선을 긋는다. */
+  .curhd{display:flex; align-items:center; gap:7px; margin:20px 16px 8px;
+    font-size:17.25px; font-weight:800; color:#16233d; letter-spacing:-.01em}
+  .curhd .bd{flex:0 0 auto; font-size:14.5px; font-weight:800; letter-spacing:.02em;
+    padding:2px 8px; border-radius:7px; background:#e8f0ff; color:#2f56c8}
+  .curhd.usd .bd{background:#fbf3dc; color:#8a6c12}
+  .curhd .n{margin-left:auto; font-size:15.75px; font-weight:600; color:#98a1b3; text-align:right}
+  .cursep{height:2px; margin:22px 12px -4px; background:#1e293b; border-radius:2px}
+  /* 입력·예수금 탭의 합계 줄 — 원화·달러를 한 카드 안에서 같이 본다 */
+  .kv .cur-tag{display:inline-block; font-size:13.5px; font-weight:800; letter-spacing:.02em;
+    padding:1px 5px; border-radius:5px; background:#eef1f6; color:#5b6577; margin-right:6px; vertical-align:1px}
+  /* 예수금 탭: 한 계좌의 원화·달러 예수금을 위아래로 바로 넣는 칸 */
+  #accs-cash .a-cashkrw, #accs-cash .a-cashusd{height:50px}
   .hint{margin:8px 2px 0; font-size:14.5px; color:#8b93a4; line-height:1.5; word-break:keep-all}
   .note{margin:0 12px 12px; padding:11px 13px; border-radius:12px; background:#eef3ff; color:#2c4a8f; font-size:15.75px; line-height:1.55; word-break:keep-all}
   .note.warn{background:#fff5e8; color:#8a5a12}
@@ -424,10 +438,10 @@
     flex:0 0 auto; height:34px; padding:0 10px; border-radius:9px; border:0;
     background:#fff; color:#6b4408; font-size:14.5px; font-weight:800; white-space:nowrap;
   }
-  body.viewing #tab-krw input, body.viewing #tab-usd input{pointer-events:none; color:#8b93a4; background:#f6f7fa}
-  body.viewing #tab-krw .addbtn, body.viewing #tab-usd .addbtn,
-  body.viewing #tab-krw .delbtn, body.viewing #tab-usd .delbtn,
-  body.viewing #tab-krw .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
+  body.viewing #tab-input input, body.viewing #tab-cash input{pointer-events:none; color:#8b93a4; background:#f6f7fa}
+  body.viewing #tab-input .addbtn, body.viewing #tab-cash .addbtn,
+  body.viewing #tab-input .delbtn, body.viewing #tab-cash .delbtn,
+  body.viewing #tab-cash .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
   body.viewing .px-btn{display:none}
   /* ---------- 🌐 시장 탭 (market-v1) ---------- */
   /* 2026-11-25 · 시장 탭 전체 글자를 등락종목 기준으로 통일 (기존 대비 1.5배 · 작은 글자만 1.2배)
@@ -649,29 +663,59 @@
     <p class="hint" style="margin:0 16px 18px">달러자산은 달러 금액으로 표시하고, 원화 환산액은 위 환율로 계산합니다. 환율을 바꾸면 환산액만 따라 바뀝니다.</p>
   </section>
 
-  <!-- ============ 원화 ============ -->
-  <section class="tab" id="tab-krw">
-    <div class="sec">기준일 · 원화자산 <span class="secright"><button class="px-btn" type="button" data-prices="1">🔄 종가 새로고침</button><span id="k-share">0.0%</span></span></div>
+  <!-- ============ 입력 (원화·달러 종목) ============ -->
+  <section class="tab" id="tab-input">
+    <div class="sec">기준일 · 자산 합계 <span class="secright"><button class="px-btn" type="button" data-prices="1">🔄 종가 새로고침</button><span id="k-share">0.0%</span></span></div>
     <div class="card">
       <label class="f"><span>평가 기준일</span><input class="t txt" id="in-date" type="date"></label>
       <div class="kv" style="margin-top:10px">
-        <div><span>원화 주식</span><b id="k-stock">0원</b></div>
-        <div><span>원화 예수금</span><b id="k-cash">0원</b></div>
-        <div class="full"><span>원화 합계</span><b id="k-total">0원</b></div>
+        <div><span><i class="cur-tag" style="background:#e8f0ff;color:#2f56c8">KRW</i>원화 주식</span><b id="k-stock">0원</b></div>
+        <div><span><i class="cur-tag" style="background:#fbf3dc;color:#8a6c12">USD</i>달러 주식</span><b id="u-stock">$0.00</b><em id="u-stockkrw">0원</em></div>
+        <div class="full"><span>주식 합계 (원화 환산)</span><b id="i-stockall">0원</b></div>
       </div>
-      <p class="hint">종목명이나 <b>티커(예: 005930)</b>를 넣고 <b>💾 저장하기</b>를 누르면 종목마다 <b>최신 현재가</b>로 맞춰 저장합니다. 달러($) 종목은 <b>달러 탭</b>에서 넣습니다.</p>
+      <p class="hint">종목명이나 <b>티커(예: 005930)</b>를 넣고 <b>💾 저장하기</b>를 누르면 종목마다 <b>최신 현재가</b>로 맞춰 저장합니다. 원화는 아래 <b>원화 종목</b>, 달러는 <b>달러 종목</b> 구역에 넣고, 예수금은 <b>💵 예수금 탭</b>에서 넣습니다.</p>
     </div>
 
-    <div class="sec">원화 보유 종목 <span id="k-holdn">0건</span></div>
+    <div class="curhd krw"><span class="bd">KRW</span>원화 종목<span class="n" id="k-holdn">0건</span></div>
     <div class="card" id="chips-wrap-krw" style="padding:12px 12px 4px">
       <div class="chips" id="chips-krw"></div>
     </div>
     <div id="holds-krw"></div>
     <button class="addbtn" id="addh-krw" type="button">＋ 원화 종목 추가</button>
 
-    <div class="sec">계좌별 투자원금 · 원화 예수금 <span>입출금 때만 수정</span></div>
-    <div class="note">입출금이 있으면 그 계좌의 <b>투자원금(예치금)</b>과 <b>원화 예수금</b>을 함께 고쳐 주세요. 그래야 수익률이 실제 수익률로 유지됩니다.</div>
-    <div id="accs-krw"></div>
+    <div class="cursep"></div>
+
+    <div class="curhd usd"><span class="bd">USD</span>달러 종목<span class="n" id="u-holdn">0건</span></div>
+    <div class="card" id="chips-wrap-usd" style="padding:12px 12px 4px">
+      <div class="chips" id="chips-usd"></div>
+    </div>
+    <div id="holds-usd"></div>
+    <button class="addbtn" id="addh-usd" type="button">＋ 달러 종목 추가</button>
+    <div style="height:6px"></div>
+  </section>
+
+  <!-- ============ 예수금 (환율 · 계좌) ============ -->
+  <section class="tab" id="tab-cash">
+    <div class="sec">환율 · 예수금 합계 <span class="secright"><span id="u-fxlabel">—</span></span></div>
+    <div class="card">
+      <div class="grid2">
+        <label class="f"><span>현재 환율 <u>₩/$</u></span><input class="t" id="in-fx" inputmode="decimal"></label>
+        <label class="f"><span>기준(매입) 환율 <u>₩/$</u> <i class="opt" style="font-style:normal;font-weight:600;color:#b4bbc9">선택</i></span><input class="t" id="in-fxbase" inputmode="decimal" step="0.01" placeholder="예: 1,350.00"></label>
+      </div>
+      <div class="fxline" id="in-fxline">기준(매입) 환율을 넣으면 환차익을 계산합니다</div>
+      <div class="fxsrc" id="in-fxsrc"><i></i>환율 출처 확인 중…</div>
+      <div class="kv" style="margin-top:10px">
+        <div><span><i class="cur-tag" style="background:#e8f0ff;color:#2f56c8">KRW</i>원화 예수금</span><b id="k-cash">0원</b></div>
+        <div><span><i class="cur-tag" style="background:#fbf3dc;color:#8a6c12">USD</i>달러 예수금</span><b id="u-cash">$0.00</b><em id="u-cashkrw">0원</em></div>
+        <div class="full"><span>예수금 합계 (원화 환산)</span><b id="i-cashtotal">0원</b></div>
+      </div>
+      <span class="fxg" id="u-fxgain">기준 환율 입력 시 환차익 표시</span>
+      <p class="hint">달러 예수금은 <b>소수점 넷째 자리까지</b> 넣고 표시됩니다. 아래 계좌 카드에서 한 계좌의 <b>원화 예수금·달러 예수금</b>을 바로 넣을 수 있고, 달러 예수금의 원화 환산액은 위 현재 환율로 계산합니다.</p>
+    </div>
+
+    <div class="sec">계좌별 예수금 <span>입출금 때만 수정</span></div>
+    <div class="note">입출금이 있으면 그 계좌의 <b>투자원금(예치금)</b>과 <b>예수금</b>을 함께 고쳐 주세요. 그래야 수익률이 실제 수익률로 유지됩니다.</div>
+    <div id="accs-cash"></div>
 
     <button class="addbtn" id="btn-addacc" type="button">➕ 새 계좌 추가</button>
     <div class="addacc" id="addacc" hidden>
@@ -697,38 +741,6 @@
         <button type="button" class="go" id="na-add">계좌 추가</button>
       </div>
     </div>
-    <div style="height:6px"></div>
-  </section>
-
-  <!-- ============ 달러 ============ -->
-  <section class="tab" id="tab-usd">
-    <div class="sec">환율 · 달러자산 <span class="secright"><button class="px-btn" type="button" data-prices="1">🔄 종가 새로고침</button><span id="u-fxlabel">—</span></span></div>
-    <div class="card">
-      <div class="grid2">
-        <label class="f"><span>현재 환율 <u>₩/$</u></span><input class="t" id="in-fx" inputmode="decimal"></label>
-        <label class="f"><span>기준(매입) 환율 <u>₩/$</u> <i class="opt" style="font-style:normal;font-weight:600;color:#b4bbc9">선택</i></span><input class="t" id="in-fxbase" inputmode="decimal" step="0.01" placeholder="예: 1,350.00"></label>
-      </div>
-      <div class="fxline" id="in-fxline">기준(매입) 환율을 넣으면 환차익을 계산합니다</div>
-      <div class="fxsrc" id="in-fxsrc"><i></i>환율 출처 확인 중…</div>
-      <div class="kv" style="margin-top:10px">
-        <div><span>달러 주식</span><b id="u-stock">$0.00</b><em id="u-stockkrw">0원</em></div>
-        <div><span>달러 예수금</span><b id="u-cash">$0.00</b><em id="u-cashkrw">0원</em></div>
-        <div class="full"><span>달러자산 합계</span><b id="u-total">$0.00</b><em id="u-totalkrw">0원</em></div>
-      </div>
-      <span class="fxg" id="u-fxgain">기준 환율 입력 시 환차익 표시</span>
-      <p class="hint">달러 종목·달러 예수금은 <b>소수점 넷째 자리까지</b> 넣고 표시됩니다. 환율을 바꾸면 원화 환산액만 따라 바뀝니다.</p>
-    </div>
-
-    <div class="sec">달러 보유 종목 <span id="u-holdn">0건</span></div>
-    <div class="card" id="chips-wrap-usd" style="padding:12px 12px 4px">
-      <div class="chips" id="chips-usd"></div>
-    </div>
-    <div id="holds-usd"></div>
-    <button class="addbtn" id="addh-usd" type="button">＋ 달러 종목 추가</button>
-
-    <div class="sec">계좌별 달러 예수금 <span>소수점 넷째 자리까지</span></div>
-    <div class="note">달러 예수금은 그 계좌의 <b>$</b> 잔고입니다. 옆의 원화 환산액은 위 현재 환율로 계산합니다. 계좌 추가·이름 수정은 <b>원화 탭</b>에서 합니다.</div>
-    <div id="accs-usd"></div>
     <div style="height:6px"></div>
   </section>
 
@@ -812,7 +824,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 전체 글자 크기 통일</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 입력·예수금 탭 분리</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -836,8 +848,8 @@
 <nav>
   <button class="on" data-tab="market"><i>🌐</i>시장</button>
   <button data-tab="summary"><i>📊</i>요약</button>
-  <button data-tab="krw"><i>🇰🇷</i>원화</button>
-  <button data-tab="usd"><i>🇺🇸</i>달러</button>
+  <button data-tab="input"><i>✏️</i>입력</button>
+  <button data-tab="cash"><i>💵</i>예수금</button>
   <button data-tab="stocks"><i>📈</i>종목</button>
   <button data-tab="trend"><i>📉</i>추이</button>
   <button data-tab="backup"><i>💾</i>백업</button>
@@ -1230,7 +1242,7 @@ function smoothPath(pts){
 }
 function trendChart(series, range){
   if(!series.length){
-    return '<div class="tr-empty">아직 저장된 기록이 없습니다.<br>원화·달러 탭에서 <b>💾 저장하기</b>를 누르면 그날 기록이 여기에 쌓입니다.</div>';
+    return '<div class="tr-empty">아직 저장된 기록이 없습니다.<br>입력·예수금 탭에서 <b>💾 저장하기</b>를 누르면 그날 기록이 여기에 쌓입니다.</div>';
   }
   var W = 320, H = 168, L = 52, R = 8, T = 16, B = 26;
   var iw = W - L - R, ih = H - T - B;
@@ -1355,7 +1367,7 @@ function renderTrendList(rows){
 }
 
 /* ---------- 저장 바: 수동 저장 (manual-save-v1) ----------
-   · 원화·달러 탭에서 값을 바꾸면 state(메모리)만 바뀐다 — 요약·비중 탭에서 바로 보인다.
+   · 입력·예수금 탭에서 값을 바꾸면 state(메모리)만 바뀐다 — 요약·종목 탭에서 바로 보인다.
    · localStorage 에는 💾 저장하기 를 눌렀을 때만 쓴다.
    · 마지막 저장 내용과 달라졌으면 dirty = true → 저장 바에 '저장 안 된 변경 있음' 표시 + ↩️ 되돌리기 활성. */
 function markChanged(){
@@ -1378,12 +1390,12 @@ function renderSavebar(){
     stamp.innerHTML = '마지막 저장<b>' + (lastSaved ? clockOf(lastSaved) : '—') + '</b>';
   }
 }
-/* 저장 바를 보일지 정한다: 원화·달러 탭이면 늘, 다른 탭에서는 저장 안 된 변경이 있을 때만. */
+/* 저장 바를 보일지 정한다: 입력·예수금 탭이면 늘, 다른 탭에서는 저장 안 된 변경이 있을 때만. */
 var barShown = null, barDirty = null;
 function syncBar(){
   var bar = document.getElementById('savebar');
   if(!bar) return;
-  var want = !viewingDate && (activeTab === 'krw' || activeTab === 'usd' || dirty);
+  var want = !viewingDate && (activeTab === 'input' || activeTab === 'cash' || dirty);
   if(bar.classList.contains('on') !== want) bar.classList.toggle('on', want);
   if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
 }
@@ -1419,7 +1431,7 @@ function needPrice(h){ return hasTicker(h) && !(num(h.price) > 0); }
 function rerenderAfterPrices(){
   var m = compute();
   renderHeader(m);   /* 저장하면서 채운 현재가가 위 총자산에도 반영되게 */
-  if(activeTab === 'krw' || activeTab === 'usd') renderCurrencyTab(curTab(), m);
+  if(activeTab === 'input') renderInputTab(m); else if(activeTab === 'cash') renderCashTab(m);
   renderSavebar(); syncBar();
 }
 function saveNow(){
@@ -1477,7 +1489,7 @@ function saveNow(){
         /* 이미 알린 종목만 남아 있었다 — 카드 안내만으로 충분하다 */
         toast('저장되었습니다 ✓ — 미등록 ' + missed.length + '종목은 현재가 0입니다', 3000, 'warn');
       }else if(mism.length){
-        toast('달러·원화 통화가 다른 종목이에요 — 그 통화 탭에서 넣어 주세요' + (changed ? ' (최신 현재가 ' + changed + '종목 반영)' : ''), 4200, 'warn');
+        toast('달러·원화 통화가 다른 종목이에요 — 입력 탭의 그 통화 구역에서 넣어 주세요' + (changed ? ' (최신 현재가 ' + changed + '종목 반영)' : ''), 4200, 'warn');
       }else if(changed){
         /* 직접 넣은 미등록·통화불일치 가격은 조용히 지키고, 확인 문구만 짧게 */
         toast(head + '저장되었습니다 ✓', 3000);
@@ -1503,7 +1515,6 @@ function undoAll(){
   ['KRW','USD'].forEach(function(c){ if(filters[c] !== 'all' && names.indexOf(filters[c]) < 0) filters[c] = 'all'; });
   dirty = false;
   renderAll();
-  if(activeTab === 'krw' || activeTab === 'usd') renderCurrencyTab(activeTab === 'usd' ? 'USD' : 'KRW');
   renderSavebar(); syncBar();
   toast('마지막 저장 상태로 되돌렸습니다');
 }
@@ -1722,26 +1733,25 @@ function renderSummary(m){
   renderFxGain(m);
 }
 
-/* ---------- 원화·달러: 상단 요약 ---------- */
+/* ---------- 입력·예수금: 상단 합계 ---------- */
 function renderCurSummary(cur, m){
   m = m || compute();
   if(cur === 'KRW'){
     setTxt('k-stock', won(m.stockKrw));
     setTxt('k-cash', won(m.cashKrw));
-    setTxt('k-total', won(m.krwTotal));
-    setTxt('k-share', '전체자산의 ' + pct(m.totalAssets ? m.krwTotal/m.totalAssets : 0));
+    setTxt('k-share', '주식 ' + pct(m.totalAssets ? m.stockSum/m.totalAssets : 0));
   }else{
     setTxt('u-stock', usd(m.usdStock));
     setTxt('u-stockkrw', won(m.usdStockKrw));
     setTxt('u-cash', usd(m.cashUsd));
     setTxt('u-cashkrw', won(m.cashUsd * m.fx));
-    setTxt('u-total', usd(m.usdTotal));
-    setTxt('u-totalkrw', won(m.usdKrw));
     setTxt('u-fxlabel', '1$ = ' + fmtFx(m.fx) + '원');
   }
+  setTxt('i-stockall', won(m.stockSum));      /* 입력 탭: 원화·달러 주식 합계 */
+  setTxt('i-cashtotal', won(m.cashAll));      /* 예수금 탭: 원화·달러 예수금 합계 */
 }
 
-/* ---------- 원화·달러: 종목 ---------- */
+/* ---------- 압력·예수금: 종목 ---------- */
 function curOf(h){ return (h && h.cur === 'USD') ? 'USD' : 'KRW'; }
 function holdById(id){
   for(var i=0;i<state.holdings.length;i++){ if(state.holdings[i].id === id) return state.holdings[i]; }
@@ -1813,7 +1823,7 @@ function renderHolds(cur){
   if(!all.length){
     box.innerHTML = '<div class="card empty"><b>' + (cur === 'USD' ? '아직 달러 종목이 없습니다' : '아직 원화 종목이 없습니다') + '</b>' +
       (cur === 'USD'
-        ? '미국 주식·ETF를 넣으면 달러자산에 자동으로 합산되고, 요약·비중 페이지에도 바로 반영됩니다.'
+        ? '미국 주식·ETF를 넣으면 달러자산에 자동으로 합산되고, 요약·종목 페이지에도 바로 반영됩니다.'
         : '국내 주식·ETF를 넣으면 원화자산과 전체 비중에 바로 반영됩니다.') +
       '<button type="button" class="addbtn" data-add="' + cur + '">＋ 첫 ' + (cur === 'USD' ? '달러' : '원화') + ' 종목 추가</button></div>';
     return;
@@ -1858,49 +1868,32 @@ function updateInputCalcs(m){
 function renderAccTotals(m){
   var map = {};
   m.accounts.forEach(function(a){ map[a.name] = a; });
-  Array.prototype.forEach.call(document.querySelectorAll('#accs-krw .card[data-acc]'), function(card){
+  Array.prototype.forEach.call(document.querySelectorAll('#accs-cash .card[data-acc]'), function(card){
     var a = map[card.getAttribute('data-acc')];
     if(!a) return;
-    var t = card.querySelector('.tot');
-    if(t) t.textContent = won(a.total);
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('#accs-usd .card[data-acc]'), function(card){
-    var a = map[card.getAttribute('data-acc')];
-    if(!a) return;
-    var u = card.querySelector('.totusd');
-    if(u) u.textContent = won(a.cashUsd * m.fx);
+    var t = card.querySelector('.totcash');
+    if(t) t.textContent = won(a.cashKrw + a.cashUsd * m.fx);
   });
 }
 
-/* ---------- 원화·달러: 계좌 ---------- */
-/* acc-add-v1: 계좌 추가·이름/구분 수정·삭제 */
+/* ---------- 입력·예수금: 계좌 ---------- */
+/* acc-add-v1: 계좌 추가·이름/구분 수정·삭제 — 예수금 탭 한 곳에서 */
 var accEdit = null;          /* 이름·구분을 고치는 중인 계좌 이름 (없으면 null) */
 function accHoldCount(name, cur){
   var n = 0;
   state.holdings.forEach(function(h){ if(h.account === name && (!cur || curOf(h) === cur)) n++; });
   return n;
 }
-function renderAccs(cur){
-  var box = document.getElementById(cur === 'USD' ? 'accs-usd' : 'accs-krw');
+/* 계좌 카드 — 한 계좌의 투자원금·원화 예수금·달러 예수금을 한 카드에서 바로 넣는다 (cash-tab-v1) */
+function renderAccs(m){
+  m = m || compute();
+  var box = document.getElementById('accs-cash');
   if(!box) return;
-  if(cur === 'USD'){
-    box.innerHTML = state.accounts.map(function(a){
-      var n = accHoldCount(a.name, 'USD');
-      return '<div class="card" data-acc="' + esc(a.name) + '">' +
-        '<div class="acct-head"><span class="nm"><b class="ttl">' + esc(a.name) + '</b>' +
-          '<span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span>' +
-          '<span class="tag cnt">달러 종목 ' + n + '건</span></span></div>' +
-        '<label class="f"><span>달러 예수금 <u>$</u></span>' +
-          '<input type="text" class="t a-cashusd" inputmode="decimal" step="0.0001" value="' + fmtNum2(a.cashUsd) + '"></label>' +
-        '<div class="foot"><div class="l">원화 환산<b class="totusd">' + won(a.cashUsd * num(state.fx)) + '</b></div>' +
-          '<div class="r" style="color:#8b93a4;font-weight:600">' + usd(a.cashUsd) + '</div></div>' +
-      '</div>';
-    }).join('');
-    return;
-  }
+  var cmap = {};
+  m.accounts.forEach(function(x){ cmap[x.name] = x; });
   box.innerHTML = state.accounts.map(function(a){
     var editing = (accEdit === a.name);
-    var n = accHoldCount(a.name, 'KRW');
+    var nk = accHoldCount(a.name, 'KRW'), nu = accHoldCount(a.name, 'USD');
     var head = editing
       ? '<div class="acct-edit">' +
           '<label class="f"><span>계좌명</span><input class="t txt a-aname" type="text" value="' + esc(a.name) + '" placeholder="예: 토스증권 종합" autocomplete="off"></label>' +
@@ -1916,28 +1909,36 @@ function renderAccs(cur){
         '</div>'
       : '<div class="acct-head"><span class="nm"><b class="ttl">' + esc(a.name) + '</b>' +
           '<span class="tag' + (a.type==='연금'?' pen':'') + '">' + a.type + '</span>' +
-          '<span class="tag cnt">종목 ' + n + '건</span></span>' +
+          '<span class="tag cnt">원화 ' + nk + ' · 달러 ' + nu + '</span></span>' +
           '<span class="acct-tools"><button type="button" class="a-acc-edit">✏️ 수정</button>' +
           '<button type="button" class="warn a-acc-del">🗑 삭제</button></span></div>';
     var money = editing ? '' :
       '<label class="f"><span>투자원금(예치금) <u>원</u></span>' +
         '<input type="text" class="t a-principal" inputmode="numeric" value="' + fmtInt(a.principal) + '"></label>' +
       '<div class="grid2" style="margin-top:8px">' +
-        '<label class="f"><span>원화 예수금 <u>원</u></span><input type="text" class="t a-cashkrw" inputmode="numeric" value="' + fmtInt(a.cashKrw) + '"></label>' +
-        '<label class="f"><span>달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.0001" value="' + fmtNum2(a.cashUsd) + '"></label>' +
+        '<label class="f"><span><i class="cur-tag" style="background:#e8f0ff;color:#2f56c8">KRW</i> 원화 예수금 <u>원</u></span><input type="text" class="t a-cashkrw" inputmode="numeric" value="' + fmtInt(a.cashKrw) + '"></label>' +
+        '<label class="f"><span><i class="cur-tag" style="background:#fbf3dc;color:#8a6c12">USD</i> 달러 예수금 <u>$</u></span><input type="text" class="t a-cashusd" inputmode="decimal" step="0.0001" value="' + fmtNum2(a.cashUsd) + '"></label>' +
       '</div>' +
-      '<div class="foot"><div class="l">평가자산<b class="tot">' + won(a.stock + a.cashKrw + a.cashUsd * num(state.fx)) + '</b></div>' +
-        '<div class="r" style="color:#8b93a4; font-weight:600">달러 예수금 ' + usd(a.cashUsd) + '</div></div>';
+      '<div class="foot"><div class="l">예수금 합계<b class="totcash">' + won(a.cashKrw + a.cashUsd * num(state.fx)) + '</b></div>' +
+        '<div class="r" style="color:#8b93a4; font-weight:600">계좌 자산 ' + won((cmap[a.name] || {}).total || 0) + '</div></div>';
     return '<div class="card" data-acc="' + esc(a.name) + '">' + head + money + '</div>';
   }).join('');
 }
-/* 한 통화 탭 전체를 다시 그린다 */
-function renderCurrencyTab(cur, m){
+/* 입력 탭 전체를 다시 그린다 — 원화·달러 두 구역을 함께 */
+function renderInputTab(m){
   m = m || compute();
-  renderChips(cur);
-  renderHolds(cur);
-  renderAccs(cur);
-  renderCurSummary(cur, m);
+  renderChips('KRW'); renderHolds('KRW');
+  renderChips('USD'); renderHolds('USD');
+  renderCurSummary('KRW', m);
+  renderCurSummary('USD', m);
+  updateInputCalcs(m);
+}
+/* 예수금 탭 전체를 다시 그린다 */
+function renderCashTab(m){
+  m = m || compute();
+  renderAccs(m);
+  renderCurSummary('KRW', m);
+  renderCurSummary('USD', m);
   updateInputCalcs(m);
 }
 
@@ -1962,7 +1963,7 @@ function renderHoldings(m){
   setTxt('st-count', m.stocks.length + '종목 · 주식 ' + won(m.stockSum));
   var box = document.getElementById('stocks');
   if(!m.stocks.length){
-    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:18px 0">보유 종목이 없습니다.<br>원화·달러 탭에서 종목을 넣으면 여기에 보유 내역과 비중이 나옵니다.</div>';
+    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:18px 0">보유 종목이 없습니다.<br>입력 탭에서 종목을 넣으면 여기에 보유 내역과 비중이 나옵니다.</div>';
   }else{
     /* 같은 종목의 계좌별 수량·매입단가 — compute() 의 종목 묶음 키(이름|통화)와 같게 묶는다 */
     var byAcct = {};
@@ -2045,7 +2046,7 @@ function renderBackup(m){
   }else if(dirty){
     dot.className = 'dotlive mem';
     st.textContent = '저장 안 된 변경 있음';
-    hint.innerHTML = '<b>아직 저장하지 않은 변경이 있습니다.</b> 원화·달러 탭 아래 <b>💾 저장하기</b>를 눌러야 이 폰에 남습니다. 앱을 닫으면 마지막으로 저장한 상태로 돌아갑니다.';
+    hint.innerHTML = '<b>아직 저장하지 않은 변경이 있습니다.</b> 입력·예수금 탭 아래 <b>💾 저장하기</b>를 눌러야 이 폰에 남습니다. 앱을 닫으면 마지막으로 저장한 상태로 돌아갑니다.';
   }else{
     dot.className = 'dotlive';
     st.textContent = '수동 저장' + (lastSaved ? ' · 마지막 저장 ' + clockOf(lastSaved) : '');
@@ -2091,11 +2092,8 @@ function renderAll(){
   else if(activeTab === 'stocks') renderHoldings(m);
   else if(activeTab === 'trend') renderTrend(m);
   else if(activeTab === 'backup') renderBackup(m);
-  else if(activeTab === 'krw') renderCurrencyTab('KRW', m);
-  else if(activeTab === 'usd') renderCurrencyTab('USD', m);
-}
-function curTab(){
-  return (activeTab === 'usd') ? 'USD' : (activeTab === 'krw' ? 'KRW' : null);
+  else if(activeTab === 'input') renderInputTab(m);
+  else if(activeTab === 'cash') renderCashTab(m);
 }
 function afterChange(opts){
   markChanged();   /* state(메모리)만 갱신 — localStorage 저장은 💾 저장하기 에서만 */
@@ -2106,13 +2104,15 @@ function afterChange(opts){
   else if(activeTab === 'stocks') renderHoldings(m);
   else if(activeTab === 'trend') renderTrend(m);
   else if(activeTab === 'backup') renderBackup(m);
-  else if(activeTab === 'krw' || activeTab === 'usd'){
-    var cur = curTab();
+  else if(activeTab === 'input'){
     if(opts && opts.rebuild){
-      renderChips(cur);
-      renderHolds(cur);
-      renderAccs(cur);
+      renderChips('KRW'); renderHolds('KRW');
+      renderChips('USD'); renderHolds('USD');
     }
+    updateInputCalcs(m);
+  }
+  else if(activeTab === 'cash'){
+    if(opts && opts.rebuild) renderAccs(m);
     updateInputCalcs(m);
   }
 }
@@ -2120,14 +2120,14 @@ function switchTab(t){
   activeTab = t;
   Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(e){ e.classList.toggle('active', e.id === 'tab-' + t); });
   Array.prototype.forEach.call(document.querySelectorAll('nav button'), function(b){ b.classList.toggle('on', b.getAttribute('data-tab') === t); });
-  syncBar();          /* 원화·달러 탭이거나 저장 안 된 변경이 있으면 저장 바를 보인다 */
+  syncBar();          /* 입력·예수금 탭이거나 저장 안 된 변경이 있으면 저장 바를 보인다 */
   renderSavebar();
   fitFrame();
   var m = compute();
   if(t === 'market'){ renderMarket(); if(!marketData) loadMarketFile(); liveMarket(false); }
   if(t === 'summary') renderSummary(m);
-  if(t === 'krw') renderCurrencyTab('KRW', m);
-  if(t === 'usd') renderCurrencyTab('USD', m);
+  if(t === 'input') renderInputTab(m);
+  if(t === 'cash') renderCashTab(m);
   if(t === 'stocks') renderHoldings(m);
   if(t === 'trend') renderTrend(m);
   if(t === 'backup') renderBackup(m);
@@ -2392,7 +2392,7 @@ function loadPrices(opts){
        var res = applyPrices(data, !!opts.manual);
        if(!res.matched && !res.fx){
          var why = res.mismatch && res.mismatch.length
-           ? '통화가 다른 종목만 있습니다 — 달러 종목은 달러 탭에서 채워집니다'
+           ? '통화가 다른 종목만 있습니다 — 달러 종목은 입력 탭 달러 구역에서 채워집니다'
            : '지금 종목과 맞는 종가가 파일에 없습니다';
          done({ok:false, why:why, mismatch:!!(res.mismatch && res.mismatch.length)});
          return;
@@ -2636,7 +2636,7 @@ document.querySelector('nav').addEventListener('click', function(e){
 });
 
 /* ---------- 탭 좌우 스와이프 (2026-11-24) — 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭 ---------- */
-var TAB_ORDER = ['market', 'summary', 'krw', 'usd', 'stocks', 'trend', 'backup'];
+var TAB_ORDER = ['market', 'summary', 'input', 'cash', 'stocks', 'trend', 'backup'];
 var swipeStart = null;
 
 /* 입력 칸·선택 상자·텍스트영역, 가로로 스크롤되는 표·영역, 하단 탭바 위에서 시작한 터치는 건너뜁니다
@@ -2810,7 +2810,7 @@ function bindHolds(cur){
         h.cur = cur;
         if(filters[cur] !== 'all' && filters[cur] !== h.account) filters[cur] = 'all';
         afterChange({rebuild:true});
-        toast(cur === 'USD' ? '달러 종목으로 옮겼습니다 — 달러 탭에서 확인하세요' : '원화 종목으로 옮겼습니다 — 원화 탭에서 확인하세요', 2800);
+        toast(cur === 'USD' ? '달러 종목으로 옮겼습니다 — 아래 달러 종목 구역에서 확인하세요' : '원화 종목으로 옮겼습니다 — 위 원화 종목 구역에서 확인하세요', 2800);
       }
       return;
     }
@@ -2879,7 +2879,7 @@ document.getElementById('main').addEventListener('click', function(e){
   if(b) addHold(b.getAttribute('data-add') === 'USD' ? 'USD' : 'KRW');
 });
 
-/* 계좌 카드 이벤트 (원화 탭: 금액 + 수정/삭제, 달러 탭: 달러 예수금) */
+/* 계좌 카드 이벤트 (예수금 탭: 원화·달러 예수금 + 수정/삭제) */
 function accByCard(e){
   var card = e.closest('.card[data-acc]');
   if(!card) return null;
@@ -2904,10 +2904,9 @@ function bindAccMoney(boxId){
   });
   box.addEventListener('focusout', function(e){ settleNum(e.target, fieldDec(e.target, null)); });
 }
-bindAccMoney('accs-krw');
-bindAccMoney('accs-usd');
+bindAccMoney('accs-cash');
 
-/* 계좌 카드: 수정·저장·취소·삭제 (acc-add-v1) — 원화 탭 */
+/* 계좌 카드: 수정·저장·취소·삭제 (acc-add-v1) — 예수금 탭 */
 function cleanAccName(v){ return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
 function saveAccEdit(card, a){
   var nameEl = card.querySelector('.a-aname');
@@ -2948,8 +2947,8 @@ function deleteAcc(a){
   afterChange({rebuild:true});
   toast(n ? ('계좌와 종목 ' + n + '건을 삭제했습니다') : '계좌를 삭제했습니다');
 }
-var accsKrwEl = document.getElementById('accs-krw');
-accsKrwEl.addEventListener('click', function(e){
+var accsCashEl = document.getElementById('accs-cash');
+accsCashEl.addEventListener('click', function(e){
   var card = e.target.closest('.card[data-acc]');
   if(!card) return;
   var a = accByCard(card);
@@ -2961,12 +2960,12 @@ accsKrwEl.addEventListener('click', function(e){
   }
   if(e.target.closest('.a-acc-edit')){
     accEdit = (accEdit === a.name) ? null : a.name;
-    renderAccs('KRW');
-    var inp = accsKrwEl.querySelector('.a-aname');
+    renderAccs(m);
+    var inp = accsCashEl.querySelector('.a-aname');
     if(inp){ inp.focus(); try{ inp.setSelectionRange(inp.value.length, inp.value.length); }catch(err){} }
     return;
   }
-  if(e.target.closest('.a-acc-cancel')){ accEdit = null; renderAccs('KRW'); updateInputCalcs(compute()); toast('수정을 취소했습니다'); return; }
+  if(e.target.closest('.a-acc-cancel')){ accEdit = null; renderAccs(compute()); updateInputCalcs(compute()); toast('수정을 취소했습니다'); return; }
   if(e.target.closest('.a-acc-save')){ saveAccEdit(card, a); return; }
   if(e.target.closest('.a-acc-del')){ deleteAcc(a); return; }
 });
@@ -3025,7 +3024,7 @@ document.getElementById('na-add').addEventListener('click', function(){
   resetAddForm();
   openAddForm(false);
   afterChange({rebuild:true});
-  var cards = accsKrwEl.querySelectorAll('.card[data-acc]');
+  var cards = accsCashEl.querySelectorAll('.card[data-acc]');
   var last = cards[cards.length - 1];
   if(last){ try{ last.scrollIntoView({block:'center'}); }catch(err){} }
   toast('"' + name + '" 계좌를 추가했습니다');
@@ -3105,89 +3104,89 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-25T06:11:11+09:00",
- "bizdate": "20261124",
+ "updatedAt": "2026-11-25T11:13:59+09:00",
+ "bizdate": "20261125",
  "sections": {
   "index": {
-   "asOf": "2026-11-24T20:15:00+09:00",
+   "asOf": "2026-11-25T11:13:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "value": 5006.03,
-     "change": 297.49,
-     "pct": 6.32,
-     "tradingValue": 15768220000000,
-     "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 4734.82,
+     "change": -271.21,
+     "pct": -5.42,
+     "tradingValue": 5973571000000,
+     "asOf": "2026-11-25T11:13:00+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "value": 665.88,
-     "change": 30.43,
-     "pct": 4.79,
-     "tradingValue": 5926822000000,
-     "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 649.49,
+     "change": -16.39,
+     "pct": -2.46,
+     "tradingValue": 2628499000000,
+     "asOf": "2026-11-25T11:13:00+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     },
     {
      "key": "KPI200",
      "name": "코스피 200",
-     "value": 778.68,
-     "change": 47.85,
-     "pct": 6.55,
-     "tradingValue": 14283409000000,
-     "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 730.94,
+     "change": -47.74,
+     "pct": -6.13,
+     "tradingValue": 5280905000000,
+     "asOf": "2026-11-25T11:13:00+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     },
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 778.1,
-     "change": 51.45,
-     "pct": 7.08,
-     "tradingValue": 28423754000000,
-     "asOf": "2026-11-24T15:34:59+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 734.3,
+     "change": -43.8,
+     "pct": -5.63,
+     "tradingValue": 8642384000000,
+     "asOf": "2026-11-25T10:53:58+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     },
     {
      "key": "KQI150",
      "name": "코스닥 150",
-     "value": 1102.16,
-     "change": 57.45,
-     "pct": 5.5,
-     "tradingValue": 3423445000000,
-     "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 1076.73,
+     "change": -25.43,
+     "pct": -2.31,
+     "tradingValue": 1430931000000,
+     "asOf": "2026-11-25T11:13:00+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     },
     {
      "key": "KVALUE",
      "name": "코리아 밸류업",
-     "value": 2425.13,
-     "change": 140.7,
-     "pct": 6.16,
-     "tradingValue": 10673315000000,
-     "asOf": "2026-11-24T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "value": 2321.26,
+     "change": -103.87,
+     "pct": -4.28,
+     "tradingValue": 4035242000000,
+     "asOf": "2026-11-25T11:13:00+09:00",
+     "marketStatus": "OPEN",
+     "status": "OPEN",
+     "statusText": "장중",
      "dec": 2
     }
    ],
@@ -3198,19 +3197,19 @@ var MARKET_INLINE = {
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 797,
-      "upper": 2,
-      "unchanged": 19,
-      "falling": 94,
+      "rising": 277,
+      "upper": 4,
+      "unchanged": 31,
+      "falling": 597,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 1389,
-      "upper": 10,
-      "unchanged": 39,
-      "falling": 322,
+      "rising": 447,
+      "upper": 2,
+      "unchanged": 60,
+      "falling": 1243,
       "lower": 0
      }
     ],
@@ -3219,7 +3218,7 @@ var MARKET_INLINE = {
    }
   },
   "us": {
-   "asOf": "2026-11-24T16:11:03-05:00",
+   "asOf": "2026-11-24T16:54:10-05:00",
    "src": "네이버 증권 해외지수",
    "rows": [
     {
@@ -3228,7 +3227,7 @@ var MARKET_INLINE = {
      "value": 7201.09,
      "change": -36.08,
      "pct": -0.5,
-     "asOf": "2026-11-24T16:11:03-05:00",
+     "asOf": "2026-11-24T16:54:10-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3239,7 +3238,7 @@ var MARKET_INLINE = {
      "value": 23733.54,
      "change": -356.02,
      "pct": -1.48,
-     "asOf": "2026-11-24T16:11:02-05:00",
+     "asOf": "2026-11-24T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3250,7 +3249,7 @@ var MARKET_INLINE = {
      "value": 50018.7,
      "change": 423.39,
      "pct": 0.85,
-     "asOf": "2026-11-24T16:10:59-05:00",
+     "asOf": "2026-11-24T16:54:25-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3261,7 +3260,7 @@ var MARKET_INLINE = {
      "value": 8832.5,
      "change": -755.55,
      "pct": -7.88,
-     "asOf": "2026-11-24T16:11:05-05:00",
+     "asOf": "2026-11-24T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3272,7 +3271,7 @@ var MARKET_INLINE = {
      "value": 26214.17,
      "change": -531.93,
      "pct": -1.99,
-     "asOf": "2026-11-24T16:11:05-05:00",
+     "asOf": "2026-11-24T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3283,7 +3282,7 @@ var MARKET_INLINE = {
      "value": 19974.53,
      "change": -80.02,
      "pct": -0.4,
-     "asOf": "2026-11-24T16:11:04-05:00",
+     "asOf": "2026-11-24T16:54:24-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3293,51 +3292,51 @@ var MARKET_INLINE = {
    "note": "미국 정규장 마지막 체결 기준입니다(장 상태는 네이버 증권 표기)."
   },
   "funds": {
-   "asOf": "2026-11-20",
+   "asOf": "2026-11-23",
    "src": "네이버 증권 증시자금동향",
    "unit": "억원",
    "rows": [
     {
      "key": "deposit",
      "name": "고객예탁금",
-     "value": 829846,
-     "change": 14176
+     "value": 853362,
+     "change": 23516
     },
     {
      "key": "credit",
      "name": "신용잔고",
-     "value": 255500,
-     "change": -1225
+     "value": 255341,
+     "change": -159
     }
    ],
    "ready": true,
    "note": null
   },
   "program": {
-   "asOf": "2026-11-24",
+   "asOf": "2026-11-25",
    "src": "네이버 증권",
    "unit": "백만원",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": 51926.4,
-     "nonArb": 336015.2,
-     "total": 387941.6
+     "arb": -52446.3,
+     "nonArb": -596407.7,
+     "total": -648854.1
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 19161.6,
-     "nonArb": 186546.4,
-     "total": 205708.0
+     "arb": -376.6,
+     "nonArb": -72962.5,
+     "total": -73339.1
     }
    ],
    "ready": true,
    "note": null
   },
   "investors": {
-   "asOf": "2026-11-24",
+   "asOf": "2026-11-25",
    "src": "네이버 증권 투자자별 매매동향",
    "cols": [
     {
@@ -3366,30 +3365,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -21350,
-      -3366,
-      -137,
-      -24716
+      10632,
+      655,
+      -879,
+      11312
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      8270,
-      1309,
-      3450,
-      9579
+      -10997,
+      -658,
+      -1910,
+      -11678
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      8734,
-      2225,
-      -3332,
-      10959
+      -1573,
+      -49,
+      2739,
+      -1624
      ]
     }
    ],
@@ -3398,7 +3397,7 @@ var MARKET_INLINE = {
    "warn": null
   },
   "bonds": {
-   "asOf": "2026-11-24T16:13:20+09:00",
+   "asOf": "2026-11-25T11:12:26+09:00",
    "src": "네이버 증권",
    "cols": [
     "30년",
@@ -3409,78 +3408,78 @@ var MARKET_INLINE = {
     {
      "key": "KR",
      "name": "한국",
-     "y10": 3.823,
-     "c10": -0.012,
-     "y2": 3.655,
-     "c2": 0,
-     "y30": 3.974,
-     "c30": -0.008,
-     "asOf": "2026-11-24T16:13:20+09:00"
+     "y10": 3.784,
+     "c10": -0.039,
+     "y2": 3.673,
+     "c2": 0.018,
+     "y30": 3.939,
+     "c30": -0.035,
+     "asOf": "2026-11-25T11:12:26+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.716,
-     "c10": -0.003,
-     "y2": 1.785,
-     "c2": 0.002,
-     "y30": 3.939,
-     "c30": 0,
-     "asOf": "2026-11-25T03:25:58+09:00"
+     "y10": 2.721,
+     "c10": 0.002,
+     "y2": 1.779,
+     "c2": -0.004,
+     "y30": 3.957,
+     "c30": 0.018,
+     "asOf": "2026-11-25T08:59:59+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.932,
-     "c10": 0.0117,
-     "y2": 4.689,
-     "c2": 0.0231,
-     "y30": 5.318,
-     "c30": 0.0233,
-     "asOf": "2026-11-24T16:09:55-05:00"
+     "y10": 4.91,
+     "c10": 0.0078,
+     "y2": 4.664,
+     "c2": -0.0067,
+     "y30": 5.304,
+     "c30": 0.0117,
+     "asOf": "2026-11-24T21:09:55-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T16:01:00-05:00",
+   "asOf": "2026-11-24T21:03:48-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.83,
-     "change": -0.49,
-     "pct": -0.47,
-     "asOf": "2026-11-24T16:01:00-05:00",
+     "value": 103.88,
+     "change": 0.06,
+     "pct": 0.06,
+     "asOf": "2026-11-24T21:03:48-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 26.38,
-     "change": -0.24,
-     "pct": -0.9,
-     "asOf": "2026-11-24T15:56:04-05:00",
+     "value": 26.36,
+     "change": -0.26,
+     "pct": -0.98,
+     "asOf": "2026-11-24T16:15:01-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3552.2,
-     "change": -99.2,
-     "pct": -2.72,
-     "asOf": "2026-11-24T15:01:04-06:00",
+     "value": 3550.9,
+     "change": -11,
+     "pct": -0.31,
+     "asOf": "2026-11-24T20:03:53-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.4,
-     "change": -0.234,
-     "pct": -4.15,
-     "asOf": "2026-11-24T15:01:04-06:00",
+     "value": 5.4175,
+     "change": 0.0485,
+     "pct": 0.9,
+     "asOf": "2026-11-24T20:03:53-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3489,25 +3488,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T15:01:04-06:00",
+   "asOf": "2026-11-24T20:03:53-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 81.48,
-     "change": 1.31,
-     "pct": 1.63,
-     "asOf": "2026-11-24T15:01:04-06:00",
+     "value": 81.27,
+     "change": -0.78,
+     "pct": -0.95,
+     "asOf": "2026-11-24T20:03:53-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.84,
-     "change": 1.47,
-     "pct": 1.64,
-     "asOf": "2026-11-24T21:01:04Z",
+     "value": 90.64,
+     "change": -0.76,
+     "pct": -0.83,
+     "asOf": "2026-11-25T02:03:53Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3515,71 +3514,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-25T06:04:34+09:00",
+   "asOf": "2026-11-25T11:09:35+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59747.11,
-     "change": -1143.11,
-     "pct": -1.88,
+     "value": 59059.01,
+     "change": -949.7,
+     "pct": -1.58,
      "unit": "USDT",
-     "asOf": "2026-11-25T06:04:34+09:00"
+     "asOf": "2026-11-25T11:09:35+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1693.79,
-     "change": -31.01,
-     "pct": -1.8,
+     "value": 1656.62,
+     "change": -17.3,
+     "pct": -1.03,
      "unit": "USDT",
-     "asOf": "2026-11-25T03:09:34+09:00"
+     "asOf": "2026-11-25T11:13:37+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
      "value": 68.98,
-     "change": -2.78,
-     "pct": -3.87,
+     "change": 0.0,
+     "pct": 0.0,
      "unit": "USDT",
-     "asOf": "2026-11-25T00:18:46+09:00"
+     "asOf": "2026-11-25T11:08:12+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-25T05:55:00+09:00",
+   "asOf": "2026-11-25T11:12:53+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1343,
-     "change": 0.5,
-     "pct": 0.04,
-     "asOf": "2026-11-25T05:55:00+09:00",
+     "value": 1342.8,
+     "change": 0.3,
+     "pct": 0.02,
+     "asOf": "2026-11-25T11:12:53+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 843.3,
-     "change": -1.09,
-     "pct": -0.13,
-     "asOf": "2026-11-25T05:55:00+09:00",
+     "value": 843.1,
+     "change": 0.03,
+     "pct": 0,
+     "asOf": "2026-11-25T11:12:53+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1472.6,
-     "change": 8.87,
-     "pct": 0.61,
-     "asOf": "2026-11-25T05:55:00+09:00",
+     "value": 1471.98,
+     "change": -0.07,
+     "pct": 0,
+     "asOf": "2026-11-25T11:12:53+09:00",
      "dec": 2,
      "unit": "원"
     }

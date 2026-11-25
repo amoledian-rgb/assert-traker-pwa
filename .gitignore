@@ -65,3 +65,7 @@ test_live_date.py
 # 나머지 6개 탭 글자 크기 통일 검증 (2026-11-25)
 shots_fonts/
 tmp_*.js
+
+# 입력·예수금 탭 재구성 검증 (2026-11-25)
+test_input_cash.py
+shots_input_cash/
