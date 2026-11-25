@@ -2960,7 +2960,7 @@ accsCashEl.addEventListener('click', function(e){
   }
   if(e.target.closest('.a-acc-edit')){
     accEdit = (accEdit === a.name) ? null : a.name;
-    renderAccs(m);
+    renderAccs(compute());
     var inp = accsCashEl.querySelector('.a-aname');
     if(inp){ inp.focus(); try{ inp.setSelectionRange(inp.value.length, inp.value.length); }catch(err){} }
     return;
