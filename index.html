@@ -39,6 +39,11 @@
   .h-field{flex:1; min-width:0; display:block}
   .h-field.sm{flex:0 0 112px}
   .h-field span{display:block; font-size:13.5px; letter-spacing:.02em; color:#9fb0cd; margin-bottom:3px}
+  /* 평가 기준일 라벨 오른쪽에 시세 업데이트 시각 (updtime-v1) — 라벨 한 줄 높이는 그대로 둔다 */
+  .h-field span.h-lbl{display:flex; align-items:baseline; justify-content:space-between; gap:6px}
+  .h-lbl b{font-size:12px; font-weight:700; letter-spacing:0; color:#E8C77E; white-space:nowrap;
+    font-variant-numeric:tabular-nums; min-width:0; overflow:hidden; text-overflow:ellipsis}
+  .h-lbl b.past{color:#f0b47a}
   .h-field input{
     width:100%; height:34px; border:1px solid rgba(255,255,255,.16); border-radius:8px;
     background:rgba(255,255,255,.08); color:#fff; font-size:16.5px; font-weight:600;
@@ -558,7 +563,7 @@
 <body>
 <header id="hd">
   <div class="h-top">
-    <label class="h-field"><span>평가 기준일</span><input id="h-date" type="date"></label>
+    <label class="h-field"><span class="h-lbl">평가 기준일<b id="h-upd">—</b></span><input id="h-date" type="date"></label>
     <label class="h-field sm"><span>환율 ₩ / $</span><input id="h-fx" inputmode="decimal"></label>
   </div>
   <div class="h-sum">
@@ -827,7 +832,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 지수 2행3열 배치</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 업데이트 시간 표기</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1656,6 +1661,7 @@ function renderHeader(m){
     if(fb.value !== baseStr && document.activeElement !== fb) fb.value = baseStr;
   }
   updateFxNote();
+  updateHeaderWhen();
 }
 /* ---------- 환차익 표시 (fxgain-v1) ---------- */
 function won2s(n){         /* 달러당 차이: +16.00원 · -3.50원 */
@@ -2323,6 +2329,52 @@ function priceStampText(iso){
   var d = new Date(iso);
   if(!d || isNaN(d.getTime())) return '';
   return pad2(d.getMonth()+1)+'/'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+/* ---------- 상단 '평가 기준일' 칸의 업데이트 시각 표기 (updtime-v1) ----------
+   시세(prices.json → state.pricesAppliedAt)와 시장(market.json → updatedAt) 중 마지막으로 반영된
+   시각을 KST HH:MM 으로 보여 준다. 기기 시간대와 상관없이 한국 시간으로 계산한다.
+   과거 기록(viewingDate)을 보는 중에는 시간 대신 '과거 기록'이라고 적어 오해가 없게 한다. */
+function kstPartsOf(iso){
+  var d = (iso instanceof Date) ? iso : new Date(iso);
+  if(!d || isNaN(d.getTime())) return null;
+  try{
+    var f = new Intl.DateTimeFormat('en-GB', { timeZone:'Asia/Seoul', year:'numeric', month:'2-digit',
+      day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false });
+    var o = {};
+    f.formatToParts(d).forEach(function(p){ o[p.type] = p.value; });
+    if(o.year && o.month && o.day){
+      var hh = Number(o.hour); if(hh === 24) hh = 0;
+      return { date:o.year + '-' + o.month + '-' + o.day, M:Number(o.month), D:Number(o.day),
+               hh:hh, mm:Number(o.minute) };
+    }
+  }catch(e){}
+  return { date:d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()),
+           M:d.getMonth()+1, D:d.getDate(), hh:d.getHours(), mm:d.getMinutes() };
+}
+function updWhenText(){
+  if(viewingDate) return '과거 기록';
+  var best = null, bestT = 0;
+  [state && state.pricesAppliedAt, (marketData && marketData.updatedAt) || null].forEach(function(s){
+    if(!s) return;
+    var t = new Date(s).getTime();
+    if(!isNaN(t) && t > bestT){ bestT = t; best = s; }
+  });
+  if(!best) return '—';
+  var p = kstPartsOf(best);
+  if(!p) return '—';
+  var hm = pad2(p.hh) + ':' + pad2(p.mm);
+  if(p.date !== kstNow().date)   /* 오늘 것이 아니면 어제·날짜를 앞에 붙인다 */
+    hm = ((kstPartsOf(new Date(Date.now() - 86400000)) || {}).date === p.date ? '어제 ' : (p.M + '/' + p.D + ' ')) + hm;
+  return hm + ' 업데이트';
+}
+function updateHeaderWhen(){
+  var el = document.getElementById('h-upd');
+  if(!el) return;
+  var t = updWhenText();
+  if(el.textContent !== t) el.textContent = t;
+  var c = viewingDate ? 'past' : '';
+  if(el.className !== c) el.className = c;
+  el.title = viewingDate ? '과거 기록을 보는 중입니다' : '시세·시장 데이터 마지막 반영 시각 (한국 시간)';
 }
 /* 반영: 종목명·티커 양쪽으로 찾아 현재가를 채우고, 빈 종목명·코드는 보완한다 */
 function applyPrices(data, force){
@@ -3107,21 +3159,21 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-25T12:27:13+09:00",
+ "updatedAt": "2026-11-25T12:43:43+09:00",
  "bizdate": "20261125",
  "sections": {
   "index": {
-   "asOf": "2026-11-25T12:27:00+09:00",
+   "asOf": "2026-11-25T12:43:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "value": 4715.17,
-     "change": -290.86,
-     "pct": -5.81,
-     "tradingValue": 7953184000000,
-     "asOf": "2026-11-25T12:27:00+09:00",
+     "value": 4739.18,
+     "change": -266.85,
+     "pct": -5.33,
+     "tradingValue": 8313059000000,
+     "asOf": "2026-11-25T12:43:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3130,11 +3182,11 @@ var MARKET_INLINE = {
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "value": 649.36,
-     "change": -16.52,
-     "pct": -2.48,
-     "tradingValue": 3155287000000,
-     "asOf": "2026-11-25T12:27:00+09:00",
+     "value": 652.91,
+     "change": -12.97,
+     "pct": -1.95,
+     "tradingValue": 3256449000000,
+     "asOf": "2026-11-25T12:43:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3143,11 +3195,11 @@ var MARKET_INLINE = {
     {
      "key": "KPI200",
      "name": "코스피 200",
-     "value": 727.48,
-     "change": -51.2,
-     "pct": -6.58,
-     "tradingValue": 6953293000000,
-     "asOf": "2026-11-25T12:27:00+09:00",
+     "value": 731.5,
+     "change": -47.18,
+     "pct": -6.06,
+     "tradingValue": 7272247000000,
+     "asOf": "2026-11-25T12:43:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3171,11 +3223,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26009.75,
-     "change": -266,
-     "pct": -1.01,
+     "value": 26026.75,
+     "change": -249,
+     "pct": -0.95,
      "tradingValue": null,
-     "asOf": "2026-11-24T21:17:06-06:00",
+     "asOf": "2026-11-24T21:33:36-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3186,11 +3238,11 @@ var MARKET_INLINE = {
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 722.75,
-     "change": -55.35,
-     "pct": -7.11,
-     "tradingValue": 11817430000000,
-     "asOf": "2026-11-25T12:07:59+09:00",
+     "value": 725.5,
+     "change": -52.6,
+     "pct": -6.76,
+     "tradingValue": 12469368000000,
+     "asOf": "2026-11-25T12:23:59+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3204,19 +3256,19 @@ var MARKET_INLINE = {
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 242,
+      "rising": 256,
       "upper": 4,
-      "unchanged": 28,
-      "falling": 638,
+      "unchanged": 33,
+      "falling": 619,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 391,
+      "rising": 425,
       "upper": 2,
-      "unchanged": 46,
-      "falling": 1313,
+      "unchanged": 52,
+      "falling": 1273,
       "lower": 0
      }
     ],
@@ -3328,16 +3380,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -16502.0,
-     "nonArb": -828410.0,
-     "total": -844912.0
+     "arb": -5350.4,
+     "nonArb": -871292.9,
+     "total": -876643.3
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 545.0,
-     "nonArb": -72315.5,
-     "total": -71770.5
+     "arb": 876.3,
+     "nonArb": -66069.7,
+     "total": -65193.4
     }
    ],
    "ready": true,
@@ -3373,30 +3425,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      12786,
-      522,
-      -288,
-      13308
+      13042,
+      391,
+      -253,
+      13442
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -14651,
-      -707,
-      -3703,
-      -15358
+      -15078,
+      -630,
+      -3824,
+      -15767
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      -1053,
-      133,
-      3898,
-      -919
+      -1052,
+      193,
+      3988,
+      -841
      ]
     }
    ],
@@ -3418,49 +3470,49 @@ var MARKET_INLINE = {
      "name": "한국",
      "y10": 3.77,
      "c10": -0.053,
-     "y2": 3.658,
-     "c2": 0.003,
-     "y30": 3.931,
-     "c30": -0.043,
+     "y2": 3.661,
+     "c2": 0.006,
+     "y30": 3.938,
+     "c30": -0.036,
      "asOf": "2026-11-25T12:25:50+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.715,
-     "c10": -0.004,
-     "y2": 1.768,
-     "c2": -0.015,
+     "y10": 2.71,
+     "c10": -0.009,
+     "y2": 1.761,
+     "c2": -0.022,
      "y30": 3.956,
      "c30": 0.017,
-     "asOf": "2026-11-25T10:10:54+09:00"
+     "asOf": "2026-11-25T10:29:57+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.904,
-     "c10": 0.0018,
-     "y2": 4.662,
-     "c2": -0.0088,
-     "y30": 5.301,
-     "c30": 0.0086,
-     "asOf": "2026-11-24T22:19:56-05:00"
+     "y10": 4.902,
+     "c10": -0.0002,
+     "y2": 4.658,
+     "c2": -0.0129,
+     "y30": 5.298,
+     "c30": 0.0055,
+     "asOf": "2026-11-24T22:39:29-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T22:17:01-05:00",
+   "asOf": "2026-11-24T22:33:34-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
      "value": 103.92,
-     "change": 0.1,
+     "change": 0.11,
      "pct": 0.1,
-     "asOf": "2026-11-24T22:17:01-05:00",
+     "asOf": "2026-11-24T22:33:34-05:00",
      "unit": "pt"
     },
     {
@@ -3475,19 +3527,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3556.4,
-     "change": -5.5,
-     "pct": -0.15,
-     "asOf": "2026-11-24T21:17:05-06:00",
+     "value": 3552.1,
+     "change": -9.8,
+     "pct": -0.28,
+     "asOf": "2026-11-24T21:33:35-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.377,
-     "change": 0.008,
-     "pct": 0.15,
-     "asOf": "2026-11-24T21:17:05-06:00",
+     "value": 5.3785,
+     "change": 0.0095,
+     "pct": 0.18,
+     "asOf": "2026-11-24T21:33:35-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3496,25 +3548,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T21:17:05-06:00",
+   "asOf": "2026-11-24T21:33:35-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.82,
-     "change": -1.23,
-     "pct": -1.5,
-     "asOf": "2026-11-24T21:17:05-06:00",
+     "value": 80.88,
+     "change": -1.17,
+     "pct": -1.43,
+     "asOf": "2026-11-24T21:33:35-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.16,
-     "change": -1.24,
-     "pct": -1.36,
-     "asOf": "2026-11-25T03:17:05Z",
+     "value": 90.23,
+     "change": -1.17,
+     "pct": -1.28,
+     "asOf": "2026-11-25T03:33:35Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3522,17 +3574,17 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-25T12:12:41+09:00",
+   "asOf": "2026-11-25T12:40:58+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59474.44,
-     "change": -534.27,
-     "pct": -0.89,
+     "value": 59898.15,
+     "change": -110.56,
+     "pct": -0.18,
      "unit": "USDT",
-     "asOf": "2026-11-25T12:12:41+09:00"
+     "asOf": "2026-11-25T12:40:58+09:00"
     },
     {
      "key": "ETH",
@@ -3557,36 +3609,36 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-25T12:26:23+09:00",
+   "asOf": "2026-11-25T12:41:23+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1344.6,
-     "change": 2.1,
-     "pct": 0.16,
-     "asOf": "2026-11-25T12:26:23+09:00",
+     "value": 1344.9,
+     "change": 2.4,
+     "pct": 0.18,
+     "asOf": "2026-11-25T12:41:23+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.44,
-     "change": 1.37,
+     "value": 844.42,
+     "change": 1.35,
      "pct": 0.16,
-     "asOf": "2026-11-25T12:26:23+09:00",
+     "asOf": "2026-11-25T12:41:23+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1472.74,
-     "change": 0.69,
+     "value": 1472.73,
+     "change": 0.68,
      "pct": 0.05,
-     "asOf": "2026-11-25T12:26:23+09:00",
+     "asOf": "2026-11-25T12:41:23+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -3664,6 +3716,7 @@ function mkStShort(t){
 }
 
 function renderMarket(){
+  updateHeaderWhen();   /* 상단 '평가 기준일' 칸의 업데이트 시각도 시장 파일 시각까지 반영 */
   var top = document.getElementById('mk-topwhen'), when = document.getElementById('mk-when');
   if(!marketData){
     if(when) when.textContent = marketErr ? (marketErr === 'local' ? '앱 주소(웹)에서만 불러옵니다' : '시장 파일을 못 읽었습니다') : '불러오는 중…';
