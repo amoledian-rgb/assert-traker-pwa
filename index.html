@@ -588,7 +588,7 @@
       <div class="mk-live" id="mk-live"><i></i>환율·코인은 새로고침할 때마다 실시간으로 다시 받습니다</div>
     </div>
 
-    <div class="sec">국내 지수 <span id="mk-index-when">—</span></div>
+    <div class="sec">지수 <span id="mk-index-when">—</span></div>
     <div class="card" id="mk-index"></div>
 
     <div class="sec">미국 지수 <span id="mk-us-when">—</span></div>
@@ -824,7 +824,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 입력·예수금 탭 분리</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 미니나스닥 추가</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -3104,21 +3104,21 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-25T11:13:59+09:00",
+ "updatedAt": "2026-11-25T11:41:14+09:00",
  "bizdate": "20261125",
  "sections": {
   "index": {
-   "asOf": "2026-11-25T11:13:00+09:00",
+   "asOf": "2026-11-25T11:41:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "value": 4734.82,
-     "change": -271.21,
-     "pct": -5.42,
-     "tradingValue": 5973571000000,
-     "asOf": "2026-11-25T11:13:00+09:00",
+     "value": 4724.94,
+     "change": -281.09,
+     "pct": -5.62,
+     "tradingValue": 6708982000000,
+     "asOf": "2026-11-25T11:41:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3127,11 +3127,11 @@ var MARKET_INLINE = {
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "value": 649.49,
-     "change": -16.39,
-     "pct": -2.46,
-     "tradingValue": 2628499000000,
-     "asOf": "2026-11-25T11:13:00+09:00",
+     "value": 649.23,
+     "change": -16.65,
+     "pct": -2.5,
+     "tradingValue": 2861554000000,
+     "asOf": "2026-11-25T11:41:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3140,11 +3140,11 @@ var MARKET_INLINE = {
     {
      "key": "KPI200",
      "name": "코스피 200",
-     "value": 730.94,
-     "change": -47.74,
-     "pct": -6.13,
-     "tradingValue": 5280905000000,
-     "asOf": "2026-11-25T11:13:00+09:00",
+     "value": 729.28,
+     "change": -49.4,
+     "pct": -6.34,
+     "tradingValue": 5861045000000,
+     "asOf": "2026-11-25T11:41:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3153,11 +3153,11 @@ var MARKET_INLINE = {
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 734.3,
-     "change": -43.8,
-     "pct": -5.63,
-     "tradingValue": 8642384000000,
-     "asOf": "2026-11-25T10:53:58+09:00",
+     "value": 726.4,
+     "change": -51.7,
+     "pct": -6.64,
+     "tradingValue": 9851116000000,
+     "asOf": "2026-11-25T11:21:59+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3166,50 +3166,52 @@ var MARKET_INLINE = {
     {
      "key": "KQI150",
      "name": "코스닥 150",
-     "value": 1076.73,
-     "change": -25.43,
-     "pct": -2.31,
-     "tradingValue": 1430931000000,
-     "asOf": "2026-11-25T11:13:00+09:00",
+     "value": 1077.26,
+     "change": -24.9,
+     "pct": -2.26,
+     "tradingValue": 1557792000000,
+     "asOf": "2026-11-25T11:41:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
      "dec": 2
     },
     {
-     "key": "KVALUE",
-     "name": "코리아 밸류업",
-     "value": 2321.26,
-     "change": -103.87,
-     "pct": -4.28,
-     "tradingValue": 4035242000000,
-     "asOf": "2026-11-25T11:13:00+09:00",
+     "key": "NQ",
+     "name": "미니나스닥",
+     "value": 26029.75,
+     "change": -246,
+     "pct": -0.94,
+     "tradingValue": null,
+     "asOf": "2026-11-24T20:31:07-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
-     "dec": 2
+     "dec": 2,
+     "delay": "10분 지연",
+     "month": "26.12."
     }
    ],
    "ready": true,
-   "note": "코스피 200은 현물 지수, 코스피 200 선물은 최근월물입니다. 선물 거래대금은 명목가 기준입니다.",
+   "note": "코스피 200은 현물 지수, 코스피 200 선물은 최근월물입니다. 선물 거래대금은 명목가 기준입니다. 미니나스닥은 CME 나스닥 100 선물 최근월물(10분 지연)입니다.",
    "breadth": {
     "rows": [
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 277,
+      "rising": 264,
       "upper": 4,
-      "unchanged": 31,
-      "falling": 597,
+      "unchanged": 16,
+      "falling": 627,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 447,
-      "upper": 2,
-      "unchanged": 60,
-      "falling": 1243,
+      "rising": 416,
+      "upper": 1,
+      "unchanged": 59,
+      "falling": 1275,
       "lower": 0
      }
     ],
@@ -3277,19 +3279,19 @@ var MARKET_INLINE = {
      "dec": 2
     },
     {
-     "key": "DJT",
-     "name": "다우운송",
-     "value": 19974.53,
-     "change": -80.02,
-     "pct": -0.4,
-     "asOf": "2026-11-24T16:54:24-05:00",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "key": "KOSPI200_NIGHT",
+     "name": "코스피 야간선물",
+     "value": null,
+     "change": null,
+     "pct": null,
+     "asOf": null,
+     "status": null,
+     "statusText": null,
      "dec": 2
     }
    ],
    "ready": true,
-   "note": "미국 정규장 마지막 체결 기준입니다(장 상태는 네이버 증권 표기)."
+   "note": "미국 정규장 마지막 체결 기준입니다(장 상태는 네이버 증권 표기). 코스피 야간선물(KRX 18:00~06:00)은 무료 공개 시세가 없어 값을 비웁니다."
   },
   "funds": {
    "asOf": "2026-11-23",
@@ -3320,16 +3322,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -52446.3,
-     "nonArb": -596407.7,
-     "total": -648854.1
+     "arb": -48824.9,
+     "nonArb": -640817.0,
+     "total": -689642.0
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": -376.6,
-     "nonArb": -72962.5,
-     "total": -73339.1
+     "arb": -227.9,
+     "nonArb": -68235.8,
+     "total": -68463.7
     }
    ],
    "ready": true,
@@ -3365,30 +3367,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      10632,
-      655,
-      -879,
-      11312
+      11731,
+      619,
+      -657,
+      12351
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -10997,
-      -658,
-      -1910,
-      -11678
+      -12383,
+      -657,
+      -2935,
+      -13040
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      -1573,
-      -49,
-      2739,
-      -1624
+      -1680,
+      -12,
+      3495,
+      -1692
      ]
     }
    ],
@@ -3397,7 +3399,7 @@ var MARKET_INLINE = {
    "warn": null
   },
   "bonds": {
-   "asOf": "2026-11-25T11:12:26+09:00",
+   "asOf": "2026-11-25T11:39:56+09:00",
    "src": "네이버 증권",
    "cols": [
     "30년",
@@ -3408,51 +3410,51 @@ var MARKET_INLINE = {
     {
      "key": "KR",
      "name": "한국",
-     "y10": 3.784,
-     "c10": -0.039,
-     "y2": 3.673,
-     "c2": 0.018,
-     "y30": 3.939,
-     "c30": -0.035,
-     "asOf": "2026-11-25T11:12:26+09:00"
+     "y10": 3.774,
+     "c10": -0.049,
+     "y2": 3.661,
+     "c2": 0.006,
+     "y30": 3.927,
+     "c30": -0.047,
+     "asOf": "2026-11-25T11:39:56+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.721,
-     "c10": 0.002,
-     "y2": 1.779,
-     "c2": -0.004,
-     "y30": 3.957,
-     "c30": 0.018,
-     "asOf": "2026-11-25T08:59:59+09:00"
+     "y10": 2.723,
+     "c10": 0.004,
+     "y2": 1.773,
+     "c2": -0.01,
+     "y30": 3.961,
+     "c30": 0.022,
+     "asOf": "2026-11-25T09:29:53+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.91,
-     "c10": 0.0078,
-     "y2": 4.664,
-     "c2": -0.0067,
-     "y30": 5.304,
-     "c30": 0.0117,
-     "asOf": "2026-11-24T21:09:55-05:00"
+     "y10": 4.904,
+     "c10": 0.0018,
+     "y2": 4.66,
+     "c2": -0.0108,
+     "y30": 5.302,
+     "c30": 0.0096,
+     "asOf": "2026-11-24T21:39:07-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T21:03:48-05:00",
+   "asOf": "2026-11-24T21:31:04-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.88,
-     "change": 0.06,
-     "pct": 0.06,
-     "asOf": "2026-11-24T21:03:48-05:00",
+     "value": 103.84,
+     "change": 0.02,
+     "pct": 0.02,
+     "asOf": "2026-11-24T21:31:04-05:00",
      "unit": "pt"
     },
     {
@@ -3467,19 +3469,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3550.9,
-     "change": -11,
-     "pct": -0.31,
-     "asOf": "2026-11-24T20:03:53-06:00",
+     "value": 3572.5,
+     "change": 10.6,
+     "pct": 0.3,
+     "asOf": "2026-11-24T20:31:07-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.4175,
-     "change": 0.0485,
-     "pct": 0.9,
-     "asOf": "2026-11-24T20:03:53-06:00",
+     "value": 5.421,
+     "change": 0.052,
+     "pct": 0.97,
+     "asOf": "2026-11-24T20:31:07-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3488,25 +3490,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T20:03:53-06:00",
+   "asOf": "2026-11-24T20:31:07-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 81.27,
-     "change": -0.78,
-     "pct": -0.95,
-     "asOf": "2026-11-24T20:03:53-06:00",
+     "value": 80.85,
+     "change": -1.2,
+     "pct": -1.46,
+     "asOf": "2026-11-24T20:31:07-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.64,
-     "change": -0.76,
-     "pct": -0.83,
-     "asOf": "2026-11-25T02:03:53Z",
+     "value": 90.28,
+     "change": -1.12,
+     "pct": -1.23,
+     "asOf": "2026-11-25T02:31:07Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3514,71 +3516,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-25T11:09:35+09:00",
+   "asOf": "2026-11-25T11:35:37+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59059.01,
-     "change": -949.7,
-     "pct": -1.58,
+     "value": 59227.23,
+     "change": -781.48,
+     "pct": -1.3,
      "unit": "USDT",
-     "asOf": "2026-11-25T11:09:35+09:00"
+     "asOf": "2026-11-25T11:35:37+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1656.62,
-     "change": -17.3,
-     "pct": -1.03,
+     "value": 1667.54,
+     "change": -6.38,
+     "pct": -0.38,
      "unit": "USDT",
-     "asOf": "2026-11-25T11:13:37+09:00"
+     "asOf": "2026-11-25T11:30:11+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 68.98,
-     "change": 0.0,
-     "pct": 0.0,
+     "value": 68.53,
+     "change": -0.45,
+     "pct": -0.65,
      "unit": "USDT",
-     "asOf": "2026-11-25T11:08:12+09:00"
+     "asOf": "2026-11-25T11:39:56+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-25T11:12:53+09:00",
+   "asOf": "2026-11-25T11:40:53+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.8,
-     "change": 0.3,
-     "pct": 0.02,
-     "asOf": "2026-11-25T11:12:53+09:00",
+     "value": 1342.5,
+     "change": 0,
+     "pct": 0,
+     "asOf": "2026-11-25T11:40:53+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 843.1,
-     "change": 0.03,
-     "pct": 0,
-     "asOf": "2026-11-25T11:12:53+09:00",
+     "value": 843.01,
+     "change": -0.06,
+     "pct": -0.01,
+     "asOf": "2026-11-25T11:40:53+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1471.98,
-     "change": -0.07,
-     "pct": 0,
-     "asOf": "2026-11-25T11:12:53+09:00",
+     "value": 1471.25,
+     "change": -0.8,
+     "pct": -0.05,
+     "asOf": "2026-11-25T11:40:53+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -3661,8 +3663,9 @@ function renderMarket(){
   if(top) top.textContent = mkWhen(marketData.updatedAt) + ' 갱신' + (marketInline ? ' (앱에 담긴 값)' : '');
   if(when) when.textContent = mkWhen((S.index || {}).asOf);
 
-  /* 1 · 국내 지수 — 코스피·코스닥·코스피 200·코스피 200 선물·코스닥 150·코리아 밸류업
-        미국 지수와 같은 2열 6칸 그리드. 코스피·코스닥은 거래대금을 보조 줄로 남긴다. */
+  /* 1 · 지수 — 코스피·코스닥·코스피 200·코스피 200 선물·코스닥 150·미니나스닥
+        미국 지수와 같은 2열 6칸 그리드. 코스피·코스닥만 거래대금을 보조 줄로 남긴다.
+        2026-11-25 운문 님 지시로 코리아 밸류업을 빼고 미니나스닥(CME 나스닥 100 선물)을 넣었다. */
   var ix = S.index || {}, h = '';
   var ixEl = document.getElementById('mk-index-when');
   if(ixEl) ixEl.textContent = mkUsDay(ix.asOf) ? (mkUsDay(ix.asOf) + ' 기준') : mkWhen(ix.asOf);
@@ -3707,7 +3710,8 @@ function renderMarket(){
     + '<span>보합</span><span>하락</span></div>' + brh + '</div>' : '';
   document.getElementById('mk-index').innerHTML = '<div class="mk-us">' + h + '</div>' + brBlock + mkNote(ix.note, !ix.ready);
 
-  /* 1-2 · 미국 지수 (S&P500·나스닥 종합·다우존스·필라델피아 반도체·나스닥100·다우운송 — 2열 그리드) */
+  /* 1-2 · 미국 지수 (S&P500·나스닥 종합·다우존스·필라델피아 반도체·나스닥100·코스피 야간선물 — 2열 그리드)
+        2026-11-25 운문 님 지시로 다우운송을 빼고 코스피 야간선물을 넣었다(야간선물은 무료 공개 시세가 없어 '—'). */
   var us = S.us || {};
   var uEl = document.getElementById('mk-us-when');
   if(uEl) uEl.textContent = mkUsDay(us.asOf) ? (mkUsDay(us.asOf) + ' 기준') : mkWhen(us.asOf);
