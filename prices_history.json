@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-25T09:43:28+09:00",
+ "updatedAt": "2026-11-25T10:13:51+09:00",
  "count": 3,
  "dates": {
   "2026-11-16": {
@@ -164,62 +164,62 @@
    }
   },
   "2026-11-25": {
-   "fx": 1347.2,
+   "fx": 1342.9,
    "prices": {
     "삼성전자": {
      "code": "005930",
      "cur": "KRW",
-     "price": 175700
+     "price": 174800
     },
     "삼성전자우": {
      "code": "005935",
      "cur": "KRW",
-     "price": 138700
+     "price": 137900
     },
     "KODEX 반도체레버리지": {
      "code": "494310",
      "cur": "KRW",
-     "price": 27580
+     "price": 27455
     },
     "SK하이닉스": {
      "code": "000660",
      "cur": "KRW",
-     "price": 1074000
+     "price": 1066000
     },
     "TIGER 반도체TOP10레버리지": {
      "code": "488080",
      "cur": "KRW",
-     "price": 12390
+     "price": 12295
     },
     "ACE KRX금현물": {
      "code": "411060",
      "cur": "KRW",
-     "price": 21420
+     "price": 21335
     },
     "ACE 미국30년국채액티브": {
      "code": "476760",
      "cur": "KRW",
-     "price": 8645
+     "price": 8620
     },
     "TIGER 기술이전바이오": {
      "code": "0168K0",
      "cur": "KRW",
-     "price": 4850
+     "price": 4930
     },
     "TIGER 200건설": {
      "code": "139220",
      "cur": "KRW",
-     "price": 5900
+     "price": 5940
     },
     "KODEX 로봇액티브": {
      "code": "445290",
      "cur": "KRW",
-     "price": 25470
+     "price": 25400
     },
     "SOL AI반도체TOP2플러스": {
      "code": "0167A0",
      "cur": "KRW",
-     "price": 11065
+     "price": 11010
     },
     "KODEX 200커버드콜액티브": {
      "code": "0219E0",
@@ -229,7 +229,7 @@
     "삼성전기": {
      "code": "009150",
      "cur": "KRW",
-     "price": 782000
+     "price": 780000
     },
     "NVDA": {
      "code": "NVDA.O",
