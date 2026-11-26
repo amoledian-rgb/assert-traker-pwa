@@ -1,48 +1,48 @@
 {
- "updatedAt": "2026-11-27T06:14:25+09:00",
- "bizdate": "20261126",
+ "updatedAt": "2026-11-27T08:14:25+09:00",
+ "bizdate": "20261127",
  "sections": {
   "index": {
-   "asOf": "2026-11-26T20:15:00+09:00",
+   "asOf": "2026-11-27T08:14:17+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
      "value": 4711.21,
-     "change": 13.7,
-     "pct": 0.29,
-     "tradingValue": 12972566000000,
-     "asOf": "2026-11-26T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "change": 0,
+     "pct": 0,
+     "tradingValue": null,
+     "asOf": "2026-11-27T08:14:17+09:00",
+     "marketStatus": "PREOPEN",
+     "status": "PREOPEN",
+     "statusText": "장 개시 전",
      "dec": 2
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
      "value": 655.71,
-     "change": 5.07,
-     "pct": 0.78,
-     "tradingValue": 5133077000000,
-     "asOf": "2026-11-26T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "change": 0,
+     "pct": 0,
+     "tradingValue": null,
+     "asOf": "2026-11-27T08:14:17+09:00",
+     "marketStatus": "PREOPEN",
+     "status": "PREOPEN",
+     "statusText": "장 개시 전",
      "dec": 2
     },
     {
      "key": "KPI200",
      "name": "코스피 200",
      "value": 727.08,
-     "change": 3.27,
-     "pct": 0.45,
-     "tradingValue": 11640981000000,
-     "asOf": "2026-11-26T20:15:00+09:00",
-     "marketStatus": "CLOSE",
-     "status": "CLOSE",
-     "statusText": "장마감",
+     "change": 0,
+     "pct": 0,
+     "tradingValue": null,
+     "asOf": "2026-11-27T08:14:17+09:00",
+     "marketStatus": "PREOPEN",
+     "status": "PREOPEN",
+     "statusText": "장 개시 전",
      "dec": 2
     },
     {
@@ -63,11 +63,11 @@
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26221.25,
-     "change": 121,
-     "pct": 0.46,
+     "value": 26265.25,
+     "change": 165,
+     "pct": 0.63,
      "tradingValue": null,
-     "asOf": "2026-11-26T15:04:18-06:00",
+     "asOf": "2026-11-26T17:04:18-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -79,8 +79,8 @@
      "key": "FUT",
      "name": "코스피 200 선물",
      "value": 726.75,
-     "change": 2,
-     "pct": 0.28,
+     "change": 0,
+     "pct": 0,
      "tradingValue": 22434073000000,
      "asOf": "2026-11-26T15:34:59+09:00",
      "marketStatus": "CLOSE",
@@ -96,19 +96,19 @@
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 426,
-      "upper": 2,
-      "unchanged": 43,
-      "falling": 441,
+      "rising": 215,
+      "upper": 0,
+      "unchanged": 68,
+      "falling": 52,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 900,
-      "upper": 9,
-      "unchanged": 98,
-      "falling": 750,
+      "rising": 212,
+      "upper": 0,
+      "unchanged": 17,
+      "falling": 38,
       "lower": 0
      }
     ],
@@ -192,44 +192,44 @@
    "note": "미국 정규장 마지막 체결 기준입니다(장 상태는 네이버 증권 표기). 러셀 2000은 야후 파이낸스·CNBC(^RUT / .RUT) 시세입니다."
   },
   "funds": {
-   "asOf": "2026-11-24",
+   "asOf": "2026-11-25",
    "src": "네이버 증권 증시자금동향",
    "unit": "억원",
    "rows": [
     {
      "key": "deposit",
      "name": "고객예탁금",
-     "value": 820497,
-     "change": -32865
+     "value": 835107,
+     "change": 14610
     },
     {
      "key": "credit",
      "name": "신용잔고",
-     "value": 254591,
-     "change": -750
+     "value": 249995,
+     "change": -4596
     }
    ],
    "ready": true,
    "note": null
   },
   "program": {
-   "asOf": "2026-11-26",
+   "asOf": "2026-11-27",
    "src": "네이버 증권",
    "unit": "백만원",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -16293.6,
-     "nonArb": 180168.8,
-     "total": 163875.2
+     "arb": 0.0,
+     "nonArb": 0.0,
+     "total": 0.0
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 12103.7,
-     "nonArb": -67413.1,
-     "total": -55309.4
+     "arb": 0.0,
+     "nonArb": 0.0,
+     "total": 0.0
     }
    ],
    "ready": true,
@@ -319,13 +319,13 @@
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.632,
-     "c10": -0.006,
+     "y10": 2.633,
+     "c10": -0.005,
      "y2": 1.745,
      "c2": 0,
      "y30": 3.888,
      "c30": -0.014,
-     "asOf": "2026-11-27T03:26:16+09:00"
+     "asOf": "2026-11-27T04:00:00+09:00"
     },
     {
      "key": "US",
@@ -343,7 +343,7 @@
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T16:04:13-05:00",
+   "asOf": "2026-11-26T18:04:13-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
@@ -352,7 +352,7 @@
      "value": 103.78,
      "change": 0.11,
      "pct": 0.11,
-     "asOf": "2026-11-26T16:04:13-05:00",
+     "asOf": "2026-11-26T18:04:13-05:00",
      "unit": "pt"
     },
     {
@@ -361,7 +361,7 @@
      "value": 26.8,
      "change": -1.49,
      "pct": -5.27,
-     "asOf": "2026-11-26T15:59:17-05:00",
+     "asOf": "2026-11-26T16:15:00-05:00",
      "unit": "pt"
     },
     {
@@ -379,18 +379,18 @@
      "key": "GOLD",
      "name": "금",
      "value": 3566.2,
-     "change": 30.4,
-     "pct": 0.86,
-     "asOf": "2026-11-26T15:04:17-06:00",
+     "change": 0,
+     "pct": 0,
+     "asOf": "2026-11-26T17:04:17-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.348,
-     "change": 0.0115,
-     "pct": 0.22,
-     "asOf": "2026-11-26T15:04:17-06:00",
+     "value": 5.364,
+     "change": 0.0275,
+     "pct": 0.52,
+     "asOf": "2026-11-26T17:04:17-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -399,25 +399,25 @@
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T15:04:17-06:00",
+   "asOf": "2026-11-26T17:04:17-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 84.91,
-     "change": 1.23,
-     "pct": 1.47,
-     "asOf": "2026-11-26T15:04:17-06:00",
+     "value": 84.89,
+     "change": 1.21,
+     "pct": 1.45,
+     "asOf": "2026-11-26T17:04:17-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 96.53,
-     "change": 1.92,
-     "pct": 2.03,
-     "asOf": "2026-11-26T21:04:17Z",
+     "value": 96.57,
+     "change": 1.96,
+     "pct": 2.07,
+     "asOf": "2026-11-26T23:00:00Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -425,35 +425,35 @@
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-27T05:20:30+09:00",
+   "asOf": "2026-11-27T08:13:52+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60451.22,
-     "change": 114.43,
+     "value": 60451.23,
+     "change": 114.44,
      "pct": 0.19,
      "unit": "USDT",
-     "asOf": "2026-11-27T05:20:30+09:00"
+     "asOf": "2026-11-27T08:13:52+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1692.75,
-     "change": -1.04,
-     "pct": -0.06,
+     "value": 1700.25,
+     "change": 6.46,
+     "pct": 0.38,
      "unit": "USDT",
-     "asOf": "2026-11-27T03:33:40+09:00"
+     "asOf": "2026-11-27T07:56:43+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 70,
-     "change": 1.78,
-     "pct": 2.61,
+     "value": 71.25,
+     "change": 3.03,
+     "pct": 4.44,
      "unit": "USDT",
-     "asOf": "2026-11-27T00:09:14+09:00"
+     "asOf": "2026-11-27T07:57:06+09:00"
     }
    ],
    "ready": true,
