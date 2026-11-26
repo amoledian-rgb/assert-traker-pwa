@@ -694,7 +694,7 @@
         <div><span><i class="cur-tag" style="background:#fbf3dc;color:#8a6c12">USD</i>달러 주식</span><b id="u-stock">$0.00</b><em id="u-stockkrw">0원</em></div>
         <div class="full"><span>주식 합계 (원화 환산)</span><b id="i-stockall">0원</b></div>
       </div>
-      <p class="hint">종목명이나 <b>티커(예: 005930)</b>를 넣고 <b>💾 저장하기</b>를 누르면 종목마다 <b>최신 현재가</b>로 맞춰 저장합니다. 원화는 아래 <b>원화 종목</b>, 달러는 <b>달러 종목</b> 구역에 넣고, 예수금은 <b>💵 예수금 탭</b>에서 넣습니다.</p>
+      <p class="hint" id="in-hint">종목명이나 <b>티커(예: 005930)</b>를 넣고 <b>💾 저장하기</b>를 누르면 종목마다 <b>최신 현재가</b>로 맞춰 저장합니다. 원화는 아래 <b>원화 종목</b>, 달러는 <b>달러 종목</b> 구역에 넣고, 예수금은 <b>💵 예수금 탭</b>에서 넣습니다.</p>
     </div>
 
     <div class="curhd krw"><span class="bd">KRW</span>원화 종목<span class="n" id="k-holdn">0건</span></div>
@@ -1021,7 +1021,7 @@ function saveState(silent){
    · 20:10 이후 종가 반영   → 그 마감일 기록 자동 저장
    · prices_history.json    → 비어 있는 날짜를 마지막 저장 보유 수량 기준으로 메운다(autoBackfill) */
 var SNAP_MAX = 1000;      /* localStorage 용량(약 2MB)을 념어서지 않게 오래된 기록부터 정리 */
-var viewingDate = null, liveState = null, liveBaseline = null, viewBaseline = null;
+var viewingDate = null, liveState = null, liveBaseline = null, viewBaseline = null, inHintHtml = null;
 /* 오늘 날짜·시각을 한국 시간(KST)으로 — 폰 시간대 설정과 상관없이 하루 경계를 맞춘다 (datekst-v1) */
 function kstNow(){
   var d = new Date();
@@ -1176,6 +1176,14 @@ function setViewing(date){
   if(date){
     var t = document.getElementById('vb-text');
     if(t) t.innerHTML = '📅 ' + date + ' 기록<span class="vb-sub">고쳐서 저장할 수 있습니다</span>';
+  }
+  /* 입력 탭 안내도 그 날짜 기록용으로 바꾼다 — 과거 저장은 오늘 시세로 덮어쓰지 않는다 (edit-past-v1) */
+  var h = document.getElementById('in-hint');
+  if(h){
+    if(inHintHtml == null) inHintHtml = h.innerHTML;
+    h.innerHTML = date
+      ? ('<b>' + date + ' 기록</b>을 고치는 중입니다 — <b>💾 ' + date + ' 기록 저장</b>을 누르면 이 날짜 기록에만 남고 오늘 데이터는 그대로입니다. 저장할 때 오늘 시세로 덮어쓰지 않습니다.')
+      : inHintHtml;
   }
   /* 그 기록의 날짜는 고정 — 날짜 칸을 눌러 바꾸면 저장 위치와 화면이 어긋난다 (edit-past-v1) */
   ['h-date', 'in-date'].forEach(function(id){
