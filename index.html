@@ -455,14 +455,14 @@
     letter-spacing:-.02em; white-space:nowrap; line-height:1; align-self:center;
   }
   .tr-add:active{filter:brightness(1.22)}
-  .tr-chart{margin:0; -webkit-user-select:none; user-select:none}
-  .tr-chart svg{display:block; width:100%; height:auto}
+  /* 터치 스크럽(trend-touch-v1) — 가로로 문지르는 건 이 그래프가 받고, 세로 화면 스크롤은 그대로 둔다 */
+  .tr-chart{margin:0; -webkit-user-select:none; user-select:none; touch-action:pan-y; -webkit-tap-highlight-color:transparent}
+  .tr-chart svg{display:block; width:100%; height:auto; cursor:crosshair}
   .tr-chart .ax{stroke:#e7eaf0; stroke-width:1; stroke-dasharray:3 4}
   .tr-chart .yl{fill:#98a1b3; font-size:12.5px; font-weight:700}
   .tr-chart .xl{fill:#98a1b3; font-size:12.5px; font-weight:700}
   .tr-chart .dot{fill:#fff; stroke:#3b6ef0; stroke-width:1.6}
   .tr-chart .dot.sel{fill:#3b6ef0; stroke:#fff; stroke-width:2}
-  .tr-chart .hit{fill:transparent}
   .tr-chart .tipbg{fill:rgba(13,23,41,.95)}
   .tr-chart .tt1{fill:#c7d3e8; font-size:12px; font-weight:700}
   .tr-chart .tt2{fill:#fff; font-size:14.5px; font-weight:800}
@@ -470,6 +470,7 @@
   /* 원금총액 추이 점선 (trend-principal-v1) */
   .tr-chart .pline{fill:none; stroke:#d97706; stroke-width:2; stroke-dasharray:4 3; stroke-linecap:round; stroke-linejoin:round}
   .tr-chart .pd{fill:#d97706; stroke:#fff; stroke-width:1.2}
+  .tr-chart .pdsel{fill:#d97706; stroke:#fff; stroke-width:1.8}
   .tr-chart .tt3{fill:#f3b96b; font-size:12px; font-weight:800}
   .tr-lg{display:flex; align-items:center; justify-content:flex-end; gap:14px; padding:0 2px 2px; font-size:12.5px; font-weight:700; color:#7c869b; letter-spacing:-.01em}
   .tr-lg span{display:inline-flex; align-items:center; gap:5px; white-space:nowrap}
@@ -885,7 +886,7 @@
         <button type="button" data-range="year">년</button>
       </div>
       <div class="tr-lg"><span><i></i>총자산</span><span><i class="p"></i>원금총액</span></div>
-      <div class="tr-chart" id="tr-chart"></div>
+      <div class="tr-chart" id="tr-chart" data-no-tab-swipe></div>
       <div class="tr-kg">
         <div><span>기간 변동</span><b id="tr-chg">—</b><em id="tr-chgpct">—</em></div>
         <div><span>최근 (마지막 기록)</span><b id="tr-last">—</b><em id="tr-lastd">—</em></div>
@@ -937,7 +938,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 추이 원금총액 추가</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 추이 포인트 터치 개선</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1616,7 +1617,7 @@ function useSnapshotNow(){
 }
 
 /* ---------- 추이 탭: 일·주·월·년 (trend-v1) ---------- */
-var trendRange = 'day', trSel = null, trendSeries = [];
+var trendRange = 'day', trSel = null, trendSeries = [], trGeom = null;
 function isoWeekKey(dstr){
   var d = new Date(dstr + 'T00:00:00Z');
   if(isNaN(d.getTime())) return dstr;
@@ -1694,6 +1695,7 @@ function trendChart(series, range){
   }
   var W = 320, H = 168, L = 52, R = 8, T = 16, B = 26;
   var iw = W - L - R, ih = H - T - B;
+  trGeom = { W:W, H:H, L:L, iw:iw, T:T, ih:ih, n:series.length };   /* 터치 좌표 → 날짜 계산용 (trend-touch-v1) */
   var vals = [];
   series.forEach(function(p){ vals.push(p.total); if(p.principal != null) vals.push(p.principal); });
   var mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals);
@@ -1762,7 +1764,6 @@ function trendChart(series, range){
     if(series.length <= 40 || sel){
       out += '<circle class="dot' + (sel ? ' sel' : '') + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(p.total).toFixed(1) + '" r="' + (sel ? 3.6 : 2.4) + '"/>';
     }
-    out += '<circle class="hit" data-i="' + i + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(p.total).toFixed(1) + '" r="' + (series.length > 28 ? 7 : 11) + '"/>';
   });
   if(trSel != null && series[trSel]){
     var p2 = series[trSel], x = X(trSel), y = Y(p2.total);
@@ -1770,8 +1771,12 @@ function trendChart(series, range){
     var tw = hasPr ? 152 : 138, th = hasPr ? 56 : 40;
     var tx = (x < W/2) ? Math.min(W - tw - 2, x + 10) : Math.max(2, x - tw - 10);
     var ty = (y - th - 10 < 2) ? (y + 12) : (y - th - 10);
+    if(ty + th > H - 2) ty = Math.max(2, H - th - 2);   /* 그래프 밖으로 잘리지 않게 */
     var suffix = (range === 'week') ? ' 주' : (range === 'month' ? ' 월' : (range === 'year' ? ' 년' : ''));
     out += '<line class="vline" x1="' + x.toFixed(1) + '" y1="' + T + '" x2="' + x.toFixed(1) + '" y2="' + (T+ih).toFixed(1) + '"/>';
+    if(hasPr){
+      out += '<circle class="pdsel" cx="' + x.toFixed(1) + '" cy="' + Y(p2.principal).toFixed(1) + '" r="3.4"/>';
+    }
     out += '<g pointer-events="none">' +
            '<rect class="tipbg" x="' + tx.toFixed(1) + '" y="' + ty.toFixed(1) + '" width="' + tw + '" height="' + th + '" rx="7"/>' +
            '<text class="tt1" x="' + (tx+8).toFixed(1) + '" y="' + (ty+15).toFixed(1) + '">' + p2.date + suffix + (suffix ? ' 마감' : '') + '</text>' +
@@ -3376,13 +3381,79 @@ document.getElementById('tr-seg').addEventListener('click', function(e){
   trSel = null;
   renderTrend();
 });
-document.getElementById('tr-chart').addEventListener('click', function(e){
-  var h = e.target.closest('[data-i]');
-  if(!h) return;
-  var i = Number(h.getAttribute('data-i'));
-  trSel = (trSel === i) ? null : i;
-  document.getElementById('tr-chart').innerHTML = trendChart(trendSeries, trendRange);
-});
+/* ---------- 추이 그래프 포인트 선택: X좌표에서 가장 가까운 날짜 (trend-touch-v1 · 2026-11-26) ----------
+   · 점이 아닌 빈 공간·원금선·위쪽 여백을 눌러도 그 X에서 가장 가까운 기록을 고른다.
+   · 누른 채로 좌우로 문지르면(스크럽) 손끝을 따라 선택이 움직인다.
+   · 같은 자리를 다시 탭하면 툴팁을 닫는다(드래그 중에는 닫지 않음).
+   · 세로로 끌면 화면 스크롤에 맡기고 선택은 그대로 둔다. 탭 좌우 스와이프는 data-no-tab-swipe 로 막혀 있다. */
+var trChartEl = document.getElementById('tr-chart');
+var trTouch = null, trChartRaf = false;
+function trScheduleChart(){
+  if(trChartRaf) return;
+  trChartRaf = true;
+  var run = function(){
+    trChartRaf = false;
+    var el = document.getElementById('tr-chart');
+    if(el) el.innerHTML = trendChart(trendSeries, trendRange);
+  };
+  if(window.requestAnimationFrame) requestAnimationFrame(run); else setTimeout(run, 16);
+}
+function trPointAt(e){
+  var svg = trChartEl.querySelector('svg');
+  if(!svg || !trGeom) return null;
+  var r = svg.getBoundingClientRect();
+  if(!r || !r.width) return null;
+  var k = trGeom.W / r.width;
+  return { x:(e.clientX - r.left) * k, y:(e.clientY - r.top) * k };
+}
+function trIndexAt(vx){
+  var n = trendSeries.length, g = trGeom;
+  if(!n || !g) return null;
+  if(n === 1) return 0;
+  var t = (vx - g.L) / (g.iw || 1);
+  if(!isFinite(t)) return null;
+  t = Math.max(0, Math.min(1, t));
+  return Math.max(0, Math.min(n - 1, Math.round(t * (n - 1))));
+}
+function trSelect(i){
+  if(i == null || trSel === i) return;
+  trSel = i;
+  trScheduleChart();
+}
+trChartEl.addEventListener('pointerdown', function(e){
+  if(!trendSeries.length) return;
+  var p = trPointAt(e);
+  if(!p) return;
+  if(p.x < trGeom.L - 24 || p.x > trGeom.L + trGeom.iw + 24) return;   /* 카드 옆 여백은 무시 */
+  var i = trIndexAt(p.x);
+  if(i == null) return;
+  trTouch = { id:e.pointerId, x:e.clientX, y:e.clientY, at:Date.now(), i:i, prev:trSel, moved:false, vertical:false };
+  try{ trChartEl.setPointerCapture(e.pointerId); }catch(err){}
+  trSelect(i);                       /* 누르는 즉시 그 날짜를 보여 준다 */
+}, {passive:true});
+trChartEl.addEventListener('pointermove', function(e){
+  var s = trTouch;
+  if(!s || e.pointerId !== s.id || s.vertical) return;
+  var dx = e.clientX - s.x, dy = e.clientY - s.y;
+  if(!s.moved){
+    if(Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+    if(Math.abs(dy) > Math.abs(dx) * 1.2){ s.vertical = true; return; }   /* 세로 = 화면 스크롤 */
+    s.moved = true;
+  }
+  var p = trPointAt(e);
+  if(!p) return;
+  trSelect(trIndexAt(p.x));          /* 손끝을 따라 선택이 움직인다 */
+}, {passive:true});
+function trTouchEnd(e, canceled){
+  var s = trTouch;
+  if(!s) return;
+  if(e && e.pointerId !== s.id) return;
+  trTouch = null;
+  if(canceled || s.moved || s.vertical) return;   /* 드래그로 고른 선택은 그대로 */
+  if(s.prev === s.i){ trSel = null; trScheduleChart(); }   /* 같은 자리를 다시 탭 = 닫기 */
+}
+trChartEl.addEventListener('pointerup', function(e){ trTouchEnd(e, false); }, {passive:true});
+trChartEl.addEventListener('pointercancel', function(e){ trTouchEnd(e, true); }, {passive:true});
 document.getElementById('tr-list').addEventListener('click', function(e){
   if(Date.now() - trSwipedAt < 400) return;   /* 페이지를 넘긴 직후의 눌림은 무시 */
   var pg = e.target.closest('[data-pg]');
@@ -3989,7 +4060,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-26T19:16:16+09:00",
+ "updatedAt": "2026-11-26T19:45:31+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
@@ -4038,11 +4109,11 @@ var MARKET_INLINE = {
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 726.65,
-     "change": -0.1,
-     "pct": -0.01,
+     "value": 724.1,
+     "change": -2.65,
+     "pct": -0.36,
      "tradingValue": null,
-     "asOf": "2026-11-26T19:15:33.464781+09:00",
+     "asOf": "2026-11-26T19:45:04.422512+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "야간장",
@@ -4053,11 +4124,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26249.75,
-     "change": 149.5,
-     "pct": 0.57,
+     "value": 26214.75,
+     "change": 114.5,
+     "pct": 0.44,
      "tradingValue": null,
-     "asOf": "2026-11-26T04:06:09-06:00",
+     "asOf": "2026-11-26T04:35:24-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -4210,16 +4281,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -16215.3,
-     "nonArb": 182265.9,
-     "total": 166050.6
+     "arb": -16235.3,
+     "nonArb": 179003.6,
+     "total": 162768.3
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 12212.4,
-     "nonArb": -64146.5,
-     "total": -51934.1
+     "arb": 12211.5,
+     "nonArb": -66379.0,
+     "total": -54167.6
     }
    ],
    "ready": true,
@@ -4255,20 +4326,20 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -10737,
-      -1373,
+      -10719,
+      -1351,
       -118,
-      -12110
+      -12070
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -828,
-      -1063,
+      -859,
+      -1085,
       1878,
-      -1891
+      -1944
      ]
     },
     {
@@ -4309,13 +4380,13 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.628,
-     "c10": -0.01,
-     "y2": 1.734,
-     "c2": -0.011,
-     "y30": 3.89,
-     "c30": -0.012,
-     "asOf": "2026-11-26T17:14:53+09:00"
+     "y10": 2.632,
+     "c10": -0.006,
+     "y2": 1.745,
+     "c2": 0,
+     "y30": 3.888,
+     "c30": -0.014,
+     "asOf": "2026-11-26T17:44:59+09:00"
     },
     {
      "key": "US",
@@ -4333,25 +4404,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T05:06:05-05:00",
+   "asOf": "2026-11-26T05:35:21-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.76,
-     "change": 0.09,
-     "pct": 0.09,
-     "asOf": "2026-11-26T05:06:05-05:00",
+     "value": 103.73,
+     "change": 0.07,
+     "pct": 0.06,
+     "asOf": "2026-11-26T05:35:21-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 26.92,
-     "change": -1.37,
-     "pct": -4.84,
-     "asOf": "2026-11-26T05:01:08-05:00",
+     "value": 27.05,
+     "change": -1.24,
+     "pct": -4.38,
+     "asOf": "2026-11-26T05:30:23-05:00",
      "unit": "pt"
     },
     {
@@ -4368,19 +4439,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3571.3,
-     "change": 35.5,
-     "pct": 1,
-     "asOf": "2026-11-26T04:06:08-06:00",
+     "value": 3559.2,
+     "change": 23.4,
+     "pct": 0.66,
+     "asOf": "2026-11-26T04:35:23-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.376,
-     "change": 0.0395,
-     "pct": 0.74,
-     "asOf": "2026-11-26T04:06:08-06:00",
+     "value": 5.38,
+     "change": 0.0435,
+     "pct": 0.82,
+     "asOf": "2026-11-26T04:35:23-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -4389,25 +4460,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T04:06:08-06:00",
+   "asOf": "2026-11-26T04:35:23-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 83.59,
-     "change": -0.09,
-     "pct": -0.11,
-     "asOf": "2026-11-26T04:06:08-06:00",
+     "value": 83.7,
+     "change": 0.02,
+     "pct": 0.02,
+     "asOf": "2026-11-26T04:35:23-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 94.05,
-     "change": -0.56,
-     "pct": -0.59,
-     "asOf": "2026-11-26T10:06:08Z",
+     "value": 94.24,
+     "change": -0.37,
+     "pct": -0.39,
+     "asOf": "2026-11-26T10:35:23Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -4415,17 +4486,17 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-26T19:05:00+09:00",
+   "asOf": "2026-11-26T19:30:56+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60873.91,
-     "change": 537.12,
-     "pct": 0.89,
+     "value": 60793.78,
+     "change": 456.99,
+     "pct": 0.76,
      "unit": "USDT",
-     "asOf": "2026-11-26T19:05:00+09:00"
+     "asOf": "2026-11-26T19:30:56+09:00"
     },
     {
      "key": "ETH",
@@ -4434,52 +4505,52 @@ var MARKET_INLINE = {
      "change": -0.25,
      "pct": -0.01,
      "unit": "USDT",
-     "asOf": "2026-11-26T18:34:02+09:00"
+     "asOf": "2026-11-26T19:42:04+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 71.28,
-     "change": 3.06,
-     "pct": 4.49,
+     "value": 70.91,
+     "change": 2.69,
+     "pct": 3.94,
      "unit": "USDT",
-     "asOf": "2026-11-26T18:04:28+09:00"
+     "asOf": "2026-11-26T19:42:23+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-26T19:13:23+09:00",
+   "asOf": "2026-11-26T19:43:43+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1344.8,
-     "change": -0.7,
-     "pct": -0.05,
-     "asOf": "2026-11-26T19:13:23+09:00",
+     "value": 1344.6,
+     "change": -0.9,
+     "pct": -0.07,
+     "asOf": "2026-11-26T19:43:43+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.48,
-     "change": -0.9,
-     "pct": -0.11,
-     "asOf": "2026-11-26T19:13:23+09:00",
+     "value": 844.07,
+     "change": -1.31,
+     "pct": -0.15,
+     "asOf": "2026-11-26T19:43:43+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1475.11,
-     "change": -1.85,
-     "pct": -0.13,
-     "asOf": "2026-11-26T19:13:23+09:00",
+     "value": 1475.9,
+     "change": -1.06,
+     "pct": -0.07,
+     "asOf": "2026-11-26T19:43:43+09:00",
      "dec": 2,
      "unit": "원"
     }
