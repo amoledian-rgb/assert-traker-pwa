@@ -4554,8 +4554,10 @@ function renderMarket(){
   if(past){
     pastHit = mkHistEntry(past);
     if(!marketHist){
-      if(!marketHistBusy && marketHistErr !== 'local') loadMarketHistory();
-      if(when) when.textContent = marketHistErr === 'local' ? '웹(앱)에서만 볼 수 있습니다' : (marketHistBusy ? '불러오는 중…' : '과거 데이터 없음');
+      /* 한 번 실패하면 다시 부르지 않는다(같은 요청을 반복하지 않게) — 그날은 빈 칸 + 안내만 */
+      if(!marketHistBusy && !marketHistErr) loadMarketHistory();
+      if(when) when.textContent = marketHistErr === 'local' ? '웹(앱)에서만 볼 수 있습니다'
+        : (marketHistBusy || !marketHistErr ? '불러오는 중…' : '과거 데이터 없음');
       if(top) top.textContent = past + ' 시장종합';
       MK_IDS.forEach(mkEmptyBox);
       return;
