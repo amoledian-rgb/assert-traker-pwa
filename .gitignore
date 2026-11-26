@@ -93,3 +93,6 @@ shots_isolate/
 sites_isolate/
 sites_addcross/
 test_live_isolate.py
+test_past_race.py
+sites_race/
+sites_race_old/
