@@ -92,3 +92,4 @@ test_past_fuzz.py
 shots_isolate/
 sites_isolate/
 sites_addcross/
+test_live_isolate.py
