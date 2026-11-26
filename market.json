@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-27T05:36:12+09:00",
+ "updatedAt": "2026-11-27T06:14:25+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
@@ -52,10 +52,10 @@
      "change": 1.25,
      "pct": 0.17,
      "tradingValue": null,
-     "asOf": "2026-11-27T05:35:24.445517+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "야간장",
+     "asOf": "2026-11-27T06:09:17.280707+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "야간장 마감",
      "dec": 2,
      "src": "앤트위키 (KOSCOM 야간 분봉)",
      "month": "2612"
@@ -67,7 +67,7 @@
      "change": 121,
      "pct": 0.46,
      "tradingValue": null,
-     "asOf": "2026-11-26T14:26:05-06:00",
+     "asOf": "2026-11-26T15:04:18-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -182,8 +182,8 @@
      "change": 19.119,
      "pct": 0.712,
      "asOf": "2026-11-25",
-     "status": "OPEN",
-     "statusText": "장중",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2,
      "src": "CNBC"
     }
@@ -343,16 +343,16 @@
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T15:25:55-05:00",
+   "asOf": "2026-11-26T16:04:13-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.77,
-     "change": 0.1,
-     "pct": 0.1,
-     "asOf": "2026-11-26T15:25:55-05:00",
+     "value": 103.78,
+     "change": 0.11,
+     "pct": 0.11,
+     "asOf": "2026-11-26T16:04:13-05:00",
      "unit": "pt"
     },
     {
@@ -361,16 +361,16 @@
      "value": 26.8,
      "change": -1.49,
      "pct": -5.27,
-     "asOf": "2026-11-26T15:21:04-05:00",
+     "asOf": "2026-11-26T15:59:17-05:00",
      "unit": "pt"
     },
     {
      "key": "VKOSPI",
      "name": "VKOSPI",
      "value": 58.4,
-     "change": -0.12,
-     "pct": -0.21,
-     "asOf": "2026-11-26T15:51:10+09:00",
+     "change": 0.0,
+     "pct": 0.0,
+     "asOf": "2026-11-26",
      "unit": "pt",
      "dec": 2,
      "src": "CNBC"
@@ -381,7 +381,7 @@
      "value": 3566.2,
      "change": 30.4,
      "pct": 0.86,
-     "asOf": "2026-11-26T14:26:04-06:00",
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/t.oz"
     },
     {
@@ -390,7 +390,7 @@
      "value": 5.348,
      "change": 0.0115,
      "pct": 0.22,
-     "asOf": "2026-11-26T14:26:04-06:00",
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -399,7 +399,7 @@
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T14:26:04-06:00",
+   "asOf": "2026-11-26T15:04:17-06:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -408,7 +408,7 @@
      "value": 84.91,
      "change": 1.23,
      "pct": 1.47,
-     "asOf": "2026-11-26T14:26:04-06:00",
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/Bbl"
     },
     {
@@ -417,7 +417,7 @@
      "value": 96.53,
      "change": 1.92,
      "pct": 2.03,
-     "asOf": "2026-11-26T20:26:04Z",
+     "asOf": "2026-11-26T21:04:17Z",
      "unit": "USD/Bbl"
     }
    ],
