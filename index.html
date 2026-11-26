@@ -302,6 +302,43 @@
   .btn.danger{background:#fff; border-color:#f3c9c9; color:#c02b30}
   .btn:active{filter:brightness(.96)}
   .btn small{font-weight:600; color:inherit; opacity:.6; font-size:14.5px}
+  /* ---------- 백업에서 날짜 기록만 가져오기 시트 (snapimport-v1) ---------- */
+  .pk{position:fixed; inset:0; z-index:60; display:none}
+  .pk.on{display:block}
+  .pk-bd{position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(13,23,41,.52)}
+  .pk-panel{
+    position:absolute; left:0; right:0; bottom:0; max-height:86vh; display:flex; flex-direction:column;
+    background:#fff; border-radius:19px 19px 0 0; box-shadow:0 -14px 32px -18px rgba(13,23,41,.8);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .pk-head{flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:13px 14px 7px}
+  .pk-head b{flex:1 1 auto; min-width:0; font-size:19.5px; font-weight:800; letter-spacing:-.02em; word-break:keep-all}
+  .pk-x{flex:0 0 auto; width:34px; height:34px; border:0; border-radius:50%; background:#eef1f6;
+    color:#5b6577; font-size:16.5px; font-weight:800; line-height:1}
+  .pk-note{flex:0 0 auto; margin:0 14px 7px; font-size:14.5px; color:#6b7488; line-height:1.5; word-break:keep-all}
+  .pk-note b{color:#4a5468}
+  .pk-bar{flex:0 0 auto; display:flex; gap:6px; padding:0 14px 8px}
+  .pk-bar button{flex:0 0 auto; height:32px; padding:0 11px; border:1px solid var(--line); border-radius:999px;
+    background:#fbfcfe; color:#3a4356; font-size:14px; font-weight:800; white-space:nowrap}
+  .pk-bar button:active{background:#eef1f6}
+  .pk-list{flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 14px 2px; border-top:1px solid var(--line)}
+  .pk-row{display:flex; align-items:center; gap:9px; padding:11px 2px; border-bottom:1px solid var(--line)}
+  .pk-row:last-child{border-bottom:0}
+  .pk-row input[type=checkbox]{flex:0 0 auto; width:22px; height:22px; margin:0; accent-color:#16233d}
+  .pk-row .d{flex:1 1 auto; min-width:0}
+  .pk-row .d b{display:block; font-size:16.5px; font-weight:700; font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pk-row .d span{display:block; font-size:14.5px; font-weight:700; color:#4a5468; font-variant-numeric:tabular-nums;
+    margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pk-badge{flex:0 0 auto; font-size:12.5px; font-weight:800; padding:4px 8px; border-radius:999px;
+    white-space:nowrap; letter-spacing:-.02em}
+  .pk-badge.new{background:rgba(34,160,107,.13); color:#1a7a52}
+  .pk-badge.over{background:rgba(224,138,21,.16); color:#8a5300}
+  .pk-empty{text-align:center; color:#8b93a4; font-size:16px; line-height:1.6; padding:22px 4px; word-break:keep-all}
+  .pk-foot{flex:0 0 auto; display:flex; gap:8px; padding:10px 14px 12px; border-top:1px solid var(--line); background:#fff}
+  .pk-foot .btn{margin-top:0; flex:1 1 0; min-width:0; height:52px; font-size:17.25px; padding:0 6px}
+  .pk-foot .btn.primary{flex:1.35 1 0}
+  .pk-foot .btn:disabled{opacity:.45}
   details{margin-top:10px; border-top:1px dashed var(--line); padding-top:9px}
   details summary{font-size:16.5px; font-weight:700; color:#5b6577; cursor:pointer; list-style:none; display:flex; align-items:center; gap:5px; line-height:1.35}
   details summary::-webkit-details-marker{display:none}
@@ -832,6 +869,9 @@
       <button class="btn primary" id="btn-export">⬇ 백업 파일 저장 <small>.json</small></button>
       <button class="btn" id="btn-import">⬆ 백업 불러오기 <small>.json</small></button>
       <input type="file" id="file-in" accept=".json,application/json" style="display:none">
+      <button class="btn" id="btn-import-dates">📅 백업에서 날짜 기록만 가져오기 <small>.json</small></button>
+      <input type="file" id="file-dates-in" accept=".json,application/json" style="display:none">
+      <p class="hint">예전에 저장한 백업 파일에서 <b>원하는 날짜 기록만</b> 골라 지금 기록에 더합니다. 오늘 데이터(보유·예수금·기준일)는 그대로 남습니다.</p>
       <details id="rawwrap">
         <summary>파일 저장이 안 될 때 — 내용 복사</summary>
         <textarea id="raw-json" readonly spellcheck="false"></textarea>
@@ -847,7 +887,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 과거 기록 독립 수정</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 백업 날짜 선택 가져오기</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -877,6 +917,25 @@
   <button data-tab="trend"><i>📉</i>추이</button>
   <button data-tab="backup"><i>💾</i>백업</button>
 </nav>
+<div class="pk" id="snap-pick">
+  <div class="pk-bd" id="snap-pick-bd"></div>
+  <div class="pk-panel" role="dialog" aria-modal="true" aria-labelledby="snap-pick-title">
+    <div class="pk-head">
+      <b id="snap-pick-title">📅 가져올 날짜 선택</b>
+      <button type="button" class="pk-x" id="snap-pick-x" aria-label="닫기">✕</button>
+    </div>
+    <p class="pk-note" id="snap-pick-note"></p>
+    <div class="pk-bar">
+      <button type="button" id="snap-pick-all">전체 선택</button>
+      <button type="button" id="snap-pick-none">선택 해제</button>
+    </div>
+    <div class="pk-list" id="snap-pick-list"></div>
+    <div class="pk-foot">
+      <button type="button" class="btn" id="snap-pick-cancel">취소</button>
+      <button type="button" class="btn primary" id="snap-pick-go" disabled>선택한 날짜 가져오기</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1533,7 +1592,8 @@ function renderTrendList(rows){
       '<div class="d"><b>' + r.date + ' (' + wday(r.date) + ')</b>' +
         '<span class="' + (prev ? cls(diff) : 'flat') + '">' + diffTxt + pctTxt + '</span></div>' +
       '<div class="a"><b>' + won(r.total) + '</b>' +
-        '<span class="flat">' + (r.source === 'history' ? '시세로 자동 기록' : (r.source === 'edit' ? '수정한 기록' : '저장 기록')) + '</span></div>' +
+        '<span class="flat">' + (r.source === 'history' ? '시세로 자동 기록'
+            : (r.source === 'edit' ? '수정한 기록' : (r.source === 'import' ? '백업에서 가져온 기록' : '저장 기록'))) + '</span></div>' +
       '<div class="tr-btns">' +
         '<button type="button" class="tr-go" data-load="' + r.date + '">불러오기</button>' +
         '<button type="button" class="tr-del" data-del="' + r.date + '">삭제</button>' +
@@ -3390,6 +3450,145 @@ fileIn.addEventListener('change', function(){
   rd.readAsText(f);
   fileIn.value = '';
 });
+/* ---------- 백업에서 날짜 기록만 가져오기 (snapimport-v1) ----------
+   예전에 저장한 백업 파일(.json)에서 고른 날짜 기록만 지금 기록(state.snapshots)에 합친다.
+   · 오늘 데이터(state.asOf·fx·accounts·holdings)와 고르지 않은 날짜 기록은 건드리지 않는다
+   · 파일에 snapshots 가 없던 예전 형식은 파일의 asOf·fx·accounts·holdings 로 1건을 만든다
+   · 고른 날짜만 바로 저장하고, 지운 날짜 목록(deletedSnaps)에서 해제해 다시 메우지 않게 한다 */
+var snapPick = null;              /* { rows:[{date, snap, exists}], sel:{'YYYY-MM-DD':true} } */
+var snapPickPrevOverflow = '';
+
+function snapPickRows(src){
+  var next = normalize(src);      /* 백업 형식이 아니면 여기서 예외 */
+  var snaps = normSnapshots(src && src.snapshots);
+  var fileAsOf = (src && typeof src.asOf === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(src.asOf)) ? src.asOf : next.asOf;
+  if(!snaps[fileAsOf]){
+    /* 예전 백업 파일 — snapshots 가 없거나 그 날짜가 빠져 있으면 파일 앞부분으로 1건을 만든다 */
+    var body = { fx: num(src.fx) || next.fx, accounts: next.accounts, holdings: next.holdings };
+    snaps[fileAsOf] = {
+      asOf: fileAsOf, fx: body.fx,
+      accounts: clone(body.accounts), holdings: clone(body.holdings),
+      total: num(src.total) > 0 ? Math.round(num(src.total)) : Math.round(bodyTotal(body)),
+      savedAt: (typeof src.savedAt === 'string' && src.savedAt) ? src.savedAt : null,
+      source: 'import'
+    };
+  }
+  var rows = Object.keys(snaps).map(function(d){
+    return { date: d, snap: snaps[d], exists: !!(state.snapshots && state.snapshots[d]) };
+  });
+  rows.sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });   /* 최신순 */
+  return rows;
+}
+function snapPickCount(){ return snapPick ? Object.keys(snapPick.sel).length : 0; }
+function snapPickUpdateGo(){
+  var n = snapPickCount(), b = document.getElementById('snap-pick-go');
+  if(!b) return;
+  b.disabled = (n === 0);
+  b.textContent = n ? ('선택한 ' + n + '개 날짜 가져오기') : '선택한 날짜 가져오기';
+}
+function renderSnapPicker(){
+  var list = document.getElementById('snap-pick-list');
+  var rows = snapPick.rows;
+  var html = '';
+  rows.forEach(function(r, i){
+    html += '<label class="pk-row">' +
+      '<input type="checkbox" data-i="' + i + '"' + (snapPick.sel[r.date] ? ' checked' : '') + '>' +
+      '<span class="d"><b>' + r.date + ' (' + wday(r.date) + ')</b>' +
+      '<span>총자산 ' + won(r.snap.total) + '</span></span>' +
+      '<span class="pk-badge ' + (r.exists ? 'over' : 'new') + '">' + (r.exists ? '기존 기록 덮어쓰기' : '새로 추가') + '</span>' +
+    '</label>';
+  });
+  list.innerHTML = html || '<div class="pk-empty">가져올 날짜 기록이 없습니다.</div>';
+  var over = rows.filter(function(r){ return r.exists; }).length;
+  document.getElementById('snap-pick-note').innerHTML = '기록 <b>' + rows.length + '건</b> 중에서 고르세요. ' +
+    '오늘(<b>' + todayKST() + '</b>) 데이터는 그대로 두고, 고른 날짜만 지금 기록에 더합니다.' +
+    (over ? ' 이미 있는 <b>' + over + '건</b>은 덮어씁니다.' : '');
+  snapPickUpdateGo();
+}
+function openSnapPicker(parsed){
+  var src = (parsed && parsed.data) ? parsed.data : parsed;   /* 파일 전체 또는 data 부분 모두 받는다 */
+  var rows;
+  try{ rows = snapPickRows(src); }
+  catch(err){
+    alert('날짜 기록을 읽지 못했습니다.\n' + (err && err.message ? err.message : '파일을 확인해 주세요.'));
+    return false;
+  }
+  if(!rows.length){ alert('이 백업 파일에는 가져올 날짜 기록이 없습니다.'); return false; }
+  snapPick = { rows: rows, sel: {} };
+  renderSnapPicker();
+  snapPickPrevOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('snap-pick').classList.add('on');
+  return true;
+}
+function closeSnapPicker(){
+  var sh = document.getElementById('snap-pick');
+  if(sh) sh.classList.remove('on');
+  document.body.style.overflow = snapPickPrevOverflow || '';
+  snapPick = null;
+}
+function applySnapPick(){
+  if(!snapPick) return;
+  var picked = snapPick.rows.filter(function(r){ return snapPick.sel[r.date]; });
+  if(!picked.length) return;
+  if(dirty && !confirm('저장하지 않은 변경이 있습니다.\n\n지금 화면 값도 함께 저장하면서 고른 날짜 기록을 더할까요?')) return;
+  if(!state.snapshots) state.snapshots = {};
+  var over = 0;
+  picked.forEach(function(r){
+    if(state.snapshots[r.date]) over++;
+    state.snapshots[r.date] = clone(r.snap);   /* 고른 날짜 기록만 그대로 복사 — 오늘 데이터는 손대지 않는다 */
+    unsnapSkip(r.date);                        /* 지운 날짜에서 해제 — 시세 기록으로 다시 메우지 않게 */
+  });
+  trimSnapshots();
+  saveState();          /* 고른 날짜만 합친 뒤 바로 저장 (오늘 보유·예수금·기준일 그대로) */
+  closeSnapPicker();
+  renderAll(); renderSavebar(); syncBar();
+  if(activeTab === 'trend') renderTrend();
+  toast(picked.length + '개 날짜 기록을 가져왔습니다' + (over ? ' (기존 ' + over + '건은 덮어씀)' : ''), 3000);
+}
+var datesIn = document.getElementById('file-dates-in');
+document.getElementById('btn-import-dates').addEventListener('click', function(){
+  if(viewingDate){ toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3200, 'warn'); return; }
+  datesIn.click();
+});
+datesIn.addEventListener('change', function(){
+  var f = datesIn.files && datesIn.files[0];
+  if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try{ openSnapPicker(JSON.parse(String(rd.result))); }
+    catch(err){ alert('불러오지 못했습니다.\n' + (err && err.message ? err.message : '파일을 확인해 주세요.')); }
+  };
+  rd.readAsText(f);
+  datesIn.value = '';
+});
+document.getElementById('snap-pick-list').addEventListener('change', function(e){
+  var cb = e.target;
+  if(!snapPick || !cb || !cb.getAttribute) return;
+  var i = cb.getAttribute('data-i');
+  if(i === null) return;
+  var r = snapPick.rows[Number(i)];
+  if(!r) return;
+  if(cb.checked) snapPick.sel[r.date] = true; else delete snapPick.sel[r.date];
+  snapPickUpdateGo();
+});
+document.getElementById('snap-pick-all').addEventListener('click', function(){
+  if(!snapPick) return;
+  snapPick.rows.forEach(function(r){ snapPick.sel[r.date] = true; });
+  Array.prototype.forEach.call(document.querySelectorAll('#snap-pick-list input[type=checkbox]'), function(c){ c.checked = true; });
+  snapPickUpdateGo();
+});
+document.getElementById('snap-pick-none').addEventListener('click', function(){
+  if(!snapPick) return;
+  snapPick.sel = {};
+  Array.prototype.forEach.call(document.querySelectorAll('#snap-pick-list input[type=checkbox]'), function(c){ c.checked = false; });
+  snapPickUpdateGo();
+});
+document.getElementById('snap-pick-go').addEventListener('click', applySnapPick);
+document.getElementById('snap-pick-cancel').addEventListener('click', function(){ closeSnapPicker(); });
+document.getElementById('snap-pick-x').addEventListener('click', function(){ closeSnapPicker(); });
+document.getElementById('snap-pick-bd').addEventListener('click', function(){ closeSnapPicker(); });
+
 document.getElementById('btn-reset').addEventListener('click', function(){
   if(viewingDate){ toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3200, 'warn'); return; }
   if(!confirm('모든 계좌·종목 데이터를 지우고 빈 앱으로 되돌립니다.\n지금 입력한 내용은 모두 사라집니다. 계속할까요?')) return;
