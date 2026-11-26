@@ -1733,18 +1733,29 @@ function trendChart(series, range){
   out += '<path d="' + area + '" fill="url(#' + gid + ')"/>';
   out += '<path d="' + line + '" fill="none" stroke="#3b6ef0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
   /* 원금총액 점선 — 값을 모르는 날(계좌 없는 옛 기록)은 선을 끊고 유효한 점끼리만 잇는다 (trend-principal-v1) */
-  var ppts = [];
-  series.forEach(function(p, i){ if(p.principal != null) ppts.push([i, X(i), Y(p.principal)]); });
-  var pline = '';
-  ppts.forEach(function(q, k){
-    var prev = ppts[k-1];
-    pline += ((prev && q[0] === prev[0] + 1) ? ' L' : ' M') + q[1].toFixed(2) + ',' + q[2].toFixed(2);
-  });
-  if(ppts.length === 1){
-    /* 점이 하나면(예: 년 보기에서 기록이 한 해씩만) 선 대신 가로 점선으로 원금 수준을 보여 준다 */
-    out += '<line class="pline" x1="' + L + '" y1="' + ppts[0][2].toFixed(1) + '" x2="' + (L+iw) + '" y2="' + ppts[0][2].toFixed(1) + '"/>';
-  }else if(pline){
-    out += '<path class="pline" d="' + pline + '"/>';
+  var pidx = [];
+  series.forEach(function(p, i){ if(p.principal != null) pidx.push(i); });
+  if(series.length === 1){
+    /* 기록이 한 건(예: 년 보기에서 한 해뿐)이면 선 대신 가로 점선으로 원금 수준을 보여 준다 */
+    if(pidx.length) out += '<line class="pline" x1="' + L + '" y1="' + Y(series[0].principal).toFixed(1) + '" x2="' + (L+iw) + '" y2="' + Y(series[0].principal).toFixed(1) + '"/>';
+  }else if(pidx.length){
+    var runs = [], cur = [];
+    pidx.forEach(function(i, k){
+      if(k && i === pidx[k-1] + 1) cur.push(i);
+      else { if(cur.length) runs.push(cur); cur = [i]; }
+    });
+    if(cur.length) runs.push(cur);
+    runs.forEach(function(run){
+      if(run.length === 1){   /* 앞뒤가 비어 홀로 남은 점은 작은 점으로 */
+        out += '<circle class="pd" cx="' + X(run[0]).toFixed(1) + '" cy="' + Y(series[run[0]].principal).toFixed(1) + '" r="2.7"/>';
+        return;
+      }
+      var d = '';
+      run.forEach(function(i, k){
+        d += (k ? ' L' : ' M') + X(i).toFixed(2) + ',' + Y(series[i].principal).toFixed(2);
+      });
+      out += '<path class="pline" d="' + d + '"/>';
+    });
   }
   series.forEach(function(p, i){
     var sel = (trSel === i);
