@@ -75,3 +75,9 @@ test_past_edit.py
 shots_past_edit/
 test_past_edit_live.py
 shots_past_edit_live/
+
+# 과거 날짜 기록에서 종목 추가·삭제 검증 (2026-11-26)
+test_past_add.py
+shots_past_add/
+test_past_add_live.py
+shots_past_add_live/
