@@ -1724,10 +1724,14 @@ function addDateRender(){
   var fxi = fxForDate(d, base.fx);
   var baseName = (baseKey === 'today') ? '오늘(최신) 데이터' : baseKey + ' 기록';
   st.className = ch.hit.length ? 'da-state ok' : 'da-state';
-  st.innerHTML = '기준 <b>' + baseName + '</b>의 계좌·보유 <b>' + n + '종목</b>·예수금을 그대로 복사합니다.<br>' +
+  st.innerHTML = (n
+      ? '기준 <b>' + baseName + '</b>의 계좌·보유 <b>' + n + '종목</b>·예수금을 그대로 복사합니다.<br>'
+      : '기준 <b>' + baseName + '</b>의 계좌·예수금만 복사합니다 — 복사할 보유 종목이 없습니다.<br>') +
     (ch.hit.length
       ? ('<b>' + d + ' 종가 ' + ch.hit.length + '/' + n + '종목</b> · 환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')로 채웁니다.')
-      : ('<b>' + d + '</b> 종가 기록이 없어 기준 가격·환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')을 그대로 씁니다.')) +
+      : (n === 0
+          ? ('환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')만 채웁니다.')
+          : ('<b>' + d + '</b> 종가 기록이 없어 기준 가격·환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')을 그대로 씁니다.'))) +
     (ch.miss.length && ch.hit.length ? '<br>종가가 없어 기준 가격을 두는 종목 <b>' + ch.miss.length + '개</b>' +
       (ch.miss.length <= 3 ? ': ' + esc(ch.miss.join(', ')) : ' — ' + esc(ch.miss.slice(0, 2).join(', ')) + ' 외') : '') +
     '<br>오늘 데이터와 다른 날짜 기록은 그대로입니다.';
