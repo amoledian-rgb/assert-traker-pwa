@@ -113,3 +113,13 @@ sites_dateadd/
 test_trpager.py
 shots_trpager/
 shots_trpager_live/
+
+# 과거 시장종합 수집·엑셀 파싱 (2026-11-26, mkhist-v1)
+#  — market_history.json 은 앱이 읽는 공개 시장 데이터라 저장소에 올린다.
+#  — 수집·파싱 스크립트와 검증 산출물, 첨부 엑셀(개인 자산)은 올리지 않는다.
+fetch_market_history.py
+parse_excel_backup.py
+test_market_history.py
+shots_mkhist/
+sites_mkhist/
+tmp/
