@@ -102,3 +102,8 @@ test_snap_import.py
 test_snap_import_live.py
 shots_snapimport/
 sites_snapimport/
+
+# 추이 탭 과거 날짜 기록 새로 만들기 검증 (2026-11-26, dateadd-v1)
+test_date_add.py
+shots_dateadd/
+sites_dateadd/
