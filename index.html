@@ -467,6 +467,14 @@
   .tr-chart .tt1{fill:#c7d3e8; font-size:12px; font-weight:700}
   .tr-chart .tt2{fill:#fff; font-size:14.5px; font-weight:800}
   .tr-chart .vline{stroke:#c3cbd9; stroke-width:1; stroke-dasharray:2 3}
+  /* 원금총액 추이 점선 (trend-principal-v1) */
+  .tr-chart .pline{fill:none; stroke:#d97706; stroke-width:2; stroke-dasharray:4 3; stroke-linecap:round; stroke-linejoin:round}
+  .tr-chart .pd{fill:#d97706; stroke:#fff; stroke-width:1.2}
+  .tr-chart .tt3{fill:#f3b96b; font-size:12px; font-weight:800}
+  .tr-lg{display:flex; align-items:center; justify-content:flex-end; gap:14px; padding:0 2px 2px; font-size:12.5px; font-weight:700; color:#7c869b; letter-spacing:-.01em}
+  .tr-lg span{display:inline-flex; align-items:center; gap:5px; white-space:nowrap}
+  .tr-lg i{display:inline-block; width:20px; height:0; border-top:3px solid #3b6ef0; border-radius:2px}
+  .tr-lg i.p{border-top:2.5px dashed #d97706}
   .tr-empty{text-align:center; color:#8b93a4; font-size:16px; line-height:1.6; padding:24px 6px; word-break:keep-all}
   .tr-kg{display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:11px; background:var(--line); border-radius:11px; overflow:hidden}
   .tr-kg>div{background:#fbfcfe; padding:9px 10px; min-width:0}
@@ -876,6 +884,7 @@
         <button type="button" data-range="month">월</button>
         <button type="button" data-range="year">년</button>
       </div>
+      <div class="tr-lg"><span><i></i>총자산</span><span><i class="p"></i>원금총액</span></div>
       <div class="tr-chart" id="tr-chart"></div>
       <div class="tr-kg">
         <div><span>기간 변동</span><b id="tr-chg">—</b><em id="tr-chgpct">—</em></div>
@@ -928,7 +937,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 7/14~ 과거 시장·자산 지원</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 추이 원금총액 추가</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1619,19 +1628,32 @@ function isoWeekKey(dstr){
   jan4.setUTCDate(jan4.getUTCDate() - jwd + 3);
   return y + '-W' + pad2(1 + Math.round((d - jan4) / (7 * 86400000)));
 }
+function snapPrincipal(s){
+  /* 그날 기록의 계좌별 원금(투자원금) 합계 — 계좌가 없거나 모두 0인 옛 기록은 null 로 둔다 (trend-principal-v1) */
+  if(!s) return null;
+  var accs = s.accounts || [], p = 0, ok = false;
+  for(var i=0;i<accs.length;i++){
+    var v = num(accs[i] && accs[i].principal);
+    if(v > 0){ p += v; ok = true; }
+  }
+  return ok ? p : null;
+}
 function snapList(){
   var s = state.snapshots || {};
   return Object.keys(s).sort().map(function(d){
-    return { date:d, total:num(s[d].total), fx:num(s[d].fx), source:(s[d].source || '') };
+    return { date:d, total:num(s[d].total), principal:snapPrincipal(s[d]), fx:num(s[d].fx), source:(s[d].source || '') };
   });
 }
 function aggSeries(range, rows){
-  if(range === 'day') return rows.map(function(r){ return { key:r.date, date:r.date, total:r.total }; });
+  if(range === 'day') return rows.map(function(r){ return { key:r.date, date:r.date, total:r.total, principal:r.principal }; });
   var map = {}, order = [];
   rows.forEach(function(r){
     var k = range === 'week' ? isoWeekKey(r.date) : (range === 'month' ? r.date.slice(0,7) : r.date.slice(0,4));
-    if(!map[k]){ map[k] = { key:k, date:r.date, total:r.total }; order.push(k); }
-    else { map[k].date = r.date; map[k].total = r.total; }    /* 그 주·월·연의 마지막 기록 */
+    if(!map[k]){ map[k] = { key:k, date:r.date, total:r.total, principal:r.principal }; order.push(k); }
+    else {
+      map[k].date = r.date; map[k].total = r.total;    /* 그 주·월·연의 마지막 기록 */
+      if(r.principal != null) map[k].principal = r.principal;   /* 원금은 그 안의 마지막 유효 기록 */
+    }
   });
   return order.map(function(k){ return map[k]; });
 }
@@ -1672,7 +1694,8 @@ function trendChart(series, range){
   }
   var W = 320, H = 168, L = 52, R = 8, T = 16, B = 26;
   var iw = W - L - R, ih = H - T - B;
-  var vals = series.map(function(p){ return p.total; });
+  var vals = [];
+  series.forEach(function(p){ vals.push(p.total); if(p.principal != null) vals.push(p.principal); });
   var mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals);
   var padV = (mx - mn) * 0.16 || Math.max(1, mx * 0.004);
   var hi = mx + padV, lo = Math.max(0, mn - padV);
@@ -1684,7 +1707,7 @@ function trendChart(series, range){
   var area = line + ' L' + X(series.length-1).toFixed(2) + ',' + (T+ih).toFixed(2) +
              ' L' + X(0).toFixed(2) + ',' + (T+ih).toFixed(2) + ' Z';
   var gid = 'trg_' + range;
-  var out = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="자산총액 추이 그래프">';
+  var out = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="자산총액·원금총액 추이 그래프">';
   out += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
          '<stop offset="0%" stop-color="#3b6ef0" stop-opacity=".32"/>' +
          '<stop offset="100%" stop-color="#3b6ef0" stop-opacity="0"/></linearGradient></defs>';
@@ -1709,6 +1732,20 @@ function trendChart(series, range){
   }
   out += '<path d="' + area + '" fill="url(#' + gid + ')"/>';
   out += '<path d="' + line + '" fill="none" stroke="#3b6ef0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  /* 원금총액 점선 — 값을 모르는 날(계좌 없는 옛 기록)은 선을 끊고 유효한 점끼리만 잇는다 (trend-principal-v1) */
+  var ppts = [];
+  series.forEach(function(p, i){ if(p.principal != null) ppts.push([i, X(i), Y(p.principal)]); });
+  var pline = '';
+  ppts.forEach(function(q, k){
+    var prev = ppts[k-1];
+    pline += ((prev && q[0] === prev[0] + 1) ? ' L' : ' M') + q[1].toFixed(2) + ',' + q[2].toFixed(2);
+  });
+  if(ppts.length === 1){
+    /* 점이 하나면(예: 년 보기에서 기록이 한 해씩만) 선 대신 가로 점선으로 원금 수준을 보여 준다 */
+    out += '<line class="pline" x1="' + L + '" y1="' + ppts[0][2].toFixed(1) + '" x2="' + (L+iw) + '" y2="' + ppts[0][2].toFixed(1) + '"/>';
+  }else if(pline){
+    out += '<path class="pline" d="' + pline + '"/>';
+  }
   series.forEach(function(p, i){
     var sel = (trSel === i);
     if(series.length <= 40 || sel){
@@ -1718,7 +1755,8 @@ function trendChart(series, range){
   });
   if(trSel != null && series[trSel]){
     var p2 = series[trSel], x = X(trSel), y = Y(p2.total);
-    var tw = 138, th = 40;
+    var hasPr = (p2.principal != null);
+    var tw = hasPr ? 152 : 138, th = hasPr ? 56 : 40;
     var tx = (x < W/2) ? Math.min(W - tw - 2, x + 10) : Math.max(2, x - tw - 10);
     var ty = (y - th - 10 < 2) ? (y + 12) : (y - th - 10);
     var suffix = (range === 'week') ? ' 주' : (range === 'month' ? ' 월' : (range === 'year' ? ' 년' : ''));
@@ -1726,7 +1764,8 @@ function trendChart(series, range){
     out += '<g pointer-events="none">' +
            '<rect class="tipbg" x="' + tx.toFixed(1) + '" y="' + ty.toFixed(1) + '" width="' + tw + '" height="' + th + '" rx="7"/>' +
            '<text class="tt1" x="' + (tx+8).toFixed(1) + '" y="' + (ty+15).toFixed(1) + '">' + p2.date + suffix + (suffix ? ' 마감' : '') + '</text>' +
-           '<text class="tt2" x="' + (tx+8).toFixed(1) + '" y="' + (ty+31).toFixed(1) + '">' + won(p2.total) + '</text></g>';
+           '<text class="tt2" x="' + (tx+8).toFixed(1) + '" y="' + (ty+31).toFixed(1) + '">' + won(p2.total) + '</text>' +
+           (hasPr ? '<text class="tt3" x="' + (tx+8).toFixed(1) + '" y="' + (ty+48).toFixed(1) + '">원금 ' + won(p2.principal) + '</text>' : '') + '</g>';
   }
   out += '</svg>';
   return out;
@@ -3939,7 +3978,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-26T18:45:28+09:00",
+ "updatedAt": "2026-11-26T19:16:16+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
@@ -3988,11 +4027,11 @@ var MARKET_INLINE = {
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 726.4,
-     "change": -0.35,
-     "pct": -0.05,
+     "value": 726.65,
+     "change": -0.1,
+     "pct": -0.01,
      "tradingValue": null,
-     "asOf": "2026-11-26T18:44:59.448335+09:00",
+     "asOf": "2026-11-26T19:15:33.464781+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "야간장",
@@ -4003,11 +4042,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26204,
-     "change": 103.75,
-     "pct": 0.4,
+     "value": 26249.75,
+     "change": 149.5,
+     "pct": 0.57,
      "tradingValue": null,
-     "asOf": "2026-11-26T03:35:21-06:00",
+     "asOf": "2026-11-26T04:06:09-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -4160,16 +4199,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -16205.0,
-     "nonArb": 183716.5,
-     "total": 167511.5
+     "arb": -16215.3,
+     "nonArb": 182265.9,
+     "total": 166050.6
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 12170.1,
-     "nonArb": -63251.3,
-     "total": -51081.1
+     "arb": 12212.4,
+     "nonArb": -64146.5,
+     "total": -51934.1
     }
    ],
    "ready": true,
@@ -4205,20 +4244,20 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -10703,
-      -1384,
+      -10737,
+      -1373,
       -118,
-      -12087
+      -12110
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -858,
-      -1054,
+      -828,
+      -1063,
       1878,
-      -1912
+      -1891
      ]
     },
     {
@@ -4259,13 +4298,13 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.627,
-     "c10": -0.011,
-     "y2": 1.732,
-     "c2": -0.013,
-     "y30": 3.886,
-     "c30": -0.016,
-     "asOf": "2026-11-26T16:44:59+09:00"
+     "y10": 2.628,
+     "c10": -0.01,
+     "y2": 1.734,
+     "c2": -0.011,
+     "y30": 3.89,
+     "c30": -0.012,
+     "asOf": "2026-11-26T17:14:53+09:00"
     },
     {
      "key": "US",
@@ -4283,25 +4322,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T04:35:17-05:00",
+   "asOf": "2026-11-26T05:06:05-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.71,
-     "change": 0.05,
-     "pct": 0.04,
-     "asOf": "2026-11-26T04:35:17-05:00",
+     "value": 103.76,
+     "change": 0.09,
+     "pct": 0.09,
+     "asOf": "2026-11-26T05:06:05-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 27.13,
-     "change": -1.16,
-     "pct": -4.1,
-     "asOf": "2026-11-26T04:30:20-05:00",
+     "value": 26.92,
+     "change": -1.37,
+     "pct": -4.84,
+     "asOf": "2026-11-26T05:01:08-05:00",
      "unit": "pt"
     },
     {
@@ -4318,19 +4357,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3572.7,
-     "change": 36.9,
-     "pct": 1.04,
-     "asOf": "2026-11-26T03:35:20-06:00",
+     "value": 3571.3,
+     "change": 35.5,
+     "pct": 1,
+     "asOf": "2026-11-26T04:06:08-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.3775,
-     "change": 0.041,
-     "pct": 0.77,
-     "asOf": "2026-11-26T03:35:20-06:00",
+     "value": 5.376,
+     "change": 0.0395,
+     "pct": 0.74,
+     "asOf": "2026-11-26T04:06:08-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -4339,25 +4378,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T03:35:20-06:00",
+   "asOf": "2026-11-26T04:06:08-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 83.46,
-     "change": -0.22,
-     "pct": -0.26,
-     "asOf": "2026-11-26T03:35:20-06:00",
+     "value": 83.59,
+     "change": -0.09,
+     "pct": -0.11,
+     "asOf": "2026-11-26T04:06:08-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 93.96,
-     "change": -0.65,
-     "pct": -0.69,
-     "asOf": "2026-11-26T09:35:20Z",
+     "value": 94.05,
+     "change": -0.56,
+     "pct": -0.59,
+     "asOf": "2026-11-26T10:06:08Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -4365,17 +4404,17 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-26T18:43:50+09:00",
+   "asOf": "2026-11-26T19:05:00+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60797.4,
-     "change": 460.61,
-     "pct": 0.76,
+     "value": 60873.91,
+     "change": 537.12,
+     "pct": 0.89,
      "unit": "USDT",
-     "asOf": "2026-11-26T18:43:50+09:00"
+     "asOf": "2026-11-26T19:05:00+09:00"
     },
     {
      "key": "ETH",
@@ -4400,36 +4439,36 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-26T18:40:53+09:00",
+   "asOf": "2026-11-26T19:13:23+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1344.1,
-     "change": -1.4,
-     "pct": -0.1,
-     "asOf": "2026-11-26T18:40:53+09:00",
+     "value": 1344.8,
+     "change": -0.7,
+     "pct": -0.05,
+     "asOf": "2026-11-26T19:13:23+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.12,
-     "change": -1.26,
-     "pct": -0.15,
-     "asOf": "2026-11-26T18:40:53+09:00",
+     "value": 844.48,
+     "change": -0.9,
+     "pct": -0.11,
+     "asOf": "2026-11-26T19:13:23+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1475.02,
-     "change": -1.94,
+     "value": 1475.11,
+     "change": -1.85,
      "pct": -0.13,
-     "asOf": "2026-11-26T18:40:53+09:00",
+     "asOf": "2026-11-26T19:13:23+09:00",
      "dec": 2,
      "unit": "원"
     }
