@@ -81,3 +81,14 @@ test_past_add.py
 shots_past_add/
 test_past_add_live.py
 shots_past_add_live/
+
+# 과거 기록이 다른 날짜 기록을 건드리지 않는지 검증 (2026-11-26, snapiso-v1)
+test_past_isolate.py
+test_past_add_cross.py
+test_live_repro_1125.py
+test_past_crosstalk.py
+test_past_crosstalk2.py
+test_past_fuzz.py
+shots_isolate/
+sites_isolate/
+sites_addcross/
