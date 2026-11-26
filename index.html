@@ -5104,8 +5104,8 @@ function mkhOpen(code){
   box.classList.add('on');
   mkhRender();
   setTxt('mkh-title', mkhInfo(p[0], p[1]).name + ' · 최근 10거래일');
-  /* market_history.json 이 아직 없으면 한 번 받아 와 다시 그린다 */
-  if(!marketHist && !marketHistErr && !marketHistBusy){
+  /* market_history.json 이 아직 없으면 한 번 받아 와 다시 그린다 (실패한 뒤 누르면 다시 시도) */
+  if(!marketHist && !marketHistBusy){
     loadMarketHistory().then(function(){ if(mkhSpec) mkhRender(); });
   }
 }
