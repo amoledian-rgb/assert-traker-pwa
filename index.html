@@ -343,7 +343,7 @@
   .pk-foot .btn.primary{flex:1.35 1 0}
   .pk-foot .btn:disabled{opacity:.45}
   /* ---------- 추이 탭 과거 날짜 추가 시트 (dateadd-v1) ---------- */
-  .da-body{flex:0 0 auto; padding:2px 14px 12px}
+  .da-body{flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:2px 14px 12px}
   .da-lbl{display:block; font-size:14.5px; font-weight:800; color:#5b6577; margin:0 0 6px}
   #date-add-input{
     display:block; width:100%; box-sizing:border-box; height:56px; padding:0 12px; border:1px solid var(--line);
@@ -355,6 +355,30 @@
   .da-state b{color:#16233d}
   .da-state.ok{color:#1a7a52}
   .da-state.warn{color:#8a5300}
+  /* ------ 날짜 추가 시트: 기준 데이터 선택 · 종가 채움 내역 (v51) ------ */
+  .da-base{margin:14px 0 0}
+  .da-base[hidden]{display:none}
+  #date-add-base{
+    display:block; width:100%; box-sizing:border-box; height:52px; padding:0 36px 0 12px; -webkit-appearance:none; appearance:none;
+    border:1px solid var(--line); border-radius:12px; background-color:#fbfcfe; color:#16233d; font-family:inherit;
+    font-size:16.5px; font-weight:800; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235b6577' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 13px center;
+  }
+  #date-add-base:focus{outline:2px solid #3b6ef0; outline-offset:-1px}
+  .da-base .da-note{margin:6px 2px 0; font-size:14px; line-height:1.5; color:#8b93a4; word-break:keep-all}
+  .da-fill[hidden]{display:none}
+  .da-fill{margin:12px 0 0; border:1px solid var(--line); border-radius:12px; background:#fbfcfe; padding:0 12px}
+  .da-fill summary{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:11px 0;
+    font-size:15px; font-weight:800; color:#4a5468; cursor:pointer; list-style:none; line-height:1.45}
+  .da-fill summary::-webkit-details-marker{display:none}
+  .da-fill summary span{color:#1a7a52; font-size:14px; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .da-fill .da-fl{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:7px 0;
+    border-top:1px dashed var(--line); font-size:15px; color:#4a5468; font-variant-numeric:tabular-nums}
+  .da-fill .da-fl span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .da-fill .da-fl b{color:#16233d; font-weight:800; white-space:nowrap}
+  .da-fill .da-fl i{font-style:normal; color:#8b93a4; font-size:13.5px; font-weight:700; margin-left:5px}
+  .da-fill .da-fmiss{padding:8px 0 11px; border-top:1px dashed var(--line); font-size:14px; line-height:1.5; color:#8a5300}
   details{margin-top:10px; border-top:1px dashed var(--line); padding-top:9px}
   details summary{font-size:16.5px; font-weight:700; color:#5b6577; cursor:pointer; list-style:none; display:flex; align-items:center; gap:5px; line-height:1.35}
   details summary::-webkit-details-marker{display:none}
@@ -988,7 +1012,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 엑셀(.xlsx) 내보내기</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-27 · 과거 날짜 직전기준·종가 자동채움</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1045,11 +1069,20 @@
       <b id="date-add-title">📅 날짜 추가</b>
       <button type="button" class="pk-x" id="date-add-x" aria-label="닫기">✕</button>
     </div>
-    <p class="pk-note" id="date-add-note">기록이 없는 <b>지난 날짜</b>를 골라 새 기록을 만듭니다. 오늘 데이터와 다른 날짜 기록은 그대로입니다.</p>
+    <p class="pk-note" id="date-add-note">기록이 없는 <b>지난 날짜</b>를 골라 새 기록을 만듭니다. 그 날짜의 <b>직전 저장 기록</b>을 기준으로 계좌·보유·예수금을 복사하고, 그날 <b>종가·환율</b>을 채웁니다. 오늘 데이터와 다른 날짜 기록은 그대로입니다.</p>
     <div class="da-body">
       <label class="da-lbl" for="date-add-input">날짜</label>
       <input type="date" id="date-add-input">
+      <div class="da-base" id="date-add-baserow" hidden>
+        <label class="da-lbl" for="date-add-base">기준 데이터 (계좌·보유·예수금 복사)</label>
+        <select id="date-add-base"></select>
+        <p class="da-note">기본값은 그 날짜의 직전 저장 기록입니다.</p>
+      </div>
       <p class="da-state" id="date-add-state">—</p>
+      <details class="da-fill" id="date-add-fill" hidden>
+        <summary>종가·환율 채움 내역 <span id="date-add-fill-sum">—</span></summary>
+        <div id="date-add-fill-list"></div>
+      </details>
     </div>
     <div class="pk-foot">
       <button type="button" class="btn" id="date-add-cancel">취소</button>
@@ -1335,15 +1368,22 @@ function showNoHist(card, on, label){
     if(anchor) card.insertBefore(el, anchor); else card.appendChild(el);
   }else if(!on && el){ el.parentNode.removeChild(el); }
 }
-/* prices_history.json 으로 빠진 날짜를 메운다 — 마지막 저장된 수량·예수금 + 그날 시세·환율 */
+/* prices_history.json 으로 빠진 날짜를 메운다 — 마지막 저장된 수량·예수금 + 그날 시세·환율
+   · 메우는 범위는 **최근 이틀(오늘·어제)** 뿐이다 (backfill1-v51). 2026-11-27 부터 prices_history.json 에
+     7/14~11/26 종가가 통째로 들어 있어서, 범위를 두지 않으면 몇 달 전 빈 날짜가 전부 '오늘 보유 수량'으로
+     지어져 그래프와 기록이 틀어진다. 그보다 오래된 빈 날은 추이 탭 [➕ 날짜 추가]가 그 날짜의 직전 기록을
+     기준으로 제대로 만든다. */
+var AUTO_BACKFILL_BACK = 2;      /* 오늘 포함 최근 3일(today-2 ~ today) 안의 날만 자동으로 메운다 */
 function autoBackfill(hist){
   hist = hist || pricesHistory;
   if(!hist || !hist.dates || !state || viewingDate) return 0;
   if(!hasAnyData()) return 0;
   if(!state.snapshots) state.snapshots = {};
   var made = 0;
+  var from = shiftYmd(todayKST(), -AUTO_BACKFILL_BACK);
   Object.keys(hist.dates).sort().forEach(function(d){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || state.snapshots[d]) return;
+    if(d < from) return;             /* 오래된 빈 날은 [➕ 날짜 추가]로 직접 (backfill1-v51) */
     if(snapSkipped(d)) return;        /* 사용자가 지운 날짜는 다시 만들지 않는다 */
     var e = hist.dates[d];
     if(!e || !e.prices) return;
@@ -1526,10 +1566,14 @@ function deleteSnapshot(date){
   toast(date + ' 기록을 삭제했습니다');
   return true;
 }
-/* ---------- 없는 과거 날짜 기록 새로 만들기 (dateadd-v1 · 2026-11-26) ----------
+/* ---------- 없는 과거 날짜 기록 새로 만들기 (dateadd-v1 · 2026-11-26 / v51: 직전기준·종가 자동채움) ----------
    추이 탭 [➕ 날짜 추가] → 고른 날짜의 기록(state.snapshots[날짜])을 새로 만든다.
+   · 기준 데이터 = 그 날짜의 **직전 저장 기록**(날짜 d 보다 앞선 기록 중 가장 최근). 하나도 없으면 오늘(최신) 데이터
+     — 시트의 드롭다운으로 다른 저장 날짜·오늘 데이터를 골라 바꿀 수 있다
+   · 기준 기록의 계좌·보유(이름·코드·수량·매입단가)·예수금·원금을 깊은 복사로 가져온다(기준 기록은 건드리지 않는다)
+   · 가격·환율은 그 날짜의 기록으로 — prices_history.json 의 종가·fx, 없으면 market_history.json 의 그날 USDKRW
+   · 그날 종가가 없는 종목만 기준 기록의 가격을 그대로 두고 시트에 알린다
    · 오늘(최신) 데이터(asOf·fx·accounts·holdings)는 건드리지 않는다 — 기록 목록에 한 칸만 더한다
-   · 시세 기록(prices_history.json)에 그 날짜 종가·환율이 있으면 그것으로, 없으면 지금 보유·현재가를 복사
    · 이미 있는 날짜면 덮어쓰지 않고 그 날짜를 열어 고치게 한다 */
 function shiftYmd(dstr, n){
   var d = new Date(String(dstr || '') + 'T00:00:00Z');
@@ -1550,12 +1594,82 @@ function addDateDefault(){            /* 가장 최근에 빠진 지난 날짜 �
   }
   return shiftYmd(t, -1);
 }
+/* 기준 데이터 선택 — 날짜별 스냅샷 키 또는 'today' (v51) */
+var addDateBase = null;
+function snapDatesBefore(d){
+  var snaps = (state && state.snapshots) || {};
+  return Object.keys(snaps).filter(function(k){
+    return /^\d{4}-\d{2}-\d{2}$/.test(k) && k < d && snaps[k];
+  }).sort().reverse();
+}
+function baseLiveState(){ return (viewingDate && liveState) ? liveState : state; }
+function addBaseLabel(key){
+  if(key === 'today'){
+    var L = baseLiveState() || state;
+    var tot = bodyTotal({ fx:num(L.fx), accounts:L.accounts, holdings:L.holdings });
+    return '오늘(최신) · ' + won(Math.round(tot));
+  }
+  var s = state.snapshots[key];
+  return key + ' · ' + won(num(s.total));
+}
+function renderAddDateBase(d){
+  var sel = document.getElementById('date-add-base');
+  if(!sel) return 'today';
+  var opts = snapDatesBefore(d).map(function(k){ return { v:k, label:addBaseLabel(k) }; });
+  var tod = { v:'today', label:addBaseLabel('today') };
+  var def = opts.length ? opts[0].v : 'today';      /* 직전 저장 기록 — 없으면 오늘 */
+  var want = (addDateBase && opts.concat([tod]).some(function(o){ return o.v === addDateBase; })) ? addDateBase : def;
+  opts.push(tod);
+  sel.innerHTML = opts.map(function(o){ return '<option value="' + esc(o.v) + '">' + esc(o.label) + '</option>'; }).join('');
+  sel.value = want;
+  addDateBase = want;
+  return want;
+}
+function baseSnapshotOf(key){
+  if(!key || key === 'today'){
+    var L = baseLiveState() || state;
+    if(!L) return null;
+    return { key:'today', fx:num(L.fx), accounts:clone(L.accounts || []), holdings:clone(L.holdings || []) };
+  }
+  var s = state.snapshots && state.snapshots[key];
+  if(!s) return null;
+  return { key:key, fx:num(s.fx), accounts:clone(s.accounts || []), holdings:clone(s.holdings || []) };
+}
+function marketUsdKrw(d){          /* 과거 시장종합의 그날 USDKRW (market_history.json) */
+  var ds = (marketHist && marketHist.dates) || {};
+  var s = ds[d] && ds[d].sections;
+  var rows = (s && s.fx && s.fx.rows) || [];
+  for(var i=0;i<rows.length;i++){
+    if(rows[i] && rows[i].key === 'USDKRW' && num(rows[i].value) > 0) return num(rows[i].value);
+  }
+  return null;
+}
+function fxForDate(d, baseFx){
+  var e = histEntryFor(d);
+  if(e && num(e.fx) > 0) return { fx:num(e.fx), src:'시세 기록' };
+  var mk = marketUsdKrw(d);
+  if(mk) return { fx:mk, src:'시장 기록' };
+  return { fx:num(baseFx) || 0, src:'기준 데이터' };
+}
+function closeHitsFor(d, holdings){
+  var e = histEntryFor(d), hit = [], miss = [];
+  (holdings || []).forEach(function(h){
+    var p = (e && e.prices) ? histPrice(e, h) : null;
+    var b = (h.price === '' || h.price == null) ? null : num(h.price);
+    if(p != null && num(p) > 0) hit.push({ name:String(h.name || ''), price:num(p), base:b, cur:(h.cur === 'USD' ? 'USD' : 'KRW') });
+    else miss.push(String(h.name || ''));
+  });
+  return { hit:hit, miss:miss };
+}
+function daPrice(v, cur){ return cur === 'USD' ? usd(v) : fmtInt(v) + '원'; }
+function daFxTxt(v){ return v > 0 ? v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '원' : '—'; }
 var addDatePrevOverflow = '';
 function openAddDate(){
   var inp = document.getElementById('date-add-input');
   if(!inp) return;
   inp.max = shiftYmd(todayKST(), -1);   /* 과거 날짜만 — 오늘은 화면의 💾 저장하기 */
   inp.value = addDateDefault();
+  addDateBase = null;                  /* 열 때마다 기본값(직전 저장 기록)으로 */
   addDateRender();
   addDatePrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
@@ -1570,9 +1684,13 @@ function addDateRender(){
   var inp = document.getElementById('date-add-input');
   var st = document.getElementById('date-add-state');
   var go = document.getElementById('date-add-go');
+  var row = document.getElementById('date-add-baserow');
+  var fill = document.getElementById('date-add-fill');
   if(!inp || !st || !go) return;
   var d = String(inp.value || ''), today = todayKST();
   go.disabled = false; go.textContent = '추가하고 열기';
+  if(row) row.hidden = true;      /* 날짜를 고쳤을 때만 기준 데이터 줄을 띄운다 */
+  if(fill) fill.hidden = true;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){
     st.className = 'da-state warn';
     st.innerHTML = '날짜를 골라 주세요.';
@@ -1592,20 +1710,41 @@ function addDateRender(){
     go.textContent = '열어서 고치기';
     return;
   }
-  var e = histEntryFor(d), n = (state.holdings || []).length, hit = 0;
-  if(e && e.prices){
-    (state.holdings || []).forEach(function(h){ if(histPrice(e, h) != null) hit++; });
+  /* ---- 새 기록: 기준 데이터 선택 · 그날 종가·환율 채움 (v51) ---- */
+  var baseKey = renderAddDateBase(d);
+  var base = baseSnapshotOf(baseKey) || baseSnapshotOf('today');
+  if(row) row.hidden = false;
+  if(!base){
+    st.className = 'da-state warn';
+    st.innerHTML = '기준으로 삼을 기록이 없습니다.';
+    return;
   }
-  if(hit){
-    var fx = (num(e.fx) > 0 ? num(e.fx) : num(state.fx));
-    st.className = 'da-state ok';
-    st.innerHTML = '이 날짜 시세 기록이 있어 <b>종목 ' + hit + '/' + n + '개 종가</b>와 <b>환율 ' +
-      fx.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '원</b>을 채워 만듭니다.' +
-      (hit < n ? ' 종가가 없는 종목은 지금 현재가로 둡니다.' : '') +
-      ' 지금 보유 수량·예수금을 복사하고, 오늘 데이터는 그대로입니다.';
-  }else{
-    st.className = 'da-state';
-    st.innerHTML = '이 날짜 시세 기록이 없어 <b>지금 보유·현재가·환율</b>을 그대로 복사합니다. 연 뒤에 그날 값으로 고쳐 주세요. 오늘 데이터는 그대로입니다.';
+  var n = (base.holdings || []).length;
+  var ch = closeHitsFor(d, base.holdings);
+  var fxi = fxForDate(d, base.fx);
+  var baseName = (baseKey === 'today') ? '오늘(최신) 데이터' : baseKey + ' 기록';
+  st.className = ch.hit.length ? 'da-state ok' : 'da-state';
+  st.innerHTML = '기준 <b>' + baseName + '</b>의 계좌·보유 <b>' + n + '종목</b>·예수금을 그대로 복사합니다.<br>' +
+    (ch.hit.length
+      ? ('<b>' + d + ' 종가 ' + ch.hit.length + '/' + n + '종목</b> · 환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')로 채웁니다.')
+      : ('<b>' + d + '</b> 종가 기록이 없어 기준 가격·환율 <b>' + daFxTxt(fxi.fx) + '</b>(' + fxi.src + ')을 그대로 씁니다.')) +
+    (ch.miss.length && ch.hit.length ? '<br>종가가 없어 기준 가격을 두는 종목 <b>' + ch.miss.length + '개</b>' +
+      (ch.miss.length <= 3 ? ': ' + esc(ch.miss.join(', ')) : ' — ' + esc(ch.miss.slice(0, 2).join(', ')) + ' 외') : '') +
+    '<br>오늘 데이터와 다른 날짜 기록은 그대로입니다.';
+  if(fill){
+    fill.hidden = false;
+    var sum = document.getElementById('date-add-fill-sum');
+    if(sum) sum.textContent = (ch.hit.length ? '종가 ' + ch.hit.length + '/' + n : '종가 없음') + ' · 환율 ' + daFxTxt(fxi.fx);
+    var list = document.getElementById('date-add-fill-list');
+    if(list){
+      var html = ch.hit.map(function(x){
+        var diff = (x.base != null && Math.abs(x.base - x.price) > 0.001)
+          ? '<i>기준 ' + daPrice(x.base, x.cur) + '</i>' : '';
+        return '<div class="da-fl"><span>' + esc(x.name) + '</span><b>' + daPrice(x.price, x.cur) + diff + '</b></div>';
+      }).join('');
+      if(ch.miss.length) html += '<div class="da-fmiss">종가 기록이 없어 기준 가격 유지: ' + esc(ch.miss.join(', ')) + '</div>';
+      list.innerHTML = html || '<div class="da-fmiss">이 날짜 종가 기록이 없어 기준 기록의 가격·환율을 그대로 씁니다.</div>';
+    }
   }
 }
 function addDateGo(){
@@ -1623,23 +1762,25 @@ function addDateGo(){
   }
   closeAddDate();
   if(exists){ loadSnapshot(d); return; }
-  createPastSnapshot(d);
+  createPastSnapshot(d, addDateBase);
 }
-function createPastSnapshot(date){
+function createPastSnapshot(date, baseKey){
   if(!state || viewingDate) return false;        /* 항상 최신 데이터에서 만든다 */
   if(state.snapshots && state.snapshots[date]){ loadSnapshot(date); return true; }
+  var base = baseSnapshotOf(baseKey) || baseSnapshotOf('today');
+  if(!base){ toast('기준으로 삼을 기록이 없습니다', 3200, 'warn'); return false; }
   var e = histEntryFor(date);
-  var fx = num(state.fx);
-  if(e && num(e.fx) > 0) fx = num(e.fx);
-  var holdings = (state.holdings || []).map(function(h){
+  var fxi = fxForDate(date, base.fx);
+  var fx = (fxi.fx > 0) ? fxi.fx : num(base.fx);
+  /* 기준 기록의 계좌·보유를 깊은 복사하고 가격만 그날 종가로 바꿔 넣는다 — 기준 기록은 그대로 둔다 */
+  var miss = 0;
+  var holdings = (base.holdings || []).map(function(h){
     var c = clone(h);
-    if(e && e.prices){
-      var p = histPrice(e, h);
-      if(p != null && num(p) > 0) c.price = num(p);
-    }
+    var p = (e && e.prices) ? histPrice(e, h) : null;
+    if(p != null && num(p) > 0) c.price = num(p); else miss++;
     return c;
   });
-  var accounts = clone(state.accounts || []);
+  var accounts = clone(base.accounts || []);
   if(!state.snapshots) state.snapshots = {};
   state.snapshots[date] = {
     asOf: date, fx: fx, accounts: accounts, holdings: holdings,
@@ -1656,7 +1797,8 @@ function createPastSnapshot(date){
     toast(date + ' 기록을 만들었지만 저장 공간이 막혀 있습니다 — 백업 파일로 남겨 주세요', 4200, 'warn');
     return false;
   }
-  toast(date + ' 기록을 만들었습니다 — 고친 뒤 💾 기록 저장을 누르세요', 4400);
+  toast(date + ' 기록을 만들었습니다 (' + ((base.key === 'today') ? '오늘 데이터' : base.key + ' 기록') + ' 기준 · 종가 ' +
+    ((base.holdings || []).length - miss) + '/' + (base.holdings || []).length + ') — 고친 뒤 💾 기록 저장을 누르세요', 4800);
   return true;
 }
 /* 이 기록 값을 지금(최신) 데이터로 삼는다 — 확인을 받고 저장한다 */
@@ -3723,6 +3865,12 @@ document.getElementById('tr-list').addEventListener('click', function(e){
 document.getElementById('btn-add-date').addEventListener('click', openAddDate);
 document.getElementById('date-add-input').addEventListener('input', addDateRender);
 document.getElementById('date-add-input').addEventListener('change', addDateRender);
+if(document.getElementById('date-add-base')){
+  document.getElementById('date-add-base').addEventListener('change', function(){
+    addDateBase = this.value || null;
+    addDateRender();
+  });
+}
 document.getElementById('date-add-go').addEventListener('click', addDateGo);
 document.getElementById('date-add-cancel').addEventListener('click', closeAddDate);
 document.getElementById('date-add-x').addEventListener('click', closeAddDate);
@@ -4664,7 +4812,7 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-26T20:16:03+09:00",
+ "updatedAt": "2026-11-27T06:14:25+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
@@ -4713,14 +4861,14 @@ var MARKET_INLINE = {
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 725.4,
-     "change": -1.35,
-     "pct": -0.19,
+     "value": 728,
+     "change": 1.25,
+     "pct": 0.17,
      "tradingValue": null,
-     "asOf": "2026-11-26T20:15:08.920915+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "야간장",
+     "asOf": "2026-11-27T06:09:17.280707+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "야간장 마감",
      "dec": 2,
      "src": "앤트위키 (KOSCOM 야간 분봉)",
      "month": "2612"
@@ -4728,11 +4876,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26155,
-     "change": 54.75,
-     "pct": 0.21,
+     "value": 26221.25,
+     "change": 121,
+     "pct": 0.46,
      "tradingValue": null,
-     "asOf": "2026-11-26T05:05:57-06:00",
+     "asOf": "2026-11-26T15:04:18-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -4984,13 +5132,13 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.634,
-     "c10": -0.004,
-     "y2": 1.752,
-     "c2": 0.007,
-     "y30": 3.895,
-     "c30": -0.007,
-     "asOf": "2026-11-26T18:14:52+09:00"
+     "y10": 2.632,
+     "c10": -0.006,
+     "y2": 1.745,
+     "c2": 0,
+     "y30": 3.888,
+     "c30": -0.014,
+     "asOf": "2026-11-27T03:26:16+09:00"
     },
     {
      "key": "US",
@@ -5008,34 +5156,34 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T06:05:50-05:00",
+   "asOf": "2026-11-26T16:04:13-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.75,
-     "change": 0.08,
-     "pct": 0.08,
-     "asOf": "2026-11-26T06:05:50-05:00",
+     "value": 103.78,
+     "change": 0.11,
+     "pct": 0.11,
+     "asOf": "2026-11-26T16:04:13-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 27.54,
-     "change": -0.75,
-     "pct": -2.65,
-     "asOf": "2026-11-26T06:00:56-05:00",
+     "value": 26.8,
+     "change": -1.49,
+     "pct": -5.27,
+     "asOf": "2026-11-26T15:59:17-05:00",
      "unit": "pt"
     },
     {
      "key": "VKOSPI",
      "name": "VKOSPI",
      "value": 58.4,
-     "change": -0.12,
-     "pct": -0.21,
-     "asOf": "2026-11-26T15:51:10+09:00",
+     "change": 0.0,
+     "pct": 0.0,
+     "asOf": "2026-11-26",
      "unit": "pt",
      "dec": 2,
      "src": "CNBC"
@@ -5043,19 +5191,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3558.4,
-     "change": 22.6,
-     "pct": 0.64,
-     "asOf": "2026-11-26T05:05:56-06:00",
+     "value": 3566.2,
+     "change": 30.4,
+     "pct": 0.86,
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.364,
-     "change": 0.0275,
-     "pct": 0.52,
-     "asOf": "2026-11-26T05:05:56-06:00",
+     "value": 5.348,
+     "change": 0.0115,
+     "pct": 0.22,
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -5064,25 +5212,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T05:05:56-06:00",
+   "asOf": "2026-11-26T15:04:17-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 84.5,
-     "change": 0.82,
-     "pct": 0.98,
-     "asOf": "2026-11-26T05:05:56-06:00",
+     "value": 84.91,
+     "change": 1.23,
+     "pct": 1.47,
+     "asOf": "2026-11-26T15:04:17-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 95.11,
-     "change": 0.5,
-     "pct": 0.53,
-     "asOf": "2026-11-26T11:05:56Z",
+     "value": 96.53,
+     "change": 1.92,
+     "pct": 2.03,
+     "asOf": "2026-11-26T21:04:17Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -5090,71 +5238,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-26T19:30:56+09:00",
+   "asOf": "2026-11-27T05:20:30+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60793.78,
-     "change": 456.99,
-     "pct": 0.76,
+     "value": 60451.22,
+     "change": 114.43,
+     "pct": 0.19,
      "unit": "USDT",
-     "asOf": "2026-11-26T19:30:56+09:00"
+     "asOf": "2026-11-27T05:20:30+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1693.54,
-     "change": -0.25,
-     "pct": -0.01,
+     "value": 1692.75,
+     "change": -1.04,
+     "pct": -0.06,
      "unit": "USDT",
-     "asOf": "2026-11-26T19:42:04+09:00"
+     "asOf": "2026-11-27T03:33:40+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 70.91,
-     "change": 2.69,
-     "pct": 3.94,
+     "value": 70,
+     "change": 1.78,
+     "pct": 2.61,
      "unit": "USDT",
-     "asOf": "2026-11-26T19:42:23+09:00"
+     "asOf": "2026-11-27T00:09:14+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-26T20:14:44+09:00",
+   "asOf": "2026-11-27T05:33:16+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1344.6,
-     "change": -0.9,
-     "pct": -0.07,
-     "asOf": "2026-11-26T20:14:44+09:00",
+     "value": 1344,
+     "change": -1.5,
+     "pct": -0.11,
+     "asOf": "2026-11-27T05:33:16+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.28,
-     "change": -1.1,
-     "pct": -0.13,
-     "asOf": "2026-11-26T20:14:44+09:00",
+     "value": 843.88,
+     "change": -1.5,
+     "pct": -0.18,
+     "asOf": "2026-11-27T05:33:16+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1475.36,
-     "change": -1.6,
-     "pct": -0.11,
-     "asOf": "2026-11-26T20:14:44+09:00",
+     "value": 1474.64,
+     "change": -2.32,
+     "pct": -0.16,
+     "asOf": "2026-11-27T05:33:16+09:00",
      "dec": 2,
      "unit": "원"
     }
