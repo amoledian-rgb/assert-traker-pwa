@@ -1766,10 +1766,16 @@ function idxNum(v){
   if(!isFinite(n)) return '—';
   return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
-function pctTxt(p){
+function pctTxt(p, dec){
+  /* 축 눈금은 정수 %, 툴팁(dec)은 ±10% 안쪽의 작은 움직임을 소수 한 자리까지 (0% 로 뭉개지지 않게) */
   if(p == null || !isFinite(p)) return '';
-  var r = Math.round(p);
-  return (r > 0 ? '+' : '') + r + '%';
+  if(dec && Math.abs(p) < 10){
+    var v1 = Math.round(p * 10) / 10;
+    if(v1 === 0) v1 = 0;
+    return (v1 > 0 ? '+' : '') + v1.toFixed(1) + '%';
+  }
+  var v = Math.round(p);
+  return (v > 0 ? '+' : '') + v + '%';
 }
 function trendChart(series, range){
   if(!series.length){
@@ -1926,8 +1932,8 @@ function trendChart(series, range){
     var nv = (p2.ndx == null) ? null : num(p2.ndx);
     var rows3 = [{ k:'총자산', v:won(p2.total), cls:'tt2' }];
     if(hasPr) rows3.push({ k:'원금', v:won(p2.principal), cls:'tt3' });
-    if(kv != null) rows3.push({ k:'코스피', v:idxNum(kv) + ' · ' + pctTxt(kpv), cls:'tt4' });
-    if(nv != null) rows3.push({ k:'나스닥100', v:idxNum(nv) + ' · ' + pctTxt(npv), cls:'tt5' });
+    if(kv != null) rows3.push({ k:'코스피', v:idxNum(kv) + ' · ' + pctTxt(kpv, 1), cls:'tt4' });
+    if(nv != null) rows3.push({ k:'나스닥100', v:idxNum(nv) + ' · ' + pctTxt(npv, 1), cls:'tt5' });
     var tw = (kv != null || nv != null) ? 172 : (hasPr ? 152 : 138);
     var th = 15 + 16 * rows3.length + 9;
     var tx = (x < W/2) ? Math.min(W - tw - 2, x + 10) : Math.max(2, x - tw - 10);
