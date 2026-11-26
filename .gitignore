@@ -69,3 +69,7 @@ tmp_*.js
 # 입력·예수금 탭 재구성 검증 (2026-11-25)
 test_input_cash.py
 shots_input_cash/
+
+# 과거 날짜 기록 수정·삭제 검증 (2026-11-26)
+test_past_edit.py
+shots_past_edit/

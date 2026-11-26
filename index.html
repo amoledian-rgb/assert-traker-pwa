@@ -354,14 +354,19 @@
   .saveflag::before{content:''; width:7px; height:7px; border-radius:50%; background:#e08a15; flex:0 0 7px}
   .savebar.dirty{background:#fff7ea; border-top-color:#efcf9b}
   .savebar.dirty .savebtn{background:linear-gradient(160deg,#e39216,#c97708); box-shadow:0 9px 20px -10px rgba(201,119,8,.95)}
+  /* 과거 기록 저장 바 (edit-past-v1) — 버튼에 날짜가 들어가 글자를 줄이고 저장 시각은 감춘다 */
+  .savebar.past{background:#fffaf0; border-top-color:#e6d6b4}
+  .savebar.past .savebtn{font-size:15.75px; background:linear-gradient(160deg,#8a5a12,#6b4408); box-shadow:0 9px 20px -10px rgba(107,68,8,.95)}
+  .savebar.past .savestamp{display:none}
+  .savebar.past .saveflag{color:#7a4a11}
   .undobtn{flex:0 0 auto; height:52px; padding:0 13px; border-radius:14px; border:1px solid #d3d9e4; background:#fff;
     color:#3a4356; font-size:15px; font-weight:800; display:flex; align-items:center; gap:3px; white-space:nowrap}
   .undobtn:disabled{opacity:.42}
   .undobtn:active{filter:brightness(.96)}
   .savebtn{
     flex:1; min-width:0; height:52px; border:0; border-radius:14px; background:var(--navy); color:#fff;
-    font-size:19px; font-weight:800; letter-spacing:-.01em;
-    display:flex; align-items:center; justify-content:center; gap:7px;
+    font-size:19px; font-weight:800; letter-spacing:-.01em; white-space:nowrap;
+    display:flex; align-items:center; justify-content:center; gap:7px; overflow:hidden;
     box-shadow:0 8px 18px -12px rgba(13,23,41,.9);
   }
   .savebtn:active{filter:brightness(1.2)}
@@ -408,20 +413,24 @@
   .tr-kg span{display:block; font-size:14.5px; color:#8b93a4; margin-bottom:2px; word-break:keep-all}
   .tr-kg b{display:block; font-size:17.25px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .tr-kg em{display:block; font-style:normal; font-size:14.5px; font-weight:700; margin-top:1px; font-variant-numeric:tabular-nums}
-  .tr-row{display:flex; align-items:center; gap:8px; padding:11px 0; border-bottom:1px solid var(--line)}
+  .tr-row{display:flex; align-items:center; gap:7px; padding:11px 0; border-bottom:1px solid var(--line)}
   .tr-row:last-child{border-bottom:0; padding-bottom:2px}
   .tr-row:first-child{padding-top:2px}
   .tr-row .d{flex:1 1 auto; min-width:0}
   .tr-row .d b{display:block; font-size:15.75px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; letter-spacing:-.02em}
   .tr-row .d span{display:block; font-size:14px; font-variant-numeric:tabular-nums; margin-top:2px; letter-spacing:-.01em}
-  .tr-row .a{text-align:right; flex:0 0 auto; max-width:52%}
+  .tr-row .a{text-align:right; flex:0 0 auto; max-width:46%}
   .tr-row .a b{display:block; font-size:17.25px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; letter-spacing:-.02em}
   .tr-row .a span{display:block; font-size:14px; font-variant-numeric:tabular-nums; margin-top:2px; white-space:nowrap}
-  .tr-go{
-    flex:0 0 auto; height:36px; padding:0 9px; border-radius:9px; border:1px solid #c9d4ef;
-    background:#eef2ff; color:#1f3f8f; font-size:13.5px; font-weight:800; white-space:nowrap; letter-spacing:-.03em;
+  /* 불러오기·삭제를 세로로 쌓아 390px 폭에서도 날짜·금액이 잘리지 않게 한다 (edit-past-v1) */
+  .tr-btns{flex:0 0 auto; display:flex; flex-direction:column; gap:4px}
+  .tr-go, .tr-del{
+    flex:0 0 auto; height:33px; padding:0 8px; border-radius:9px; font-family:inherit;
+    font-size:13px; font-weight:800; white-space:nowrap; letter-spacing:-.03em;
   }
-  .tr-go:active{filter:brightness(.96)}
+  .tr-go{border:1px solid #c9d4ef; background:#eef2ff; color:#1f3f8f}
+  .tr-del{border:1px solid #e8cfcf; background:#fdf3f3; color:#a4402f}
+  .tr-go:active, .tr-del:active{filter:brightness(.96)}
   .tr-row.on{background:#f4f7ff; border-radius:10px; padding-left:6px; padding-right:6px; margin:0 -6px}
   .tr-row.on .tr-go{background:#1B365D; border-color:#1B365D; color:#fff}
   .tr-now{margin-top:9px; display:flex; align-items:center; gap:8px; font-size:14.5px; color:#8b93a4; line-height:1.5; word-break:keep-all}
@@ -438,12 +447,16 @@
     box-shadow:0 6px 14px -10px rgba(13,23,41,.85);
   }
   #view-banner.on{display:flex}
-  #view-banner .vb-t{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  #view-banner .vb-t{flex:1; min-width:0; white-space:normal; line-height:1.28; word-break:keep-all}
+  #view-banner .vb-sub{display:block; font-size:13.5px; font-weight:600; opacity:.86; letter-spacing:0}
   #view-banner button{
     flex:0 0 auto; height:34px; padding:0 10px; border-radius:9px; border:0;
     background:#fff; color:#6b4408; font-size:14.5px; font-weight:800; white-space:nowrap;
   }
-  body.viewing #tab-input input, body.viewing #tab-cash input{pointer-events:none; color:#8b93a4; background:#f6f7fa}
+  /* 과거 기록도 그 날짜의 값을 고칠 수 있다 (edit-past-v1) — 입력칸은 그대로 두고 날짜 칸만 고정하며,
+     계좌·종목 추가/삭제와 시세 새로고침은 감춘다(그 날짜 기록의 틀은 바꾸지 않는다). */
+  body.viewing #tab-input input[type="date"], body.viewing #tab-cash input[type="date"]{pointer-events:none; color:#8b93a4; background:#f6f7fa}
+  #h-date:disabled, #in-date:disabled{color:#8b93a4; background:#f6f7fa; -webkit-text-fill-color:#8b93a4; opacity:1}
   body.viewing #tab-input .addbtn, body.viewing #tab-cash .addbtn,
   body.viewing #tab-input .delbtn, body.viewing #tab-cash .delbtn,
   body.viewing #tab-cash .acct-tools, body.viewing #btn-addacc, body.viewing #addacc{display:none}
@@ -795,13 +808,13 @@
     <div class="sec">날짜별 저장 기록 <span id="tr-count">0일</span></div>
     <div class="card" id="tr-list"></div>
     <div class="tr-now" id="tr-viewact" style="display:none; margin:0 16px 4px">
-      <span>지금 <b id="tr-vd">—</b> 기록을 보는 중입니다. 이 값으로 현재 데이터를 바꾸려면 오른쪽 버튼을 누르세요.</span>
+      <span>지금 <b id="tr-vd">—</b> 기록을 보는 중입니다 — <b>고친 값은 💾 {날짜} 기록 저장</b>으로 이 날짜에만 남고, 오늘 데이터는 그대로입니다.</span>
       <button type="button" id="tr-use">이 기록 값으로 쓰기</button>
     </div>
     <div class="tr-now" id="tr-now" style="margin:0 16px 4px">
       <span>기록은 💾 저장하기를 누른 날과, 20:10 이후 종가가 반영된 날에 자동으로 쌓입니다. 며칠 앱을 열지 않아도 시세 기록(<b>prices_history.json</b>)에서 그날 보유 수량 기준으로 메워 둡니다.</span>
     </div>
-    <p class="hint" style="margin:0 16px 18px">주·월·년은 그 주·월·연의 <b>마지막 기록일</b> 값을 씁니다. 과거 기록은 지금 보유 수량·예수금에 그날 시세를 적용해 계산합니다.</p>
+    <p class="hint" style="margin:0 16px 18px">주·월·년은 그 주·월·연의 <b>마지막 기록일</b> 값을 씁니다. 과거 기록은 지금 보유 수량·예수금에 그날 시세를 적용해 계산합니다. 날짜별 기록은 <b>불러오기</b>로 열어 그 날짜의 값을 고쳐 저장하거나, <b>삭제</b>로 지울 수 있습니다.</p>
   </section>
 
   <!-- ============ 백업 ============ -->
@@ -832,7 +845,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-25 · 프로그램 기준일 표기</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 과거 기록 수정·삭제</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -943,7 +956,7 @@ function normSnapshots(snaps){
   });
   return out;
 }
-function withSnaps(s){ if(s && !s.snapshots) s.snapshots = {}; return s; }
+function withSnaps(s){ if(s && !s.snapshots) s.snapshots = {}; if(s && !Array.isArray(s.deletedSnaps)) s.deletedSnaps = []; return s; }
 /* 실시간 환율 반영 이력 (fxlive-v1) — 저장 파일에 남겨 앱을 다시 열어도 출처·시각이 보인다 */
 function normFxLive(v){
   if(!v || typeof v !== 'object') return null;
@@ -968,7 +981,9 @@ function normalize(d){
     fxLive: normFxLive(d.fxLive),
     accounts: normAccounts(d.accounts),
     holdings: normHoldings(d.holdings),
-    snapshots: normSnapshots(d.snapshots)
+    snapshots: normSnapshots(d.snapshots),
+    /* 사용자가 지운 날짜 — 시세 기록(prices_history.json)으로 다시 메우지 않는다 (edit-past-v1) */
+    deletedSnaps: (Array.isArray(d.deletedSnaps) ? d.deletedSnaps.filter(function(x){ return /^\d{4}-\d{2}-\d{2}$/.test(String(x)); }).slice(-SNAP_MAX) : [])
   };
   return out;
 }
@@ -1006,7 +1021,7 @@ function saveState(silent){
    · 20:10 이후 종가 반영   → 그 마감일 기록 자동 저장
    · prices_history.json    → 비어 있는 날짜를 마지막 저장 보유 수량 기준으로 메운다(autoBackfill) */
 var SNAP_MAX = 1000;      /* localStorage 용량(약 2MB)을 념어서지 않게 오래된 기록부터 정리 */
-var viewingDate = null, liveState = null, liveBaseline = null;
+var viewingDate = null, liveState = null, liveBaseline = null, viewBaseline = null;
 /* 오늘 날짜·시각을 한국 시간(KST)으로 — 폰 시간대 설정과 상관없이 하루 경계를 맞춘다 (datekst-v1) */
 function kstNow(){
   var d = new Date();
@@ -1041,8 +1056,25 @@ function recordSnapshot(date, source){
     total: Math.round(m.totalAssets),
     savedAt: new Date().toISOString(), source: source || 'save'
   };
+  unsnapSkip(date);
   trimSnapshots();
   return state.snapshots[date];
+}
+/* 지운 날짜 목록 관리 — 지운 날 다시 기록되면 해제 (edit-past-v1) */
+function snapSkipped(d){ return !!state && Array.isArray(state.deletedSnaps) && state.deletedSnaps.indexOf(d) >= 0; }
+function snapSkip(d){
+  [state, liveState].forEach(function(v){
+    if(!v) return;
+    if(!Array.isArray(v.deletedSnaps)) v.deletedSnaps = [];
+    if(v.deletedSnaps.indexOf(d) < 0) v.deletedSnaps.push(d);
+  });
+}
+function unsnapSkip(d){
+  [state, liveState].forEach(function(v){
+    if(!v || !Array.isArray(v.deletedSnaps)) return;
+    var i = v.deletedSnaps.indexOf(d);
+    if(i >= 0) v.deletedSnaps.splice(i, 1);
+  });
 }
 function trimSnapshots(){
   var keys = Object.keys(state.snapshots || {}).sort();
@@ -1081,6 +1113,7 @@ function autoBackfill(hist){
   var made = 0;
   Object.keys(hist.dates).sort().forEach(function(d){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || state.snapshots[d]) return;
+    if(snapSkipped(d)) return;        /* 사용자가 지운 날짜는 다시 만들지 않는다 */
     var e = hist.dates[d];
     if(!e || !e.prices) return;
     var fx = num(e.fx) > 0 ? num(e.fx) : num(state.fx);
@@ -1140,7 +1173,15 @@ function setViewing(date){
   document.body.classList.toggle('viewing', !!date);
   var vb = document.getElementById('view-banner');
   if(vb) vb.classList.toggle('on', !!date);
-  if(date) setTxt('vb-text', '📅 ' + date + ' 기록 조회 중');
+  if(date){
+    var t = document.getElementById('vb-text');
+    if(t) t.innerHTML = '📅 ' + date + ' 기록<span class="vb-sub">고쳐서 저장할 수 있습니다</span>';
+  }
+  /* 그 기록의 날짜는 고정 — 날짜 칸을 눌러 바꾸면 저장 위치와 화면이 어긋난다 (edit-past-v1) */
+  ['h-date', 'in-date'].forEach(function(id){
+    var e = document.getElementById(id);
+    if(e) e.disabled = !!date;
+  });
   fitFrame();
 }
 function loadSnapshot(date){
@@ -1148,27 +1189,97 @@ function loadSnapshot(date){
   if(!snap){ toast('그 날짜 기록이 없습니다', 2600, 'warn'); return; }
   if(!viewingDate){ liveState = state; liveBaseline = baselineText; }
   var view = clone(snap);
-  view.snapshots = state.snapshots;         /* 기록 목록은 그대로 둔다 */
+  /* 기록 목록은 복사본으로 — 이 화면에서 고친 내용이 저장 전에 최신 데이터로 새지 않게 (edit-past-v1) */
+  view.snapshots = {};
+  Object.keys(state.snapshots || {}).forEach(function(k){ view.snapshots[k] = state.snapshots[k]; });
   view.asOf = snap.asOf; view.fx = snap.fx;
   view.pricesAppliedAt = state.pricesAppliedAt;
   state = view;
+  viewBaseline = clone(snap);          /* 되돌리기 기준 — 이 날짜 기록을 열었을 때의 값 */
   viewingDate = date;
   baselineText = JSON.stringify(state); dirty = false;
   setViewing(date);
   renderAll(); renderSavebar(); syncBar();
-  toast(date + ' 기록으로 화면을 바꿨습니다 — 고치려면 [최신으로 돌아가기]', 3400);
+  toast(date + ' 기록을 열었습니다 — 고친 뒤 💾 기록 저장을 누르세요', 4000);
 }
 function backToLatest(quiet){
   if(!viewingDate) return;
   state = liveState || state;
   liveState = null;
   baselineText = liveBaseline || JSON.stringify(state);
-  liveBaseline = null;
+  liveBaseline = null; viewBaseline = null;
   viewingDate = null;
   dirty = (JSON.stringify(state) !== baselineText);
   setViewing(null);
   renderAll(); renderSavebar(); syncBar();
   if(!quiet) toast('최신 데이터로 돌아왔습니다');
+}
+/* ---------- 과거 기록 고치기 · 저장 · 삭제 (edit-past-v1) ----------
+   과거 기록을 보는 동안 고친 값은 그 날짜 스냅샷(state.snapshots[그날])에만 쓴다.
+   · 저장할 때 오늘(최신) 데이터는 건드리지 않는다 — liveState 는 그대로 두고 liveState.snapshots[그날] 만 맞춘다
+   · 저장할 때 prices.json 을 다시 받아 오늘 시세로 덮어쓰지 않는다 (saveNow → saveViewedSnapshot)
+   · 삭제는 추이 탭 날짜별 기록의 [삭제] — 확인 뒤 그 날짜만 지우고 바로 저장한다 */
+function viewedSnapshotBody(){
+  var m = compute();
+  return { asOf: viewingDate, fx: num(state.fx),
+           accounts: clone(state.accounts), holdings: clone(state.holdings),
+           total: Math.round(m.totalAssets),
+           savedAt: new Date().toISOString(), source: 'edit' };
+}
+function flashSaveBtn(){
+  var b = document.getElementById('btn-save');
+  if(b){ b.classList.remove('done'); void b.offsetWidth; b.classList.add('done'); setTimeout(function(){ b.classList.remove('done'); }, 800); }
+}
+function saveViewedSnapshot(quiet){
+  var d = viewingDate;
+  if(!d) return false;
+  if(!liveState){
+    toast('기록을 저장할 수 없습니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3400, 'warn');
+    return false;
+  }
+  if(!state.snapshots || !state.snapshots[d]){
+    toast('그 날짜 기록을 찾지 못했습니다 — [최신으로 돌아가기] 뒤 다시 불러와 주세요', 3800, 'warn');
+    return false;
+  }
+  var snap = viewedSnapshotBody();
+  state.snapshots[d] = snap;
+  if(!liveState.snapshots) liveState.snapshots = {};
+  liveState.snapshots[d] = clone(snap);      /* 최신 데이터의 기록 목록도 같은 내용으로 (localStorage 에 이 값이 저장된다) */
+  /* 저장은 항상 최신 데이터 기준 — 지금 보는 과거 화면 값이 '오늘'로 섞이지 않는다 */
+  var view = state;
+  state = liveState;
+  saveState();
+  var blocked = memoryOnly;
+  state = view;
+  baselineText = JSON.stringify(state); dirty = false;
+  renderSavebar(); syncBar();
+  if(activeTab === 'trend') renderTrend();
+  if(blocked){
+    toast('저장 공간이 막혀 있습니다 — 백업 파일로 남겨 주세요', 3200, 'warn');
+    return false;
+  }
+  if(!quiet) toast(d + ' 기록을 수정했습니다 ✓', 3000);
+  flashSaveBtn();
+  return true;
+}
+function deleteSnapshot(date){
+  date = String(date || '');
+  if(!state.snapshots || !state.snapshots[date]){ toast('그 날짜 기록이 없습니다', 2600, 'warn'); return false; }
+  if(!confirm(date + ' 기록을 삭제할까요?\n\n추이 그래프와 날짜별 목록에서 이 날짜가 사라집니다. 되돌릴 수 없습니다.')) return false;
+  var wasViewing = (viewingDate === date);
+  delete state.snapshots[date];
+  if(liveState && liveState.snapshots && liveState.snapshots !== state.snapshots) delete liveState.snapshots[date];
+  snapSkip(date);                      /* 시세 기록으로 다시 메우지 않게 지운 날짜로 남긴다 */
+  if(wasViewing) backToLatest(true);
+  /* 기록 삭제는 바로 저장 — 다른 날짜를 보는 중이면 그 화면의 '저장 안 된 변경' 표시는 그대로 둔다 */
+  var view = viewingDate ? state : null;
+  var keepBase = baselineText, keepDirty = dirty;
+  if(view) state = liveState;
+  saveState();
+  if(view){ state = view; baselineText = keepBase; dirty = keepDirty; }
+  renderAll(); renderSavebar(); syncBar();
+  toast(date + ' 기록을 삭제했습니다');
+  return true;
 }
 /* 이 기록 값을 지금(최신) 데이터로 삼는다 — 확인을 받고 저장한다 */
 function useSnapshotNow(){
@@ -1177,7 +1288,7 @@ function useSnapshotNow(){
   if(!confirm('지금 보고 있는 ' + d + ' 기록 값으로 현재 데이터를 바꿀까요?\n\n최신 데이터는 이 기록의 수량·가격·예수금·환율로 덮어써집니다.')) return;
   var view = state;
   state = liveState || state;
-  liveState = null; liveBaseline = null; viewingDate = null;
+  liveState = null; liveBaseline = null; viewBaseline = null; viewingDate = null;
   state.asOf = view.asOf; state.fx = num(view.fx);
   state.fxLive = null;                     /* 과거 기록의 환율을 지금 환율로 착각하지 않게 */
   state.accounts = clone(view.accounts); state.holdings = clone(view.holdings);
@@ -1367,8 +1478,11 @@ function renderTrendList(rows){
       '<div class="d"><b>' + r.date + ' (' + wday(r.date) + ')</b>' +
         '<span class="' + (prev ? cls(diff) : 'flat') + '">' + diffTxt + pctTxt + '</span></div>' +
       '<div class="a"><b>' + won(r.total) + '</b>' +
-        '<span class="flat">' + (r.source === 'history' ? '시세로 자동 기록' : '저장 기록') + '</span></div>' +
-      '<button type="button" class="tr-go" data-load="' + r.date + '">불러오기</button>' +
+        '<span class="flat">' + (r.source === 'history' ? '시세로 자동 기록' : (r.source === 'edit' ? '수정한 기록' : '저장 기록')) + '</span></div>' +
+      '<div class="tr-btns">' +
+        '<button type="button" class="tr-go" data-load="' + r.date + '">불러오기</button>' +
+        '<button type="button" class="tr-del" data-del="' + r.date + '">삭제</button>' +
+      '</div>' +
     '</div>';
   }
   box.innerHTML = html;
@@ -1387,8 +1501,21 @@ function renderSavebar(){
   var bar = document.getElementById('savebar');
   var stamp = document.getElementById('save-stamp');
   var undo = document.getElementById('btn-undo');
-  if(bar) bar.classList.toggle('dirty', dirty);
+  if(bar){ bar.classList.toggle('dirty', dirty); bar.classList.toggle('past', !!viewingDate); }
   if(undo) undo.disabled = !dirty;
+  /* 과거 기록을 보는 중에는 저장 버튼이 그 날짜 기록을 저장한다고 밝힌다 (edit-past-v1) */
+  var sb = document.getElementById('btn-save');
+  if(sb){
+    var lbl = viewingDate ? ('💾 ' + viewingDate + ' 기록 저장') : '💾 저장하기';
+    if(sb.textContent !== lbl) sb.textContent = lbl;
+  }
+  var flag = document.getElementById('save-flag');
+  if(flag){
+    var ftxt = viewingDate
+      ? (viewingDate + ' 기록을 고치는 중 · 저장하면 이 날짜 기록만 바뀝니다')
+      : '저장 안 된 변경 있음 · 💾 저장하기를 눌러야 남습니다';
+    if(flag.textContent !== ftxt) flag.textContent = ftxt;
+  }
   if(!stamp) return;
   if(memoryOnly){
     stamp.className = 'savestamp mem';
@@ -1403,16 +1530,13 @@ var barShown = null, barDirty = null;
 function syncBar(){
   var bar = document.getElementById('savebar');
   if(!bar) return;
-  var want = !viewingDate && (activeTab === 'input' || activeTab === 'cash' || dirty);
+  var want = viewingDate ? (activeTab !== 'market') : (activeTab === 'input' || activeTab === 'cash' || dirty);
   if(bar.classList.contains('on') !== want) bar.classList.toggle('on', want);
   if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
 }
 /* 💾 저장하기 — 이때만 localStorage 에 쓴다. */
 function doSave(quiet){
-  if(viewingDate){
-    toast('과거 기록을 보는 중입니다 — [최신으로 돌아가기]를 먼저 눌러 주세요', 3400, 'warn');
-    return false;
-  }
+  if(viewingDate) return saveViewedSnapshot(quiet);   /* 과거 기록은 그 날짜 스냅샷만 저장한다 */
   recordSnapshot(state.asOf, 'save');   /* 그날 기록 남기기 (snap-v1) */
   saveState();
   renderSavebar();
@@ -1443,6 +1567,8 @@ function rerenderAfterPrices(){
   renderSavebar(); syncBar();
 }
 function saveNow(){
+  /* 과거 기록을 보는 중에는 \'기록 저장\' — 오늘 시세를 받아 덮어쓰지 않고, 화면에 입력한 값 그대로 저장한다 */
+  if(viewingDate) return saveViewedSnapshot();
   var rows = state.holdings.filter(hasTicker);   /* 가격 유무와 상관없이 이름·티커가 있는 종목 전부 */
   if(!rows.length){ doSave(); return; }
   if(location.protocol === 'file:'){   /* 파일 하나로 열면 브라우저가 시세 파일 읽기를 막는다 */
@@ -1516,15 +1642,25 @@ function saveNow(){
 /* ↩️ 되돌리기 — 저장하지 않은 변경을 버리고 마지막 저장 상태로 돌아간다. */
 function undoAll(){
   if(!dirty) return;
-  if(!confirm('저장하지 않은 변경을 버리고 마지막으로 저장한 상태로 되돌릴까요?')) return;
-  state = JSON.parse(baselineText);
+  if(!confirm(viewingDate ? ('저장하지 않은 변경을 버리고 ' + viewingDate + ' 기록을 처음 열었을 때 값으로 되돌릴까요?')
+                         : '저장하지 않은 변경을 버리고 마지막으로 저장한 상태로 되돌릴까요?')) return;
+  if(viewingDate && viewBaseline){
+    /* 과거 기록은 그 날짜를 열었을 때의 값으로 — 기록 목록(스냅샷)은 지금 것을 그대로 둔다 */
+    var snaps = state.snapshots || {};
+    var v = clone(viewBaseline);
+    v.snapshots = snaps;
+    v.pricesAppliedAt = state.pricesAppliedAt;
+    state = v;
+  }else{
+    state = JSON.parse(baselineText);
+  }
   editSide = {};   /* 되돌렸으면 '마지막에 고친 칸' 기록도 버린다 */
   var names = state.accounts.map(function(a){ return a.name; });
   ['KRW','USD'].forEach(function(c){ if(filters[c] !== 'all' && names.indexOf(filters[c]) < 0) filters[c] = 'all'; });
   dirty = false;
   renderAll();
   renderSavebar(); syncBar();
-  toast('마지막 저장 상태로 되돌렸습니다');
+  toast(viewingDate ? (viewingDate + ' 기록 처음 값으로 되돌렸습니다') : '마지막 저장 상태로 되돌렸습니다');
 }
 
 /* ---------- 계산 ---------- */
@@ -2744,6 +2880,8 @@ document.getElementById('tr-chart').addEventListener('click', function(e){
   document.getElementById('tr-chart').innerHTML = trendChart(trendSeries, trendRange);
 });
 document.getElementById('tr-list').addEventListener('click', function(e){
+  var del = e.target.closest('[data-del]');
+  if(del){ deleteSnapshot(del.getAttribute('data-del')); return; }
   var b = e.target.closest('[data-load]');
   if(!b) return;
   loadSnapshot(b.getAttribute('data-load'));
@@ -3159,21 +3297,21 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-25T13:43:39+09:00",
- "bizdate": "20261125",
+ "updatedAt": "2026-11-26T09:16:28+09:00",
+ "bizdate": "20261126",
  "sections": {
   "index": {
-   "asOf": "2026-11-25T13:43:00+09:00",
+   "asOf": "2026-11-26T09:16:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "value": 4713.68,
-     "change": -292.35,
-     "pct": -5.84,
-     "tradingValue": 9742744000000,
-     "asOf": "2026-11-25T13:43:00+09:00",
+     "value": 4748.7,
+     "change": 51.19,
+     "pct": 1.09,
+     "tradingValue": 1677273000000,
+     "asOf": "2026-11-26T09:16:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3182,11 +3320,11 @@ var MARKET_INLINE = {
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "value": 650.51,
-     "change": -15.37,
-     "pct": -2.31,
-     "tradingValue": 3869700000000,
-     "asOf": "2026-11-25T13:43:00+09:00",
+     "value": 669.06,
+     "change": 18.42,
+     "pct": 2.83,
+     "tradingValue": 804699000000,
+     "asOf": "2026-11-26T09:16:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3195,11 +3333,11 @@ var MARKET_INLINE = {
     {
      "key": "KPI200",
      "name": "코스피 200",
-     "value": 727.09,
-     "change": -51.59,
-     "pct": -6.63,
-     "tradingValue": 8550058000000,
-     "asOf": "2026-11-25T13:43:00+09:00",
+     "value": 732.27,
+     "change": 8.46,
+     "pct": 1.17,
+     "tradingValue": 1508035000000,
+     "asOf": "2026-11-26T09:16:00+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3208,11 +3346,11 @@ var MARKET_INLINE = {
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 742.6,
-     "change": -35.5,
-     "pct": -4.56,
+     "value": 727.3,
+     "change": 2.55,
+     "pct": 0.35,
      "tradingValue": null,
-     "asOf": "2026-11-25T06:08:30.350301+09:00",
+     "asOf": "2026-11-26T06:09:44.671048+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "야간장 마감",
@@ -3223,11 +3361,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 25989,
-     "change": -286.75,
-     "pct": -1.09,
+     "value": 26121,
+     "change": 20.75,
+     "pct": 0.08,
      "tradingValue": null,
-     "asOf": "2026-11-24T22:33:33-06:00",
+     "asOf": "2026-11-25T18:06:22-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3238,11 +3376,11 @@ var MARKET_INLINE = {
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 727.1,
-     "change": -51,
-     "pct": -6.55,
-     "tradingValue": 15017291000000,
-     "asOf": "2026-11-25T13:23:59+09:00",
+     "value": 731.15,
+     "change": 6.4,
+     "pct": 0.88,
+     "tradingValue": 574338000000,
+     "asOf": "2026-11-26T08:56:58+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3256,19 +3394,19 @@ var MARKET_INLINE = {
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 259,
-      "upper": 4,
-      "unchanged": 28,
-      "falling": 622,
+      "rising": 513,
+      "upper": 0,
+      "unchanged": 53,
+      "falling": 310,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 449,
+      "rising": 1153,
       "upper": 4,
-      "unchanged": 63,
-      "falling": 1238,
+      "unchanged": 88,
+      "falling": 477,
       "lower": 0
      }
     ],
@@ -3277,16 +3415,16 @@ var MARKET_INLINE = {
    }
   },
   "us": {
-   "asOf": "2026-11-24T16:54:25-05:00",
+   "asOf": "2026-11-25T16:32:17-05:00",
    "src": "네이버 증권 해외지수 · 야후 파이낸스(러셀 2000)",
    "rows": [
     {
      "key": "DJI",
      "name": "다우존스",
-     "value": 50018.7,
-     "change": 423.39,
-     "pct": 0.85,
-     "asOf": "2026-11-24T16:54:25-05:00",
+     "value": 50182.95,
+     "change": 164.25,
+     "pct": 0.33,
+     "asOf": "2026-11-25T16:32:17-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3294,10 +3432,10 @@ var MARKET_INLINE = {
     {
      "key": "INX",
      "name": "S&P 500",
-     "value": 7201.09,
-     "change": -36.08,
-     "pct": -0.5,
-     "asOf": "2026-11-24T16:54:10-05:00",
+     "value": 7182.78,
+     "change": -18.31,
+     "pct": -0.25,
+     "asOf": "2026-11-25T16:32:06-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3305,10 +3443,10 @@ var MARKET_INLINE = {
     {
      "key": "IXIC",
      "name": "나스닥 종합",
-     "value": 23733.54,
-     "change": -356.02,
-     "pct": -1.48,
-     "asOf": "2026-11-24T17:15:59-05:00",
+     "value": 23585.8,
+     "change": -147.73,
+     "pct": -0.62,
+     "asOf": "2026-11-25T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3316,10 +3454,10 @@ var MARKET_INLINE = {
     {
      "key": "NDX",
      "name": "나스닥 100",
-     "value": 26214.17,
-     "change": -531.93,
-     "pct": -1.99,
-     "asOf": "2026-11-24T17:15:59-05:00",
+     "value": 26046.9,
+     "change": -167.27,
+     "pct": -0.64,
+     "asOf": "2026-11-25T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3327,10 +3465,10 @@ var MARKET_INLINE = {
     {
      "key": "SOX",
      "name": "필반",
-     "value": 8832.5,
-     "change": -755.55,
-     "pct": -7.88,
-     "asOf": "2026-11-24T17:15:59-05:00",
+     "value": 8774.86,
+     "change": -57.64,
+     "pct": -0.65,
+     "asOf": "2026-11-25T17:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -3338,10 +3476,10 @@ var MARKET_INLINE = {
     {
      "key": "RUT",
      "name": "러셀 2000",
-     "value": 2684.942,
-     "change": 15.287,
-     "pct": 0.573,
-     "asOf": "2026-11-24T16:30:00-05:00",
+     "value": 2704.061,
+     "change": 19.119,
+     "pct": 0.712,
+     "asOf": "2026-11-25T16:30:00-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2,
@@ -3352,51 +3490,51 @@ var MARKET_INLINE = {
    "note": "미국 정규장 마지막 체결 기준입니다(장 상태는 네이버 증권 표기). 러셀 2000은 야후 파이낸스·CNBC(^RUT / .RUT) 시세입니다."
   },
   "funds": {
-   "asOf": "2026-11-23",
+   "asOf": "2026-11-24",
    "src": "네이버 증권 증시자금동향",
    "unit": "억원",
    "rows": [
     {
      "key": "deposit",
      "name": "고객예탁금",
-     "value": 853362,
-     "change": 23516
+     "value": 820497,
+     "change": -32865
     },
     {
      "key": "credit",
      "name": "신용잔고",
-     "value": 255341,
-     "change": -159
+     "value": 254591,
+     "change": -750
     }
    ],
    "ready": true,
    "note": null
   },
   "program": {
-   "asOf": "2026-11-25",
+   "asOf": "2026-11-26",
    "src": "네이버 증권",
    "unit": "백만원",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -23478.3,
-     "nonArb": -988334.2,
-     "total": -1011812.4
+     "arb": -33308.8,
+     "nonArb": -66311.3,
+     "total": -99620.1
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 1588.2,
-     "nonArb": -88009.5,
-     "total": -86421.3
+     "arb": 116.1,
+     "nonArb": 24636.1,
+     "total": 24752.2
     }
    ],
    "ready": true,
    "note": null
   },
   "investors": {
-   "asOf": "2026-11-25",
+   "asOf": "2026-11-26",
    "src": "네이버 증권 투자자별 매매동향",
    "cols": [
     {
@@ -3425,30 +3563,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      14831,
-      420,
-      -278,
-      15252
+      489,
+      -587,
+      -46,
+      -98
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -16939,
-      -867,
-      -3507,
-      -17807
+      172,
+      335,
+      -423,
+      507
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      -1735,
-      421,
-      3660,
-      -1314
+      -789,
+      264,
+      457,
+      -524
      ]
     }
    ],
@@ -3457,7 +3595,7 @@ var MARKET_INLINE = {
    "warn": null
   },
   "bonds": {
-   "asOf": "2026-11-25T13:43:05+09:00",
+   "asOf": "2026-11-25T15:51:09+09:00",
    "src": "네이버 증권",
    "cols": [
     "30년",
@@ -3468,78 +3606,78 @@ var MARKET_INLINE = {
     {
      "key": "KR",
      "name": "한국",
-     "y10": 3.778,
-     "c10": -0.045,
-     "y2": 3.667,
-     "c2": 0.012,
-     "y30": 3.93,
-     "c30": -0.044,
-     "asOf": "2026-11-25T13:43:05+09:00"
+     "y10": 3.807,
+     "c10": -0.016,
+     "y2": 3.632,
+     "c2": -0.023,
+     "y30": 3.935,
+     "c30": -0.039,
+     "asOf": "2026-11-25T15:51:09+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.699,
-     "c10": -0.02,
-     "y2": 1.758,
-     "c2": -0.025,
-     "y30": 3.956,
-     "c30": 0.017,
-     "asOf": "2026-11-25T11:01:29+09:00"
+     "y10": 2.634,
+     "c10": -0.018,
+     "y2": 1.726,
+     "c2": -0.006,
+     "y30": 3.925,
+     "c30": -0.031,
+     "asOf": "2026-11-26T03:25:58+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.9,
-     "c10": -0.0022,
-     "y2": 4.658,
-     "c2": -0.0129,
-     "y30": 5.295,
-     "c30": 0.0034,
-     "asOf": "2026-11-24T23:39:08-05:00"
+     "y10": 4.864,
+     "c10": -0.038,
+     "y2": 4.65,
+     "c2": -0.0212,
+     "y30": 5.254,
+     "c30": -0.0379,
+     "asOf": "2026-11-25T17:05:00-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-24T23:33:28-05:00",
+   "asOf": "2026-11-25T18:10:00-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.97,
-     "change": 0.15,
-     "pct": 0.15,
-     "asOf": "2026-11-24T23:33:28-05:00",
+     "value": 103.67,
+     "change": -0.15,
+     "pct": -0.14,
+     "asOf": "2026-11-25T18:10:00-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 26.36,
-     "change": -0.26,
-     "pct": -0.98,
-     "asOf": "2026-11-24T16:15:01-05:00",
+     "value": 28.29,
+     "change": 1.93,
+     "pct": 7.32,
+     "asOf": "2026-11-25T16:15:01-05:00",
      "unit": "pt"
     },
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3548.7,
-     "change": -13.2,
-     "pct": -0.37,
-     "asOf": "2026-11-24T22:33:32-06:00",
+     "value": 3575.9,
+     "change": 40.1,
+     "pct": 1.13,
+     "asOf": "2026-11-25T18:06:21-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.3715,
-     "change": 0.0025,
-     "pct": 0.05,
-     "asOf": "2026-11-24T22:33:32-06:00",
+     "value": 5.4055,
+     "change": 0.069,
+     "pct": 1.29,
+     "asOf": "2026-11-25T18:06:21-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -3548,25 +3686,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-24T22:33:32-06:00",
+   "asOf": "2026-11-25T18:06:21-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 80.76,
-     "change": -1.29,
-     "pct": -1.57,
-     "asOf": "2026-11-24T22:33:32-06:00",
+     "value": 83.99,
+     "change": 0.31,
+     "pct": 0.37,
+     "asOf": "2026-11-25T18:06:21-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 90.18,
-     "change": -1.22,
-     "pct": -1.33,
-     "asOf": "2026-11-25T04:33:32Z",
+     "value": 94.61,
+     "change": 3.21,
+     "pct": 3.51,
+     "asOf": "2026-11-25T23:00:00Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -3574,71 +3712,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-25T13:35:40+09:00",
+   "asOf": "2026-11-26T09:07:48+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 59174.48,
-     "change": -834.23,
-     "pct": -1.39,
+     "value": 60402.31,
+     "change": 65.52,
+     "pct": 0.11,
      "unit": "USDT",
-     "asOf": "2026-11-25T13:35:40+09:00"
+     "asOf": "2026-11-26T09:07:48+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1664.65,
-     "change": -9.27,
-     "pct": -0.55,
+     "value": 1715.24,
+     "change": 21.45,
+     "pct": 1.27,
      "unit": "USDT",
-     "asOf": "2026-11-25T13:42:50+09:00"
+     "asOf": "2026-11-26T09:14:52+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 68.53,
-     "change": -0.45,
-     "pct": -0.65,
+     "value": 68.22,
+     "change": -0.76,
+     "pct": -1.1,
      "unit": "USDT",
-     "asOf": "2026-11-25T11:39:56+09:00"
+     "asOf": "2026-11-26T02:07:56+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-25T13:42:23+09:00",
+   "asOf": "2026-11-26T09:15:53+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.4,
-     "change": -0.1,
-     "pct": -0.01,
-     "asOf": "2026-11-25T13:42:23+09:00",
+     "value": 1344.2,
+     "change": -1.3,
+     "pct": -0.1,
+     "asOf": "2026-11-26T09:15:53+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 842.69,
-     "change": -0.38,
-     "pct": -0.05,
-     "asOf": "2026-11-25T13:42:23+09:00",
+     "value": 844.61,
+     "change": -0.77,
+     "pct": -0.09,
+     "asOf": "2026-11-26T09:15:53+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1469.39,
-     "change": -2.66,
-     "pct": -0.18,
-     "asOf": "2026-11-25T13:42:23+09:00",
+     "value": 1474.92,
+     "change": -2.04,
+     "pct": -0.14,
+     "asOf": "2026-11-26T09:15:53+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -4166,6 +4304,7 @@ function boot(){
                      get history(){ return pricesHistory; }, loadHistory:loadHistory,
                      get snapshots(){ return state.snapshots || {}; }, loadSnapshot:loadSnapshot,
                      backToLatest:backToLatest, get viewing(){ return viewingDate; },
+                     saveViewed:saveViewedSnapshot, deleteSnapshot:deleteSnapshot, saveViewedSnapshot:saveViewedSnapshot,
                      setTrend:function(r){ trendRange = r; trSel = null; renderTrend(); },
                      get trendRange(){ return trendRange; },
                      get records(){ return snapList(); },
