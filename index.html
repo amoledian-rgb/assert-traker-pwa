@@ -662,6 +662,24 @@
   #tab-market .sec span{font-size:15.75px}
   #tab-market .hint{font-size:14.5px; line-height:1.5}
   .mk-note.warn{color:#a06a14}
+  /* ---------- 시장종합 지표 → 최근 10거래일 툴팁 (mkhist10-v1 · 2026-11-26) ----------
+     카드 겉모양은 그대로 두고, 이미 그려진 줄·칸을 누를 수 있게만 한다(새 버튼·아이콘 없음).
+     팝업은 화면 아래에서 올라오는 시트라 시장 탭의 배치·높이에 영향을 주지 않는다. */
+  #tab-market [data-mkh]{cursor:pointer}
+  #tab-market [data-mkh]:active{background:#f3f6fc}
+  .mkh-tbl{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; table-layout:fixed}
+  .mkh-tbl th{font-size:13.5px; color:#8b93a4; font-weight:700; padding:0 0 7px; text-align:right;
+    white-space:nowrap; border-bottom:1px solid var(--line); letter-spacing:-.02em}
+  .mkh-tbl th:first-child{text-align:left; width:92px}
+  .mkh-tbl th + th, .mkh-tbl td + td{padding-left:5px}
+  .mkh-tbl td{font-size:16.5px; font-weight:700; padding:8px 0; text-align:right;
+    border-bottom:1px solid #f1f4f8; white-space:nowrap; letter-spacing:-.03em}
+  .mkh-tbl td:first-child{text-align:left; color:#5b6577; font-size:14px; font-weight:700; letter-spacing:-.02em}
+  .mkh-tbl td:first-child i{font-style:normal; color:#a9b1c0; font-size:12.5px; font-weight:600}
+  .mkh-tbl td em{display:block; font-style:normal; font-size:12.5px; font-weight:700; margin-top:2px; letter-spacing:-.02em}
+  .mkh-tbl tr.today td{background:#f7fafc}
+  .mkh-tbl tr.today td:first-child{color:#16233d}
+  .mkh-tbl td.na{color:#c0c6d0; font-weight:600}
   /* ---------- 첫 실행 안내 배너 ---------- */
   .setup{display:none; margin:2px 12px 6px; padding:12px 13px; border-radius:14px;
     background:linear-gradient(150deg,#22386b 0%,#16233d 100%); color:#fff;
@@ -952,7 +970,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 추이 코스피·나스닥100 추가</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 10거래일 툴팁·바깥 닫기</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1019,6 +1037,17 @@
       <button type="button" class="btn" id="date-add-cancel">취소</button>
       <button type="button" class="btn primary" id="date-add-go">추가하고 열기</button>
     </div>
+  </div>
+</div>
+<div class="pk" id="mkh">
+  <div class="pk-bd" id="mkh-bd"></div>
+  <div class="pk-panel" role="dialog" aria-modal="true" aria-labelledby="mkh-title">
+    <div class="pk-head">
+      <b id="mkh-title">—</b>
+      <button type="button" class="pk-x" id="mkh-x" aria-label="닫기">✕</button>
+    </div>
+    <p class="pk-note" id="mkh-note"></p>
+    <div class="pk-list" id="mkh-list"></div>
   </div>
 </div>
 
@@ -3627,6 +3656,35 @@ function trTouchEnd(e, canceled){
 }
 trChartEl.addEventListener('pointerup', function(e){ trTouchEnd(e, false); }, {passive:true});
 trChartEl.addEventListener('pointercancel', function(e){ trTouchEnd(e, true); }, {passive:true});
+/* 차트 바깥을 누르면 툴팁 닫기 (trclose-outside-v1 · 2026-11-26)
+   · 차트 밖에서 시작한 누름을 손 뗈을 때 닫는다 — 그사이 10px 넘게 움직였으면(성크롤·드래그)
+     닫지 않아 스크롤하다 툴팁이 사라지지 않는다.
+   · 차트 안 누름은 차트 자신이 처리한다(같은 자리 다시 탭 = 닫기, 드래그 = 선택 이동). */
+var trOutside = null;
+function trInChart(el){
+  for(var n = el; n && n.nodeType === 1; n = n.parentNode){ if(n.id === 'tr-chart') return true; }
+  return false;
+}
+document.addEventListener('pointerdown', function(e){
+  trOutside = null;
+  if(trSel == null || trTouch) return;
+  if(trInChart(e.target)) return;
+  trOutside = { id:e.pointerId, x:e.clientX, y:e.clientY };
+}, {passive:true});
+document.addEventListener('pointermove', function(e){
+  var s = trOutside;
+  if(!s || e.pointerId !== s.id) return;
+  if(Math.abs(e.clientX - s.x) > 10 || Math.abs(e.clientY - s.y) > 10) trOutside = null;   /* 스크롤 */
+}, {passive:true});
+document.addEventListener('pointerup', function(e){
+  var s = trOutside;
+  if(!s) return;
+  if(e.pointerId !== undefined && e.pointerId !== s.id) return;
+  trOutside = null;
+  if(trSel == null) return;
+  trSel = null; trScheduleChart();
+}, {passive:true});
+document.addEventListener('pointercancel', function(){ trOutside = null; }, {passive:true});
 document.getElementById('tr-list').addEventListener('click', function(e){
   if(Date.now() - trSwipedAt < 400) return;   /* 페이지를 넘긴 직후의 눌림은 무시 */
   var pg = e.target.closest('[data-pg]');
@@ -4233,11 +4291,11 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-26T19:45:31+09:00",
+ "updatedAt": "2026-11-26T20:16:03+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
-   "asOf": "2026-11-26T16:15:00+09:00",
+   "asOf": "2026-11-26T20:15:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -4246,8 +4304,8 @@ var MARKET_INLINE = {
      "value": 4711.21,
      "change": 13.7,
      "pct": 0.29,
-     "tradingValue": 12284259000000,
-     "asOf": "2026-11-26T16:15:00+09:00",
+     "tradingValue": 12972566000000,
+     "asOf": "2026-11-26T20:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -4259,8 +4317,8 @@ var MARKET_INLINE = {
      "value": 655.71,
      "change": 5.07,
      "pct": 0.78,
-     "tradingValue": 4831612000000,
-     "asOf": "2026-11-26T16:15:00+09:00",
+     "tradingValue": 5133077000000,
+     "asOf": "2026-11-26T20:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -4272,8 +4330,8 @@ var MARKET_INLINE = {
      "value": 727.08,
      "change": 3.27,
      "pct": 0.45,
-     "tradingValue": 11015044000000,
-     "asOf": "2026-11-26T16:15:00+09:00",
+     "tradingValue": 11640981000000,
+     "asOf": "2026-11-26T20:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -4282,11 +4340,11 @@ var MARKET_INLINE = {
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 724.1,
-     "change": -2.65,
-     "pct": -0.36,
+     "value": 725.4,
+     "change": -1.35,
+     "pct": -0.19,
      "tradingValue": null,
-     "asOf": "2026-11-26T19:45:04.422512+09:00",
+     "asOf": "2026-11-26T20:15:08.920915+09:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "야간장",
@@ -4297,11 +4355,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26214.75,
-     "change": 114.5,
-     "pct": 0.44,
+     "value": 26155,
+     "change": 54.75,
+     "pct": 0.21,
      "tradingValue": null,
-     "asOf": "2026-11-26T04:35:24-06:00",
+     "asOf": "2026-11-26T05:05:57-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -4454,16 +4512,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -16235.3,
-     "nonArb": 179003.6,
-     "total": 162768.3
+     "arb": -16293.6,
+     "nonArb": 180168.8,
+     "total": 163875.2
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 12211.5,
-     "nonArb": -66379.0,
-     "total": -54167.6
+     "arb": 12103.7,
+     "nonArb": -67413.1,
+     "total": -55309.4
     }
    ],
    "ready": true,
@@ -4499,30 +4557,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -10719,
-      -1351,
+      -10748,
+      -1339,
       -118,
-      -12070
+      -12087
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -859,
-      -1085,
+      -841,
+      -1096,
       1878,
-      -1944
+      -1937
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      7530,
-      2379,
+      7529,
+      2378,
       -1734,
-      9909
+      9907
      ]
     }
    ],
@@ -4553,13 +4611,13 @@ var MARKET_INLINE = {
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.632,
-     "c10": -0.006,
-     "y2": 1.745,
-     "c2": 0,
-     "y30": 3.888,
-     "c30": -0.014,
-     "asOf": "2026-11-26T17:44:59+09:00"
+     "y10": 2.634,
+     "c10": -0.004,
+     "y2": 1.752,
+     "c2": 0.007,
+     "y30": 3.895,
+     "c30": -0.007,
+     "asOf": "2026-11-26T18:14:52+09:00"
     },
     {
      "key": "US",
@@ -4577,25 +4635,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T05:35:21-05:00",
+   "asOf": "2026-11-26T06:05:50-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.73,
-     "change": 0.07,
-     "pct": 0.06,
-     "asOf": "2026-11-26T05:35:21-05:00",
+     "value": 103.75,
+     "change": 0.08,
+     "pct": 0.08,
+     "asOf": "2026-11-26T06:05:50-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 27.05,
-     "change": -1.24,
-     "pct": -4.38,
-     "asOf": "2026-11-26T05:30:23-05:00",
+     "value": 27.54,
+     "change": -0.75,
+     "pct": -2.65,
+     "asOf": "2026-11-26T06:00:56-05:00",
      "unit": "pt"
     },
     {
@@ -4612,19 +4670,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3559.2,
-     "change": 23.4,
-     "pct": 0.66,
-     "asOf": "2026-11-26T04:35:23-06:00",
+     "value": 3558.4,
+     "change": 22.6,
+     "pct": 0.64,
+     "asOf": "2026-11-26T05:05:56-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.38,
-     "change": 0.0435,
-     "pct": 0.82,
-     "asOf": "2026-11-26T04:35:23-06:00",
+     "value": 5.364,
+     "change": 0.0275,
+     "pct": 0.52,
+     "asOf": "2026-11-26T05:05:56-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -4633,25 +4691,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T04:35:23-06:00",
+   "asOf": "2026-11-26T05:05:56-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 83.7,
-     "change": 0.02,
-     "pct": 0.02,
-     "asOf": "2026-11-26T04:35:23-06:00",
+     "value": 84.5,
+     "change": 0.82,
+     "pct": 0.98,
+     "asOf": "2026-11-26T05:05:56-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 94.24,
-     "change": -0.37,
-     "pct": -0.39,
-     "asOf": "2026-11-26T10:35:23Z",
+     "value": 95.11,
+     "change": 0.5,
+     "pct": 0.53,
+     "asOf": "2026-11-26T11:05:56Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -4694,7 +4752,7 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-26T19:43:43+09:00",
+   "asOf": "2026-11-26T20:14:44+09:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -4703,27 +4761,27 @@ var MARKET_INLINE = {
      "value": 1344.6,
      "change": -0.9,
      "pct": -0.07,
-     "asOf": "2026-11-26T19:43:43+09:00",
+     "asOf": "2026-11-26T20:14:44+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 844.07,
-     "change": -1.31,
-     "pct": -0.15,
-     "asOf": "2026-11-26T19:43:43+09:00",
+     "value": 844.28,
+     "change": -1.1,
+     "pct": -0.13,
+     "asOf": "2026-11-26T20:14:44+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1475.9,
-     "change": -1.06,
-     "pct": -0.07,
-     "asOf": "2026-11-26T19:43:43+09:00",
+     "value": 1475.36,
+     "change": -1.6,
+     "pct": -0.11,
+     "asOf": "2026-11-26T20:14:44+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -4840,6 +4898,230 @@ function mkHistEntry(date){
   return null;
 }
 
+/* ---------- 시장종합 지표를 누르면 직전 10거래일 툴팁 (mkhist10-v1 · 2026-11-26) ----------
+   · 시장 탭 카드의 겉모양(높이·여백·글자·배치)은 그대로 두고, 이미 그려진 줄·칸에만
+     data-mkh 표시를 달아 누를 수 있게 한다 — 새 버튼·아이콘은 카드에 붙이지 않는다.
+   · 값은 market_history.json(그날 기록) + 오늘 market.json 을 쓴다. 값이 없는 날은 건너뛴다.
+   · 보고 있는 기준일(과거 날짜 조회 중이면 그 날짜)을 포함한 최근 10거래일만 보여 준다.
+   · 어두운 바깥·✕ 를 누르면 바로 닫힌다. */
+var MKH_MAX = 10;
+var mkhSpec = null;
+
+function mkhAttr(kind, key){
+  if(!key) return '';
+  return ' data-mkh="' + esc(kind + '|' + key) + '"';
+}
+function mkhTodayDate(){
+  var ix = ((marketData || {}).sections || {}).index || {};
+  var m = String(ix.asOf || '').match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : todayKST();
+}
+function mkhRowOf(sec, key){
+  var rows = (sec && sec.rows) || [];
+  for(var i = 0; i < rows.length; i++){ if(rows[i] && rows[i].key === key) return rows[i]; }
+  return null;
+}
+/* 이름·단위 — 지금 시장 파일에 없으면 가까운 과거 기록에서 찾는다 */
+function mkhMeta(section, key){
+  var r = mkhRowOf(((marketData || {}).sections || {})[section], key);
+  if(r) return r;
+  var ds = (marketHist && marketHist.dates) || {}, ks = Object.keys(ds).sort().reverse();
+  for(var i = 0; i < ks.length; i++){
+    r = mkhRowOf(((ds[ks[i]] || {}).sections || {})[section], key);
+    if(r) return r;
+  }
+  return null;
+}
+function mkhNumOr(v){ return (v === null || v === undefined || !isFinite(Number(v))) ? null : Number(v); }
+/* 한 날짜의 값 → 팝업 한 줄. 값이 하나도 없는 날은 null(목록에서 뺀다). */
+function mkhRec(kind, key, sec){
+  if(!sec) return null;
+  if(kind === 'program'){
+    var c = mkhRowOf(sec.program, key);
+    if(!c) return null;
+    var a = mkhNumOr(c.arb), na = mkhNumOr(c.nonArb);
+    if(a === null && na === null) return null;
+    return { cells: [{ v:a, d:0, s:a }, { v:na, d:0, s:na }] };
+  }
+  if(kind === 'programrow'){
+    var cells = [], any = false;
+    ['KOSPI', 'KOSDAQ'].forEach(function(k){
+      var c2 = mkhRowOf(sec.program, k), v = c2 ? mkhNumOr(c2[key]) : null;
+      if(v !== null) any = true;
+      cells.push({ v:v, d:0, s:v });
+    });
+    return any ? { cells:cells } : null;
+  }
+  if(kind === 'investors'){
+    var iv = mkhRowOf(sec.investors, key);
+    if(!iv || !iv.values) return null;
+    var vals = iv.values.map(mkhNumOr);
+    if(vals.every(function(x){ return x === null; })) return null;
+    return { cells: vals.map(function(x){ return { v:x, d:0, s:x }; }),
+             cols: ((sec.investors || {}).cols || []).map(function(c){ return c.name || c; }) };
+  }
+  if(kind === 'bonds'){
+    var b = mkhRowOf(sec.bonds, key);
+    if(!b) return null;
+    var ys = [b.y30, b.y10, b.y2].map(mkhNumOr), cs = [b.c30, b.c10, b.c2].map(mkhNumOr);
+    if(ys.every(function(x){ return x === null; })) return null;
+    return { cells: ys.map(function(y, i){ return { v:y, d:3, chg:cs[i] }; }) };
+  }
+  var r = mkhRowOf(sec[kind], key);
+  if(!r) return null;
+  var v = mkhNumOr(r.value);
+  if(v === null) return null;
+  var isFunds = (kind === 'funds');
+  return { cells: [{ v:v, d:(isFunds ? 0 : (r.dec === undefined ? 2 : r.dec)),
+                    chg:mkhNumOr(r.change), pct:(isFunds ? null : mkhNumOr(r.pct)) }] };
+}
+/* 기준일까지의 최근 10거래일 — 오늘 날짜는 market.json(장 마감 값) 우선 */
+function mkhSeries(kind, key){
+  var past = mkPastDate(), ref = past || mkhTodayDate(), todayD = mkhTodayDate();
+  var todaySections = (!past && marketData && marketData.sections) ? marketData.sections : null;
+  var ds = (marketHist && marketHist.dates) || {};
+  var dates = Object.keys(ds).filter(function(d){ return d <= ref; }).sort().reverse();
+  if(todaySections && todayD <= ref && dates.indexOf(todayD) < 0) dates.unshift(todayD);
+  var items = [];
+  dates.forEach(function(d){
+    if(items.length >= MKH_MAX) return;
+    var sec = (todaySections && d === todayD) ? todaySections : ((ds[d] || {}).sections || null);
+    var rec = mkhRec(kind, key, sec);
+    if(!rec) return;
+    rec.date = d;
+    items.push(rec);
+  });
+  var gaps = 0;
+  if(items.length){
+    var newest = items[0].date, oldest = items[items.length - 1].date;
+    var span = dates.filter(function(d){ return d >= oldest && d <= newest; }).length;
+    gaps = Math.max(0, span - items.length);
+  }
+  return { ref:ref, past:past, items:items, gaps:gaps };
+}
+function mkhInfo(kind, key){
+  if(kind === 'program'){
+    var pr = mkhMeta('program', key);
+    return { name:'프로그램 매매 · ' + ((pr && pr.name) || key), unit:'백만원' };
+  }
+  if(kind === 'programrow'){
+    return { name:'프로그램 매매 · ' + (key === 'arb' ? '차익' : '비차익'), unit:'백만원' };
+  }
+  if(kind === 'investors'){
+    var iv = mkhMeta('investors', key);
+    return { name:'투자자별 · ' + ((iv && iv.name) || key), unit:'코스피·코스닥 억원 / 선물 계약' };
+  }
+  if(kind === 'bonds'){
+    var b = mkhMeta('bonds', key);
+    return { name:'국채수익률 · ' + ((b && b.name) || key), unit:'%' };
+  }
+  if(kind === 'funds'){
+    var f = mkhMeta('funds', key);
+    return { name:(f && f.name) || key, unit:'억원' };
+  }
+  var m = mkhMeta(kind, key) || {};
+  return { name:m.name || key, unit:(m.unit || '') };
+}
+function mkhHeads(kind, items){
+  if(kind === 'program') return ['차익', '비차익'];
+  if(kind === 'programrow') return ['코스피', '코스닥'];
+  if(kind === 'bonds') return ['30년', '10년', '2년'];
+  if(kind === 'investors'){
+    for(var i = 0; i < items.length; i++){
+      if(items[i].cols && items[i].cols.length) return items[i].cols;
+    }
+    return ['코스피', '코스닥', '선물', '주식선물'];
+  }
+  return ['값', '전일대비'];
+}
+function mkhRowHtml(it, kind){
+  var d = String(it.date);
+  var h = '<tr' + (d === mkhTodayDate() ? ' class="today"' : '') + '><td>'
+        + d.slice(5, 7) + '.' + d.slice(8, 10) + ' <i>' + wday(d) + '</i></td>';
+  var single = (kind === 'index' || kind === 'us' || kind === 'funds' || kind === 'market'
+             || kind === 'energy' || kind === 'crypto' || kind === 'fx');
+  if(single){
+    var c = it.cells[0];
+    var cls = (c.chg === null || c.chg === undefined || !c.chg) ? '' : (c.chg > 0 ? 'up' : 'down');
+    h += '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + mkFixed(c.v, c.d) + '</td>';
+    h += '<td' + (cls ? ' class="' + cls + '"' : '') + '><em>'
+       + (c.chg === null || c.chg === undefined ? '—'
+          : mkArrow(c.chg) + ' ' + mkSigned(c.chg, c.d)
+            + (c.pct === null || c.pct === undefined ? '' : ' (' + mkSigned(c.pct, 2) + '%)'))
+       + '</em></td>';
+    return h + '</tr>';
+  }
+  it.cells.forEach(function(cc){
+    if(cc.v === null || cc.v === undefined){ h += '<td class="na">—</td>'; return; }
+    if(kind === 'bonds'){
+      h += '<td>' + mkFixed(cc.v, 3) + '%'
+         + (cc.chg === null || cc.chg === undefined ? ''
+            : '<em class="' + (cc.chg > 0 ? 'up' : (cc.chg < 0 ? 'down' : 'flat')) + '">'
+              + mkSigned(cc.chg, 3) + '</em>') + '</td>';
+      return;
+    }
+    var k2 = (cc.s === null || cc.s === undefined || !cc.s) ? '' : (cc.s > 0 ? 'up' : 'down');
+    h += '<td' + (k2 ? ' class="' + k2 + '"' : '') + '>' + mkFixed(cc.v, cc.d) + '</td>';
+  });
+  return h + '</tr>';
+}
+function mkhRender(){
+  var box = document.getElementById('mkh');
+  if(!box || !mkhSpec) return;
+  var kind = mkhSpec.kind, key = mkhSpec.key;
+  var info = mkhInfo(kind, key);
+  var title = document.getElementById('mkh-title'), note = document.getElementById('mkh-note'), list = document.getElementById('mkh-list');
+  if(!title || !list) return;
+  var cur = mkhSeries(kind, key), n = cur.items.length;
+  title.textContent = info.name + ' · ' + (n && n < MKH_MAX ? ('최근 ' + n + '거래일') : '최근 10거래일');
+  if(!n){
+    note.textContent = info.unit ? ('단위 ' + info.unit) : '';
+    list.innerHTML = '<div class="pk-empty">' + (marketHist ? '과거 기록이 없습니다'
+      : (marketHistErr === 'local' ? '지난 기록은 앱 주소(웹)에서만 볼 수 있습니다'
+      : (marketHistErr ? '과거 기록을 못 읽었습니다 — 잠시 뒤 다시 눌러 주세요' : '과거 기록을 불러오는 중…'))) + '</div>';
+    return;
+  }
+  var h = '<table class="mkh-tbl"><thead><tr><th>날짜</th>';
+  mkhHeads(kind, cur.items).forEach(function(t){ h += '<th>' + esc(t) + '</th>'; });
+  h += '</tr></thead><tbody>';
+  cur.items.forEach(function(it){ h += mkhRowHtml(it, kind); });
+  h += '</tbody></table>';
+  list.innerHTML = h;
+  note.textContent = cur.items[n-1].date + ' ~ ' + cur.items[0].date
+    + (info.unit ? ' · 단위 ' + info.unit : '') + ' · 그날 기록'
+    + ((n < MKH_MAX || cur.gaps) ? ' (값이 없는 날 제외)' : '');
+}
+function mkhClose(){
+  var box = document.getElementById('mkh');
+  if(box) box.classList.remove('on');
+  mkhSpec = null;
+}
+function mkhOpen(code){
+  var p = String(code || '').split('|');
+  if(!p[0] || !p[1]) return;
+  mkhSpec = { kind:p[0], key:p[1] };
+  var box = document.getElementById('mkh');
+  if(!box) return;
+  box.classList.add('on');
+  mkhRender();
+  setTxt('mkh-title', mkhInfo(p[0], p[1]).name + ' · 최근 10거래일');
+  /* market_history.json 이 아직 없으면 한 번 받아 와 다시 그린다 */
+  if(!marketHist && !marketHistErr && !marketHistBusy){
+    loadMarketHistory().then(function(){ if(mkhSpec) mkhRender(); });
+  }
+}
+(function mkhBind(){
+  var tab = document.getElementById('tab-market');
+  if(tab) tab.addEventListener('click', function(e){
+    var hit = (e.target && e.target.closest) ? e.target.closest('[data-mkh]') : null;
+    if(!hit) return;
+    mkhOpen(hit.getAttribute('data-mkh'));
+  });
+  var x = document.getElementById('mkh-x'); if(x) x.addEventListener('click', mkhClose);
+  var bd = document.getElementById('mkh-bd'); if(bd) bd.addEventListener('click', mkhClose);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && mkhSpec) mkhClose(); });
+})();
+
 function renderMarket(){
   updateHeaderWhen();   /* 상단 '평가 기준일' 칸의 업데이트 시각도 시장 파일 시각까지 반영 */
   var top = document.getElementById('mk-topwhen'), when = document.getElementById('mk-when');
@@ -4887,12 +5169,12 @@ function renderMarket(){
   if(ixEl) ixEl.textContent = mkUsDay(ix.asOf) ? (mkUsDay(ix.asOf) + ' 기준') : mkWhen(ix.asOf);
   (ix.rows || []).forEach(function(r){
     if(r.value === null || r.value === undefined){
-      h += '<div><span class="n">' + esc(r.name) + '</span><span class="v">—</span>'
+      h += '<div' + mkhAttr('index', r.key) + '><span class="n">' + esc(r.name) + '</span><span class="v">—</span>'
         + '<span class="c flat">미제공</span></div>';
       return;
     }
     var k = r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'flat');
-    h += '<div>'
+    h += '<div' + mkhAttr('index', r.key) + '>'
       + '<span class="n">' + esc(r.name) + '</span>'
       + '<span class="v ' + k + '">' + mkFixed(r.value, r.dec === undefined ? 2 : r.dec) + '</span>'
       + '<span class="c ' + k + '">'
@@ -4934,12 +5216,12 @@ function renderMarket(){
   var uh = '';
   (us.rows || []).forEach(function(r){
     if(r.value === null || r.value === undefined){
-      uh += '<div><span class="n">' + esc(r.name) + '</span><span class="v">—</span>'
+      uh += '<div' + mkhAttr('us', r.key) + '><span class="n">' + esc(r.name) + '</span><span class="v">—</span>'
         + '<span class="c flat">미제공</span></div>';
       return;
     }
     var uk = r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'flat');
-    uh += '<div>'
+    uh += '<div' + mkhAttr('us', r.key) + '>'
       + '<span class="n">' + esc(r.name) + '</span>'
       + '<span class="v ' + uk + '">' + mkFixed(r.value, r.dec === undefined ? 2 : r.dec) + '</span>'
       + '<span class="c ' + uk + '">'
@@ -4960,7 +5242,7 @@ function renderMarket(){
   if(fEl) fEl.textContent = mkWhen(fd.asOf);
   var fh = '<div class="mk-duo">';
   (fd.rows || []).forEach(function(r){
-    fh += '<div><span>' + esc(r.name) + ' <i>억원</i></span><b>'
+    fh += '<div' + mkhAttr('funds', r.key) + '><span>' + esc(r.name) + ' <i>억원</i></span><b>'
       + (r.value === null || r.value === undefined ? '—' : mkFixed(r.value, 0)) + '</b>'
       + '<em class="' + (r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'flat')) + '">'
       + (r.change === null || r.change === undefined ? '' : '전일 ' + mkSigned(r.change, 0)) + '</em></div>';
@@ -4973,13 +5255,13 @@ function renderMarket(){
     fh += '<div class="mk-mini"><div class="mk-tbl-h">프로그램 매매 <span>'
       + (pgWhen && pgWhen !== '—' ? esc(pgWhen) + ' · ' : '') + '백만원</span></div>'
       + '<table class="mk-tbl"><thead><tr><th></th>';
-    (pg.rows || []).forEach(function(c){ fh += '<th>' + esc(c.name) + '</th>'; });
+    (pg.rows || []).forEach(function(c){ fh += '<th' + mkhAttr('program', c.key) + '>' + esc(c.name) + '</th>'; });
     fh += '</tr></thead><tbody>';
     [['arb', '차익'], ['nonArb', '비차익']].forEach(function(pair){
-      fh += '<tr><td>' + pair[1] + '</td>';
+      fh += '<tr><td' + mkhAttr('programrow', pair[0]) + '>' + pair[1] + '</td>';
       (pg.rows || []).forEach(function(c){
         var v = c[pair[0]];
-        fh += '<td class="' + (v === null ? 'na"' : (v > 0 ? 'up"' : (v < 0 ? 'down"' : '"'))) + '>'
+        fh += '<td' + mkhAttr('program', c.key) + ' class="' + (v === null ? 'na"' : (v > 0 ? 'up"' : (v < 0 ? 'down"' : '"'))) + '>'
           + (v === null || v === undefined ? '—' : mkSigned(v, 0)) + '</td>';
       });
       fh += '</tr>';
@@ -4996,7 +5278,7 @@ function renderMarket(){
   (iv.cols || []).forEach(function(c){ ih += '<th>' + esc(c.name) + '</th>'; });
   ih += '</tr></thead><tbody>';
   (iv.rows || []).forEach(function(r){
-    ih += '<tr><td>' + esc(r.name) + '</td>';
+    ih += '<tr' + mkhAttr('investors', r.key) + '><td>' + esc(r.name) + '</td>';
     (r.values || []).forEach(function(v){
       ih += '<td class="' + (v === null ? 'na"' : (v > 0 ? 'up"' : (v < 0 ? 'down"' : '"'))) + '>'
         + (v === null || v === undefined ? '—' : mkSigned(v, 0)) + '</td>';
@@ -5017,7 +5299,7 @@ function renderMarket(){
   bcols.forEach(function(c){ bh += '<th>' + esc(c) + '</th>'; });
   bh += '</tr></thead><tbody>';
   (bd.rows || []).forEach(function(r){
-    bh += '<tr><td>' + esc(r.name) + '</td>';
+    bh += '<tr' + mkhAttr('bonds', r.key) + '><td>' + esc(r.name) + '</td>';
     [[r.y30, r.c30], [r.y10, r.c10], [r.y2, r.c2]].forEach(function(p){
       bh += '<td>' + (p[0] === null || p[0] === undefined ? '—' : mkFixed(p[0], 3) + '%')
         + (p[1] === null || p[1] === undefined ? '' : '<em class="' + (p[1] > 0 ? 'up' : (p[1] < 0 ? 'down' : 'flat'))
@@ -5034,11 +5316,11 @@ function renderMarket(){
   var mh = '';
   (mk.rows || []).forEach(function(r){
     if(r.value === null || r.value === undefined){
-      mh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span>'
+      mh += '<div class="mk-row"' + mkhAttr('market', r.key) + '><span class="nm">' + esc(r.name) + '</span><span class="val">—</span>'
         + '<span class="chg na">미제공</span></div>';
       return;
     }
-    mh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '<em>' + esc(r.unit || '') + '</em></span>'
+    mh += '<div class="mk-row"' + mkhAttr('market', r.key) + '><span class="nm">' + esc(r.name) + '<em>' + esc(r.unit || '') + '</em></span>'
       + '<span class="val">' + mkFixed(r.value, r.dec === undefined ? 2 : r.dec) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
   });
   var missing = (mk.rows || []).filter(function(r){ return (r.value === null || r.value === undefined); });
@@ -5053,10 +5335,10 @@ function renderMarket(){
   var eh = '';
   (en.rows || []).forEach(function(r){
     if(r.value === null || r.value === undefined){
-      eh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      eh += '<div class="mk-row"' + mkhAttr('energy', r.key) + '><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
       return;
     }
-    eh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '<em>USD/Bbl</em></span>'
+    eh += '<div class="mk-row"' + mkhAttr('energy', r.key) + '><span class="nm">' + esc(r.name) + '<em>USD/Bbl</em></span>'
       + '<span class="val">' + mkFixed(r.value, 2) + '</span>' + mkBadge(r.change, 2, r.pct) + '</div>';
   });
   eh += mkNote(en.note, true);
@@ -5079,10 +5361,10 @@ function renderMarket(){
     var cUnit = B ? (B.unit || 'USDT') : (cRow.unit || 'USDT');
     var cDec = cRow.dec === undefined ? 2 : cRow.dec;
     if(cVal === null || cVal === undefined){
-      ch += '<div class="mk-row"><span class="nm">' + esc(cRow.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      ch += '<div class="mk-row"' + mkhAttr('crypto', cRow.key) + '><span class="nm">' + esc(cRow.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
       return;
     }
-    ch += '<div class="mk-row"><span class="nm">' + esc(cRow.name) + '<em>' + esc(cUnit) + '</em></span>'
+    ch += '<div class="mk-row"' + mkhAttr('crypto', cRow.key) + '><span class="nm">' + esc(cRow.name) + '<em>' + esc(cUnit) + '</em></span>'
       + '<span class="val">' + mkFixed(cVal, cDec) + '</span>'
       + (cChg === null || cChg === undefined
           ? '<span class="chg flat"><b' + (B ? ' class="live" style="color:#1d7a4b"' : '') + '>' + (B ? '실시간' : '—') + '</b></span>'
@@ -5105,11 +5387,11 @@ function renderMarket(){
     var live = LIVE_FX[r.key] || null;
     var v = live ? live.rate : r.value;
     if(v === null || v === undefined){
-      xh += '<div class="mk-row"><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
+      xh += '<div class="mk-row"' + mkhAttr('fx', r.key) + '><span class="nm">' + esc(r.name) + '</span><span class="val">—</span><span class="chg na">미제공</span></div>';
       return;
     }
     var same = live ? (Math.abs(Number(v) - Number(r.value || 0)) < 0.005) : true;
-    xh += '<div class="mk-row"><span class="nm">' + esc(r.name)
+    xh += '<div class="mk-row"' + mkhAttr('fx', r.key) + '><span class="nm">' + esc(r.name)
       + (live ? '<em>' + esc(live.label || '실시간') + '</em>' : '<em>' + esc(r.unit || '원') + '</em>') + '</span>'
       + '<span class="val">' + mkFixed(v, r.dec === undefined ? 2 : r.dec) + '</span>'
       + (live && !same ? '<span class="chg flat"><b class="live" style="color:#1d7a4b">실시간</b></span>'
