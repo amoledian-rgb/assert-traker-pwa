@@ -157,3 +157,7 @@ test_sunny_v49.py
 shots_sunny49/
 shots_pk49/
 tmp_pk_preview.html
+
+# 백업 탭 엑셀(.xlsx) 내보내기 검증 (2026-11-26, xlsx-v1)
+test_xlsx.py
+shots_xlsx/
