@@ -4227,7 +4227,7 @@ function xRowXml(row, ri){
     var c = row[i];
     if(!c) continue;
     var ref = xCol(i) + ri;
-    if(c.t === 'n') out += '<c r="' + ref + '" s="' + c.s + '"><v>' + c.v + '</v></c>';
+    if(c.t === 'n') out += '<c r="' + ref + '" s="' + c.s + '" t="n"><v>' + c.v + '</v></c>';
     else if(c.t === 's' && c.v !== '') out += '<c r="' + ref + '" s="' + c.s + '" t="inlineStr"><is><t xml:space="preserve">' + xEsc(c.v) + '</t></is></c>';
     else out += '<c r="' + ref + '" s="' + c.s + '"/>';
   }
