@@ -3816,7 +3816,8 @@ function snapPickUpdateGo(){
   var n = snapPickCount(), b = document.getElementById('snap-pick-go');
   if(!b) return;
   b.disabled = (n === 0);
-  b.textContent = n ? ('선택한 ' + n + '개 날짜 가져오기') : '선택한 날짜 가져오기';
+  /* 87건처럼 많아도 버튼 한 줄에 들어가게 건수를 앞에 짧게 (mkhist-v1) */
+  b.textContent = n ? (n + '개 날짜 가져오기') : '선택한 날짜 가져오기';
 }
 function renderSnapPicker(){
   var list = document.getElementById('snap-pick-list');
