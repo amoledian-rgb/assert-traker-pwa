@@ -123,3 +123,4 @@ test_market_history.py
 shots_mkhist/
 sites_mkhist/
 tmp/
+sites_nohist/
