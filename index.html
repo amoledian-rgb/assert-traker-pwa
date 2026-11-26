@@ -493,6 +493,22 @@
   .tr-go:active, .tr-del:active{filter:brightness(.96)}
   .tr-row.on{background:#f4f7ff; border-radius:10px; padding-left:6px; padding-right:6px; margin:0 -6px}
   .tr-row.on .tr-go{background:#1B365D; border-color:#1B365D; color:#fff}
+  /* 날짜별 저장 기록 페이지 나눔 (trpager-v1) — 10개씩, 숫자 버튼 · 목록 좌우 스와이프
+     가로 스와이프를 앱 탭 이동에 빼앗기지 않도록 touch-action:pan-y (세로 스크롤만 브라우저가 맡는다) */
+  #tr-list{touch-action:pan-y}
+  .tr-pager{display:flex; flex-direction:column; align-items:center; gap:6px; margin-top:8px; padding-top:8px}
+  .tr-pg-meta{font-size:14px; font-weight:700; color:#8b93a4; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+  .tr-pg-row{display:flex; align-items:center; justify-content:center; gap:3px; max-width:100%; overflow:hidden}
+  .tr-pg-b{
+    flex:0 0 auto; min-width:30px; height:32px; padding:0 6px; border:1px solid var(--line); border-radius:9px;
+    background:#fff; color:#3c4761; font-family:inherit; font-size:15px; font-weight:800; line-height:1;
+    font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+  }
+  .tr-pg-b.on{background:var(--navy); border-color:var(--navy); color:#fff}
+  .tr-pg-b:active{filter:brightness(.96)}
+  .tr-pg-b:disabled{opacity:.32}
+  .tr-pg-e{flex:0 0 auto; width:13px; text-align:center; color:#a9b1c0; font-size:14px; font-weight:800; letter-spacing:0}
+  .tr-pg-hint{font-size:12.5px; color:#a9b1c0; font-weight:600; letter-spacing:-.01em; word-break:keep-all; text-align:center}
   .tr-now{margin-top:9px; display:flex; align-items:center; gap:8px; font-size:14.5px; color:#8b93a4; line-height:1.5; word-break:keep-all}
   .tr-now span{flex:1; min-width:0}
   .tr-now button{
@@ -908,7 +924,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 과거 날짜 추가</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 저장기록 페이지 이동</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1742,16 +1758,74 @@ function renderTrend(m){
     if(viewingDate){ setTxt('tr-vd', viewingDate); setTxt('tr-vdlbl', viewingDate); }
   }
 }
+/* 날짜별 저장 기록 — 최신순으로 페이지당 10개씩 (trpager-v1)
+   · 10개 이하면 예전과 똑같이 페이지 바 없이 쭉 보여 준다.
+   · 11개 이상이면 목록 아래에 '1 / 3페이지' + ‹ 1 2 3 … › 페이지 바를 둔다.
+   · 기록이 지워져 페이지 수가 줄면 trPage 를 유효 범위로 되돌린다. */
+var trPage = 1, TR_PER = 10;
+function trPageCount(n){ return Math.max(1, Math.ceil(num(n) / TR_PER)); }
+/* 페이지 번호 줄: 7페이지까지는 모두, 그보다 많으면 1 … 현재-1 현재 현재+1 … 마지막 (390px 폭에 한 줄로) */
+function trPageNums(p, cur){
+  var out = [], i, s, e;
+  if(p <= 7){ for(i = 1; i <= p; i++) out.push(i); return out; }
+  s = Math.max(2, cur - 1); e = Math.min(p - 1, cur + 1);
+  if(cur <= 4){ s = 2; e = 5; }               /* 앞쪽: 1 2 3 4 5 … p */
+  if(cur >= p - 3){ s = p - 4; e = p - 1; }   /* 뒤쪽: 1 … p-4 p-3 p-2 p-1 p */
+  out.push(1);
+  if(s > 2) out.push('…');
+  for(i = s; i <= e; i++) out.push(i);
+  if(e < p - 1) out.push('…');
+  out.push(p);
+  return out;
+}
+function renderTrPager(pages){
+  if(pages <= 1) return '';
+  var h = '<div class="tr-pg-row">' +
+    '<button type="button" class="tr-pg-b" data-pg="prev" aria-label="이전 페이지"' + (trPage <= 1 ? ' disabled' : '') + '>‹</button>';
+  trPageNums(pages, trPage).forEach(function(n){
+    if(n === '…') h += '<span class="tr-pg-e">…</span>';
+    else h += '<button type="button" class="tr-pg-b' + (n === trPage ? ' on' : '') + '" data-pg="' + n + '"' +
+              (n === trPage ? ' aria-current="page"' : '') + '>' + n + '</button>';
+  });
+  h += '<button type="button" class="tr-pg-b" data-pg="next" aria-label="다음 페이지"' + (trPage >= pages ? ' disabled' : '') + '>›</button>';
+  h += '</div>';
+  return '<div class="tr-pager">' +
+    '<div class="tr-pg-meta">' + trPage + ' / ' + pages + '페이지</div>' + h +
+    '<div class="tr-pg-hint">목록을 좌우로 밀어 페이지를 넘길 수 있어요</div>' +
+  '</div>';
+}
+/* 페이지 이동 — 화면 위·아래(그래프·요약)는 그대로 두고 목록만 다시 그린다. */
+function goTrendPage(n){
+  var pages = trPageCount(snapList().length);
+  n = Math.round(num(n));
+  if(!isFinite(n) || !(n >= 1)) return false;
+  if(n > pages) n = pages;
+  if(n === trPage) return false;              /* 1페이지에서 이전 · 마지막에서 다음은 그대로 */
+  trPage = n;
+  renderTrendList(snapList());
+  return true;
+}
+function trPageStep(d){ return goTrendPage(trPage + d); }
 function renderTrendList(rows){
   var box = document.getElementById('tr-list');
   if(!box) return;
   setTxt('tr-count', rows.length + '일');
   if(!rows.length){
+    trPage = 1;
+    box.removeAttribute('data-no-tab-swipe');
     box.innerHTML = '<div class="tr-empty">저장된 날짜가 없습니다.<br>💾 저장하기를 누르면 오늘이 첫 기록이 됩니다.</div>';
     return;
   }
+  var pages = trPageCount(rows.length);
+  if(!(trPage >= 1)) trPage = 1;
+  if(trPage > pages) trPage = pages;          /* 기록이 줄면 유효 범위로 자동 보정 */
+  /* 2페이지 이상일 때만 목록 안 탭 스와이프를 막는다 — 10개 이하면 예전처럼 목록 위에서도 탭이 넘어간다 */
+  if(pages > 1) box.setAttribute('data-no-tab-swipe', '1');
+  else box.removeAttribute('data-no-tab-swipe');
+  var end = rows.length - (trPage - 1) * TR_PER;   /* 이 페이지의 마지막(오래된 쪽) 인덱스 + 1 */
+  var start = Math.max(0, end - TR_PER);
   var html = '';
-  for(var j = rows.length - 1; j >= 0; j--){
+  for(var j = end - 1; j >= start; j--){
     var r = rows[j], prev = rows[j-1];
     var diff = prev ? r.total - prev.total : null;
     var gap = 0;
@@ -1772,7 +1846,7 @@ function renderTrendList(rows){
       '</div>' +
     '</div>';
   }
-  box.innerHTML = html;
+  box.innerHTML = html + renderTrPager(pages);
 }
 
 /* ---------- 저장 바: 수동 저장 (manual-save-v1) ----------
@@ -3145,6 +3219,7 @@ var swipeStart = null;
    (숫자를 고치거나 표를 옆으로 밀어 보는 동작이 탭 이동으로 새지 않게). */
 function swipeBlocked(el){
   for(var n = el; n && n.nodeType === 1 && n !== document.body && n !== document.documentElement; n = n.parentNode){
+    if(n.hasAttribute('data-no-tab-swipe')) return true;   /* 이 영역의 좌우 스와이프는 페이지 이동 몫 (trpager-v1) */
     if(n.tagName === 'INPUT' || n.tagName === 'SELECT' || n.tagName === 'TEXTAREA') return true;
     if(n.tagName === 'NAV') return true;
     if(n.isContentEditable) return true;
@@ -3175,6 +3250,70 @@ document.addEventListener('touchend', function(e){
   switchTab(TAB_ORDER[j]);
 }, {passive:true});
 
+/* ---------- 날짜별 저장 기록: 목록을 좌우로 밀어 페이지 넘기기 (trpager-v1) ----------
+   · #tr-list 안에서 가로로 밀면 페이지 이동만 한다 — 앱 탭 이동은 절대 발동하지 않는다
+     (data-no-tab-swipe 로 한 번 막고, 여기 리스너가 stopPropagation 으로 다시 막는다).
+   · 세로로 밀면 화면 스크롤에 맡기고(가로채지 않음), 한 페이지뿐이면 아예 가로채지 않는다. */
+var trListEl = document.getElementById('tr-list');
+var trSwipe = null, trSwipedAt = 0;
+function trSwipeAllowed(){ return trPageCount(snapList().length) > 1; }
+trListEl.addEventListener('touchstart', function(e){
+  trSwipe = null;
+  if(!e.touches || e.touches.length !== 1) return;
+  if(!trSwipeAllowed()) return;               /* 10개 이하 = 예전처럼 탭 스와이프가 그대로 된다 */
+  var t = e.touches[0];
+  trSwipe = { x:t.clientX, y:t.clientY, at:Date.now(), horiz:false };
+  swipeStart = null;                          /* 탭 스와이프 시작점이 남아 있지 않게 */
+  e.stopPropagation();
+}, {passive:true});
+trListEl.addEventListener('touchmove', function(e){
+  var s = trSwipe, t;
+  if(!s) return;
+  t = e.touches && e.touches[0];
+  if(!t) return;
+  var dx = t.clientX - s.x, dy = t.clientY - s.y;
+  if(!s.horiz){
+    if(Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) s.horiz = true;
+    else if(Math.abs(dy) > 10){ trSwipe = null; return; }   /* 세로 넘김 = 화면 스크롤에 맡긴다 */
+    else return;
+  }
+  if(e.cancelable) e.preventDefault();        /* 페이지를 넘기는 동안 화면이 흔들리지 않게 */
+  e.stopPropagation();
+}, {passive:false});
+function trSwipeFinish(e, dead){
+  var s = trSwipe; trSwipe = null;
+  if(!s) return;
+  e.stopPropagation();                        /* 탭 스와이프 판정으로 넘기지 않는다 */
+  if(dead || !s.horiz) return;
+  var t = e.changedTouches && e.changedTouches[0];
+  if(!t) return;
+  var dx = t.clientX - s.x, dy = t.clientY - s.y;
+  if(Date.now() - s.at > 1500) return;        /* 길게 눌렀다 끌면 이동 아님 */
+  if(Math.abs(dx) < 42) return;               /* 짧은 움직임은 누름으로 본다 */
+  if(Math.abs(dx) <= Math.abs(dy) * 1.2) return;
+  trSwipedAt = Date.now();                    /* 바로 뒤 따라오는 click 은 무시 */
+  trPageStep(dx < 0 ? 1 : -1);                /* 왼쪽으로 밀면 다음 · 오른쪽으로 밀면 이전 */
+}
+trListEl.addEventListener('touchend', function(e){ trSwipeFinish(e, false); }, {passive:true});
+trListEl.addEventListener('touchcancel', function(e){ trSwipeFinish(e, true); }, {passive:true});
+/* 데스크톱 마우스로도 같은 방식 (탭 스와이프는 터치 전용이라 겹치지 않는다) */
+var trMouse = null;
+trListEl.addEventListener('pointerdown', function(e){
+  trMouse = null;
+  if(e.pointerType !== 'mouse' || e.button !== 0) return;
+  if(!trSwipeAllowed()) return;
+  trMouse = { x:e.clientX, y:e.clientY, at:Date.now() };
+});
+window.addEventListener('pointerup', function(e){
+  var s = trMouse; trMouse = null;
+  if(!s || e.pointerType !== 'mouse') return;
+  var dx = e.clientX - s.x, dy = e.clientY - s.y;
+  if(Date.now() - s.at > 1500) return;
+  if(Math.abs(dx) < 42 || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
+  trSwipedAt = Date.now();
+  trPageStep(dx < 0 ? 1 : -1);
+});
+
 /* ---------- 추이 탭 조작: 기간 전환 · 포인트 터치 · 기록 불러오기 (trend-v1) ---------- */
 document.getElementById('tr-seg').addEventListener('click', function(e){
   var b = e.target.closest('button[data-range]');
@@ -3191,6 +3330,15 @@ document.getElementById('tr-chart').addEventListener('click', function(e){
   document.getElementById('tr-chart').innerHTML = trendChart(trendSeries, trendRange);
 });
 document.getElementById('tr-list').addEventListener('click', function(e){
+  if(Date.now() - trSwipedAt < 400) return;   /* 페이지를 넘긴 직후의 눌림은 무시 */
+  var pg = e.target.closest('[data-pg]');
+  if(pg){
+    var v = pg.getAttribute('data-pg');
+    if(v === 'prev') trPageStep(-1);
+    else if(v === 'next') trPageStep(1);
+    else goTrendPage(Number(v));
+    return;
+  }
   var del = e.target.closest('[data-del]');
   if(del){ deleteSnapshot(del.getAttribute('data-del')); return; }
   var b = e.target.closest('[data-load]');
@@ -3786,11 +3934,11 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-26T15:45:43+09:00",
+ "updatedAt": "2026-11-26T16:16:30+09:00",
  "bizdate": "20261126",
  "sections": {
   "index": {
-   "asOf": "2026-11-26T15:45:00+09:00",
+   "asOf": "2026-11-26T16:15:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
@@ -3800,7 +3948,7 @@ var MARKET_INLINE = {
      "change": 13.7,
      "pct": 0.29,
      "tradingValue": 12284259000000,
-     "asOf": "2026-11-26T15:45:00+09:00",
+     "asOf": "2026-11-26T16:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -3813,7 +3961,7 @@ var MARKET_INLINE = {
      "change": 5.07,
      "pct": 0.78,
      "tradingValue": 4831612000000,
-     "asOf": "2026-11-26T15:45:00+09:00",
+     "asOf": "2026-11-26T16:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -3826,7 +3974,7 @@ var MARKET_INLINE = {
      "change": 3.27,
      "pct": 0.45,
      "tradingValue": 11015044000000,
-     "asOf": "2026-11-26T15:45:00+09:00",
+     "asOf": "2026-11-26T16:15:00+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "장마감",
@@ -3850,11 +3998,11 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26252.75,
-     "change": 152.5,
-     "pct": 0.58,
+     "value": 26212,
+     "change": 111.75,
+     "pct": 0.43,
      "tradingValue": null,
-     "asOf": "2026-11-26T00:35:36-06:00",
+     "asOf": "2026-11-26T01:06:24-06:00",
      "marketStatus": "OPEN",
      "status": "OPEN",
      "statusText": "장중",
@@ -3865,14 +4013,14 @@ var MARKET_INLINE = {
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 724.8,
-     "change": 0.05,
-     "pct": 0.01,
-     "tradingValue": 21148455000000,
-     "asOf": "2026-11-26T15:25:59+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "value": 726.75,
+     "change": 2,
+     "pct": 0.28,
+     "tradingValue": 22434073000000,
+     "asOf": "2026-11-26T15:34:59+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2
     }
    ],
@@ -4007,16 +4155,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": -15236.7,
-     "nonArb": 187667.0,
-     "total": 172430.3
+     "arb": -15202.8,
+     "nonArb": 189128.4,
+     "total": 173925.7
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 10855.0,
-     "nonArb": -61922.6,
-     "total": -51067.7
+     "arb": 11407.9,
+     "nonArb": -62803.4,
+     "total": -51395.4
     }
    ],
    "ready": true,
@@ -4052,30 +4200,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -10440,
-      -1356,
-      58,
-      -11795
+      -10471,
+      -1366,
+      67,
+      -11837
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      -1096,
-      -1040,
-      708,
-      -2136
+      -1089,
+      -1049,
+      564,
+      -2138
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      7509,
-      2329,
-      -733,
-      9838
+      7531,
+      2347,
+      -597,
+      9878
      ]
     }
    ],
@@ -4084,7 +4232,7 @@ var MARKET_INLINE = {
    "warn": null
   },
   "bonds": {
-   "asOf": "2026-11-26T15:45:22+09:00",
+   "asOf": "2026-11-26T16:16:01+09:00",
    "src": "네이버 증권",
    "cols": [
     "30년",
@@ -4095,24 +4243,24 @@ var MARKET_INLINE = {
     {
      "key": "KR",
      "name": "한국",
-     "y10": 3.79,
-     "c10": -0.017,
+     "y10": 3.773,
+     "c10": -0.034,
      "y2": 3.667,
      "c2": 0.035,
-     "y30": 3.929,
-     "c30": -0.006,
-     "asOf": "2026-11-26T15:45:22+09:00"
+     "y30": 3.927,
+     "c30": -0.008,
+     "asOf": "2026-11-26T16:16:01+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.654,
-     "c10": 0.002,
+     "y10": 2.649,
+     "c10": -0.003,
      "y2": 1.762,
      "c2": 0.03,
-     "y30": 3.909,
-     "c30": -0.047,
-     "asOf": "2026-11-26T13:43:39+09:00"
+     "y30": 3.901,
+     "c30": -0.055,
+     "asOf": "2026-11-26T14:14:57+09:00"
     },
     {
      "key": "US",
@@ -4130,16 +4278,16 @@ var MARKET_INLINE = {
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T01:35:32-05:00",
+   "asOf": "2026-11-26T02:06:20-05:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.81,
-     "change": 0.14,
-     "pct": 0.14,
-     "asOf": "2026-11-26T01:35:32-05:00",
+     "value": 103.78,
+     "change": 0.12,
+     "pct": 0.11,
+     "asOf": "2026-11-26T02:06:20-05:00",
      "unit": "pt"
     },
     {
@@ -4154,19 +4302,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3566.1,
-     "change": 30.3,
-     "pct": 0.86,
-     "asOf": "2026-11-26T00:35:36-06:00",
+     "value": 3570.2,
+     "change": 34.4,
+     "pct": 0.97,
+     "asOf": "2026-11-26T01:06:23-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.37,
-     "change": 0.0335,
-     "pct": 0.63,
-     "asOf": "2026-11-26T00:35:36-06:00",
+     "value": 5.3885,
+     "change": 0.052,
+     "pct": 0.97,
+     "asOf": "2026-11-26T01:06:23-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -4175,25 +4323,25 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T00:35:36-06:00",
+   "asOf": "2026-11-26T01:06:23-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 84.05,
-     "change": 0.37,
-     "pct": 0.44,
-     "asOf": "2026-11-26T00:35:36-06:00",
+     "value": 83.97,
+     "change": 0.29,
+     "pct": 0.35,
+     "asOf": "2026-11-26T01:06:23-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 94.81,
-     "change": 0.2,
-     "pct": 0.21,
-     "asOf": "2026-11-26T06:35:36Z",
+     "value": 94.65,
+     "change": 0.04,
+     "pct": 0.04,
+     "asOf": "2026-11-26T07:06:23Z",
      "unit": "USD/Bbl"
     }
    ],
@@ -4201,17 +4349,17 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-26T15:45:03+09:00",
+   "asOf": "2026-11-26T16:14:21+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60476.07,
-     "change": 139.28,
-     "pct": 0.23,
+     "value": 60458.61,
+     "change": 121.82,
+     "pct": 0.2,
      "unit": "USDT",
-     "asOf": "2026-11-26T15:45:03+09:00"
+     "asOf": "2026-11-26T16:14:21+09:00"
     },
     {
      "key": "ETH",
@@ -4236,36 +4384,36 @@ var MARKET_INLINE = {
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-26T15:44:44+09:00",
+   "asOf": "2026-11-26T16:15:23+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.4,
-     "change": -3.1,
-     "pct": -0.23,
-     "asOf": "2026-11-26T15:44:44+09:00",
+     "value": 1342.9,
+     "change": -2.6,
+     "pct": -0.19,
+     "asOf": "2026-11-26T16:15:23+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 843.08,
-     "change": -2.3,
-     "pct": -0.27,
-     "asOf": "2026-11-26T15:44:44+09:00",
+     "value": 843.95,
+     "change": -1.43,
+     "pct": -0.17,
+     "asOf": "2026-11-26T16:15:23+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1471.67,
-     "change": -5.29,
-     "pct": -0.36,
-     "asOf": "2026-11-26T15:44:44+09:00",
+     "value": 1472.83,
+     "change": -4.13,
+     "pct": -0.28,
+     "asOf": "2026-11-26T16:15:23+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -4797,6 +4945,7 @@ function boot(){
                      setTrend:function(r){ trendRange = r; trSel = null; renderTrend(); },
                      get trendRange(){ return trendRange; },
                      get records(){ return snapList(); },
+                     get trPage(){ return trPage; }, goTrendPage:goTrendPage,
                      get market(){ return marketData; }, loadMarket:loadMarketFile,
                      refreshMarket:refreshMarket, liveMarket:liveMarket,
                      get marketLive(){ return mkLive; } };

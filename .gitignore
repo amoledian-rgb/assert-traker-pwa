@@ -108,3 +108,8 @@ test_date_add.py
 test_date_add_live.py
 shots_dateadd/
 sites_dateadd/
+
+# 추이 탭 기록 10개씩 페이지·스와이프 검증 (2026-11-26, trpager-v1)
+test_trpager.py
+shots_trpager/
+shots_trpager_live/
