@@ -151,3 +151,9 @@ sites_mkh10/
 # 시장 탭 써니 아이콘(pickle://) 검증 (2026-11-26, sunny48)
 test_sunny_v48.py
 shots_sunny48/
+
+# 시장 탭 피클 캐릭터 아이콘(pickle://) 검증 (2026-11-26, sunny49)
+test_sunny_v49.py
+shots_sunny49/
+shots_pk49/
+tmp_pk_preview.html

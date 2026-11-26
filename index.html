@@ -662,14 +662,17 @@
   #tab-market .sec span{font-size:15.75px}
   #tab-market .hint{font-size:14.5px; line-height:1.5}
   .mk-note.warn{color:#a06a14}
-  /* 써니 아이콘 (pickle:// 테스트 · 2026-11-26)
-     시장종합 제목 줄 오른쪽, `갱신` 글자 앞에 놓는 작은 보라 원형 배지. 줄 높이·폭을 늘리지 않도록 22px 고정. */
-  #tab-market .sec .mk-sunny{flex:0 0 auto; align-self:center; display:inline-flex; align-items:center; justify-content:center;
-    width:22px; height:22px; border-radius:50%; text-decoration:none; line-height:1; letter-spacing:0;
-    color:#fff; font-size:13.5px; font-weight:800;
-    background:linear-gradient(145deg,#8b5cf6 0%,#7c3aed 55%,#6d28d9 100%);
-    box-shadow:0 2px 5px -2px rgba(124,58,237,.65)}
-  #tab-market .sec .mk-sunny:active{filter:brightness(1.15)}
+  /* 써니 = 피클 캐릭터 아이콘 (pickle:// · 2026-11-26 v49)
+     `시장 데이터 기준` 카드 안, `🔄 새로고침` 왼쪽에 나란히. 새로고침 버튼과 같은 40px 높이의
+     아주 연한 보라 타일 안에 36px 캐릭터(보라 ㅅ 몸통 + 두 눈 + 미소)를 넣는다. */
+  #tab-market .mk-head-row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  #tab-market .mk-actions{flex:0 0 auto; display:flex; align-items:center; gap:8px}
+  #tab-market .mk-sunny{flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:12px; text-decoration:none; line-height:0; letter-spacing:0;
+    background:linear-gradient(160deg,#f7f3ff 0%,#ece3fe 100%);
+    border:1px solid rgba(124,58,237,.18); box-shadow:0 2px 6px -3px rgba(124,58,237,.5)}
+  #tab-market .mk-sunny svg{display:block; width:36px; height:36px; pointer-events:none}
+  #tab-market .mk-sunny:active{transform:translateY(1px); filter:brightness(.97)}
   /* ---------- 시장종합 지표 → 최근 10거래일 툴팁 (mkhist10-v1 · 2026-11-26) ----------
      카드 겉모양은 그대로 두고, 이미 그려진 줄·칸을 누를 수 있게만 한다(새 버튼·아이콘 없음).
      팝업은 화면 아래에서 올라오는 시트라 시장 탭의 배치·높이에 영향을 주지 않는다. */
@@ -724,14 +727,17 @@
   </div>
   <!-- ============ 🌐 시장 (시장종합) ============ -->
   <section class="tab active" id="tab-market">
-    <div class="sec">시장종합 <a class="mk-sunny" href="pickle://" aria-label="써니 부르기" title="써니 부르기">ㅅ</a><span id="mk-topwhen">불러오는 중…</span></div>
+    <div class="sec">시장종합 <span id="mk-topwhen">불러오는 중…</span></div>
     <div class="card mk-head" style="display:block">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+      <div class="mk-head-row">
         <div class="mk-when">
           <span>시장 데이터 기준</span>
           <b id="mk-when">—</b>
         </div>
-        <button type="button" class="mk-btn" id="mk-refresh">🔄 새로고침</button>
+        <div class="mk-actions">
+          <a class="mk-sunny" href="pickle://" aria-label="써니 부르기" title="써니 부르기"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><defs><linearGradient id="mkPkBody" gradientUnits="userSpaceOnUse" x1="0" y1="3" x2="0" y2="41"><stop offset="0" stop-color="#a78bfa"/><stop offset=".55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs><g fill="none" stroke="url(#mkPkBody)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M24 10.5 L13 34"/><path d="M24 10.5 L35 34"/></g><ellipse cx="20.1" cy="16.3" rx="3.2" ry="3.4" fill="#fff"/><ellipse cx="27.9" cy="16.3" rx="3.2" ry="3.4" fill="#fff"/><circle cx="20.45" cy="16.6" r="1.9" fill="#2b1a52"/><circle cx="28.25" cy="16.6" r="1.9" fill="#2b1a52"/><circle cx="19.75" cy="15.65" r="0.8" fill="#fff"/><circle cx="27.55" cy="15.65" r="0.8" fill="#fff"/><path d="M21.2 21.3 a2.8 2.8 0 0 0 5.6 0 z" fill="#231440"/><circle cx="15.6" cy="22.4" r="2.3" fill="#f472b6" opacity=".45"/><circle cx="32.4" cy="22.4" r="2.3" fill="#f472b6" opacity=".45"/></svg></a>
+          <button type="button" class="mk-btn" id="mk-refresh">🔄 새로고침</button>
+        </div>
       </div>
       <div class="mk-live" id="mk-live"><i></i>환율·코인은 새로고침할 때마다 실시간으로 다시 받습니다</div>
     </div>
@@ -977,7 +983,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 시장탭 써니 아이콘(테스트)</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 시장탭 피클 아이콘</span></div>
     </div>
 
     <div class="sec">초기화</div>
