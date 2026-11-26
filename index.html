@@ -662,6 +662,14 @@
   #tab-market .sec span{font-size:15.75px}
   #tab-market .hint{font-size:14.5px; line-height:1.5}
   .mk-note.warn{color:#a06a14}
+  /* 써니 아이콘 (pickle:// 테스트 · 2026-11-26)
+     시장종합 제목 줄 오른쪽, `갱신` 글자 앞에 놓는 작은 보라 원형 배지. 줄 높이·폭을 늘리지 않도록 22px 고정. */
+  #tab-market .sec .mk-sunny{flex:0 0 auto; align-self:center; display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%; text-decoration:none; line-height:1; letter-spacing:0;
+    color:#fff; font-size:13.5px; font-weight:800;
+    background:linear-gradient(145deg,#8b5cf6 0%,#7c3aed 55%,#6d28d9 100%);
+    box-shadow:0 2px 5px -2px rgba(124,58,237,.65)}
+  #tab-market .sec .mk-sunny:active{filter:brightness(1.15)}
   /* ---------- 시장종합 지표 → 최근 10거래일 툴팁 (mkhist10-v1 · 2026-11-26) ----------
      카드 겉모양은 그대로 두고, 이미 그려진 줄·칸을 누를 수 있게만 한다(새 버튼·아이콘 없음).
      팝업은 화면 아래에서 올라오는 시트라 시장 탭의 배치·높이에 영향을 주지 않는다. */
@@ -716,7 +724,7 @@
   </div>
   <!-- ============ 🌐 시장 (시장종합) ============ -->
   <section class="tab active" id="tab-market">
-    <div class="sec">시장종합 <span id="mk-topwhen">불러오는 중…</span></div>
+    <div class="sec">시장종합 <a class="mk-sunny" href="pickle://" aria-label="써니 부르기" title="써니 부르기">ㅅ</a><span id="mk-topwhen">불러오는 중…</span></div>
     <div class="card mk-head" style="display:block">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
         <div class="mk-when">
@@ -969,7 +977,7 @@
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 10거래일 툴팁·바깥 닫기</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-26 · 시장탭 써니 아이콘(테스트)</span></div>
     </div>
 
     <div class="sec">초기화</div>

@@ -147,3 +147,7 @@ test_mkh10.py
 shots_mkh10/
 shots_mkh10_live/
 sites_mkh10/
+
+# 시장 탭 써니 아이콘(pickle://) 검증 (2026-11-26, sunny48)
+test_sunny_v48.py
+shots_sunny48/
