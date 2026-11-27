@@ -167,3 +167,8 @@ test_v51.py
 shots_v51/
 sites_v51/
 backfill_history.py
+
+# 프로그램 매매 '전체' 열 · 유가 '난방유' 검증 (2026-11-27, v52)
+test_v52.py
+shots_v52/
+sites_v52/
