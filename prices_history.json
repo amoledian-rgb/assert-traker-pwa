@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-28T05:36:54+09:00",
+ "updatedAt": "2026-11-28T06:15:21+09:00",
  "count": 99,
  "dates": {
   "2026-07-14": {
@@ -40589,7 +40589,7 @@
    }
   },
   "2026-11-27": {
-   "fx": 1334.2,
+   "fx": 1335.5,
    "prices": {
     "삼성전자": {
      "code": "005930",
@@ -40659,17 +40659,17 @@
     "NVDA": {
      "code": "NVDA.O",
      "cur": "USD",
-     "price": 150.62
+     "price": 150.49
     },
     "AAPL": {
      "code": "AAPL.O",
      "cur": "USD",
-     "price": 358.85
+     "price": 358.54
     },
     "SOXL": {
      "code": "SOXL.K",
      "cur": "USD",
-     "price": 36.7
+     "price": 36.57
     },
     "SGOV": {
      "code": "SGOV.K",
