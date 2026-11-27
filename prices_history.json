@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-27T22:36:44+09:00",
+ "updatedAt": "2026-11-27T23:37:00+09:00",
  "count": 99,
  "dates": {
   "2026-07-14": {
@@ -40659,27 +40659,27 @@
     "NVDA": {
      "code": "NVDA.O",
      "cur": "USD",
-     "price": 149.3
+     "price": 147.43
     },
     "AAPL": {
      "code": "AAPL.O",
      "cur": "USD",
-     "price": 355.58
+     "price": 357.2
     },
     "SOXL": {
      "code": "SOXL.K",
      "cur": "USD",
-     "price": 32.02
+     "price": 34.01
     },
     "SGOV": {
      "code": "SGOV.K",
      "cur": "USD",
-     "price": 100.68
+     "price": 100.71
     },
     "BOXX": {
      "code": "BOXX.K",
      "cur": "USD",
-     "price": 119.22
+     "price": 119.26
     }
    }
   }
