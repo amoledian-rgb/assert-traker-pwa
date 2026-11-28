@@ -6629,8 +6629,10 @@ function updateCoinCalcs(m){
   var ea = document.getElementById('c-kimp-avg');
   if(ea){ ea.className = 'v' + (n ? ' ' + cls(sum) : ''); ea.textContent = n ? coinPctTxt(sum / n) + ' (' + n + '종목)' : '—'; }
   setTxt('c-src', coinLive.src || '—');
-  setTxt('c-kimpwhen', coinLive.at ? coinWhenTxt(coinLive.at) + ' 기준' : '—');
-  setTxt('c-stat', coinLive.at ? ('업비트 원화 · ' + coinWhenTxt(coinLive.at)) : '업비트 원화 기준');
+  setTxt('c-kimpwhen', viewingDate ? ('과거 기록 · 김프는 오늘 시세 기준')
+                                    : (coinLive.at ? coinWhenTxt(coinLive.at) + ' 기준' : '—'));
+  setTxt('c-stat', viewingDate ? (viewingDate + ' 기록 · 그 기록의 코인만')
+                                : (coinLive.at ? ('업비트 원화 · ' + coinWhenTxt(coinLive.at)) : '업비트 원화 기준'));
 }
 function renderCoins(m){
   m = m || compute();
