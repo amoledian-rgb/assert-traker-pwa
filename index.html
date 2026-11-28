@@ -6428,8 +6428,11 @@ var COIN_NAMES = { BTC:'비트코인', ETH:'이더리움', SOL:'솔라나', XRP:
   INJ:'인젝티브', FIL:'파일코인', HBAR:'헤데라', AAVE:'에이브', SAND:'샌드박스' };
 var COIN_MKTS_DEFAULT = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'];
 function coinSym(s){
-  return String(s == null ? '' : s).trim().toUpperCase()
-    .replace(/^KRW[-_\s]?/, '').replace(/USDT$/,'').replace(/[^A-Z0-9]/g, '').slice(0, 12);
+  var t = String(s == null ? '' : s).trim().toUpperCase()
+    .replace(/^KRW[-_\s]?/, '').replace(/[^A-Z0-9]/g, '').slice(0, 12);
+  /* 'BTCUSDT' 처럼 뒤에 USDT 를 붙여 넣은 경우만 떼어 낸다 — USDT 자체(원화 USDT 마켓)는 그대로 */
+  if(t.length > 4 && t.slice(-4) === 'USDT') t = t.slice(0, -4);
+  return t;
 }
 function coinName(sym){ return COIN_NAMES[sym] || ''; }
 /* 코인 상태 — 없으면 기본 관심 코인만 (값은 0) */
