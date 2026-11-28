@@ -6819,6 +6819,7 @@ function boot(){
   renderAll();
   renderSavebar();
   Array.prototype.forEach.call(document.querySelectorAll('.px-btn'), function(b){
+    if(b.id === 'c-refresh') return;   /* 코인 탭 새로고침은 업비트·바이낸스 코인 시세만 받는다 (v54) */
     b.addEventListener('click', function(){ refreshAll({manual:true}); });
   });
   var mkBtn = document.getElementById('mk-refresh');
