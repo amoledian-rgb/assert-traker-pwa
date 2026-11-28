@@ -395,19 +395,61 @@
   .chk:last-child{border-bottom:0}
   .chk .k{color:#5b6577; white-space:nowrap}
   .chk .v{font-weight:700; text-align:right; min-width:0}
+  /* ---------- 코인 탭 (coins-v1 · 2026-11-28 v53) ---------- */
+  .csum{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:11px}
+  .csum>div{background:#fbfcfe; border:1px solid var(--line); border-radius:12px; padding:10px 10px; min-width:0}
+  .csum span{display:block; font-size:15.75px; color:#8b93a4; margin-bottom:3px; word-break:keep-all}
+  .csum b{display:block; font-size:20px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.2}
+  .csum em{display:block; font-style:normal; font-size:15.75px; color:var(--sub); margin-top:2px; font-variant-numeric:tabular-nums; word-break:keep-all}
+  .csum .full{grid-column:1 / -1; background:#f4f7ff; border-color:#d5dff5}
+  .csum .full b{font-size:26px; color:#0f1c33}
+  /* 시세 카드 한 코인 — 심볼 줄 + 2×2 시세(원화·USDT·24h·김프) */
+  .coinrow{padding:11px 0; border-bottom:1px solid var(--line)}
+  .coinrow:first-child{padding-top:2px}
+  .coinrow:last-child{border-bottom:0; padding-bottom:2px}
+  .coinrow .chd{display:flex; align-items:baseline; gap:6px; min-width:0}
+  .coinrow .chd b{font-size:17.25px; font-weight:800; letter-spacing:-.01em; flex:0 0 auto}
+  .coinrow .chd .nm{font-size:14.5px; font-weight:600; color:#8b93a4; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .coinrow .chd .x{margin-left:auto; flex:0 0 auto; width:32px; height:32px; border:1px solid var(--line); border-radius:8px;
+    background:#fff; color:#b4bbc9; font-size:15px; line-height:1; padding:0}
+  .coinrow .chd .x:active{background:#fdeeee; border-color:#f1d3d3; color:var(--up)}
+  .coinrow .pxs{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px}
+  .coinrow .pxs>div{background:#fbfcfe; border:1px solid #eef1f6; border-radius:9px; padding:6px 8px; min-width:0}
+  .coinrow .pxs span{display:block; font-size:13.5px; font-weight:600; color:#98a1b3; margin-bottom:1px}
+  .coinrow .pxs b{display:block; font-size:16.5px; font-weight:700; font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  /* 보유 코인 카드 */
+  .crow{padding:11px 0; border-bottom:1px solid var(--line)}
+  .crow:first-child{padding-top:2px}
+  .crow:last-child{border-bottom:0; padding-bottom:2px}
+  .crow .chd{display:flex; align-items:baseline; gap:6px; margin-bottom:8px; min-width:0}
+  .crow .chd b{font-size:17.25px; font-weight:800; flex:0 0 auto}
+  .crow .chd .nm{font-size:14.5px; font-weight:600; color:#8b93a4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .crow .chd .ev{margin-left:auto; flex:0 0 auto; font-style:normal; font-size:15.75px; font-weight:800; font-variant-numeric:tabular-nums}
+  /* 코인 추가 줄 */
+  .cadd{display:flex; gap:7px; margin:0 12px 10px}
+  .cadd input{flex:1 1 auto; min-width:0; height:48px; border:1px solid var(--line); border-radius:11px; background:#fff;
+    padding:0 11px; font-size:17.25px; font-weight:700; color:var(--ink); letter-spacing:.01em; outline:none; text-transform:uppercase}
+  .cadd input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,110,240,.12)}
+  .cadd button{flex:0 0 auto; min-width:84px; height:48px; border:0; border-radius:11px; background:#1B365D; color:#fff;
+    font-size:17.25px; font-weight:800; padding:0 14px}
+  .cadd button:active{filter:brightness(1.07)}
+  .px-btn.sm{height:34px; padding:0 10px; font-size:14.5px}
   /* ---------- nav ---------- */
   nav{
     position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex;
     background:#fff; border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px);
     box-shadow:0 -6px 16px -12px rgba(20,27,43,.35);
   }
-  /* 7개 탭: 390px 폭에서 2글자 라벨이 잘리지 않게 (nav-v10 · 2026-11-25 글자 확대) */
+  /* 8개 탭: 390px 폭에서 3글자(예수금) 라벨까지 한 줄에 잘리지 않게 (nav-v11 · 2026-11-28 코인 탭) */
   nav button{
     flex:1 1 0; min-width:0; border:0; background:transparent; padding:8px 0 9px; color:#98a1b3;
     display:flex; flex-direction:column; align-items:center; gap:3px;
     font-size:14px; font-weight:700; letter-spacing:-.04em; white-space:nowrap; overflow:hidden;
   }
   nav button i{font-style:normal; font-size:19px; line-height:1.15; filter:grayscale(1); opacity:.55}
+  nav.nav8 button{padding:7px 0 8px; gap:2px; font-size:12.5px; letter-spacing:-.055em}
+  nav.nav8 button i{font-size:17px}
   nav button.on{color:var(--navy)}
   nav button.on i{filter:none; opacity:1}
   .toast{
@@ -812,6 +854,8 @@
         <div><span>투자원금</span><b id="s-principal">0</b></div>
         <div><span>주식 평가액</span><b id="s-stock">0</b></div>
         <div><span>예수금</span><b id="s-cash">0</b></div>
+        <div><span>코인 평가액</span><b id="s-coin">0</b></div>
+        <div><span>코인 예수금</span><b id="s-coincash">0</b></div>
         <div><span>달러자산</span><b id="s-usd">$0.00</b><span class="fxg" id="s-usd-gain">기준 환율 입력 시 환차익 표시</span></div>
       </div>
     </div>
@@ -938,6 +982,9 @@
       </div>
       <div class="wbar2" id="w-bar"><i style="background:#1B365D;width:0%"></i><i style="background:#c9a227;width:0%"></i></div>
       <div class="barnum"><span id="w-barl">주식 0.0%</span><span id="w-barr">예수금 0.0%</span></div>
+      <div class="rowline" id="w-coinrow" style="display:none; margin-top:6px; padding-top:7px; border-top:1px dashed var(--line)">
+        <span class="k">코인 (평가액 · 예수금)</span><span class="v" id="w-coin">—</span>
+      </div>
     </div>
 
     <div class="sec">종목별 보유 내역 · 비중 <span id="st-count">0종목</span></div>
@@ -946,7 +993,47 @@
 
     <div class="sec">예수금 비중 <span>참고</span></div>
     <div class="card" id="w-cashrows"></div>
-    <p class="hint" style="margin:0 16px 18px">비중은 모두 <b>총자산(주식 + 원화 예수금 + 달러 예수금 환산)</b> 대비입니다. 종목 비중 합계 + 예수금 비중 = 100.0%가 됩니다. 계좌 옆 괄호는 그 계좌의 매입단가, 평균단가는 계좌별 매입단가의 수량가중 평균이며, 매입단가를 비워 둔 종목은 손익을 표시하지 않습니다.</p>
+    <p class="hint" style="margin:0 16px 18px">비중은 모두 <b>총자산(주식 + 원화 예수금 + 달러 예수금 환산 + 코인)</b> 대비입니다. 종목 비중 합계 + 예수금 비중 + 코인 비중 = 100.0%가 됩니다. 계좌 옆 괄호는 그 계좌의 매입단가, 평균단가는 계좌별 매입단가의 수량가중 평균이며, 매입단가를 비워 둔 종목은 손익을 표시하지 않습니다.</p>
+  </section>
+
+  <!-- ============ 코인 (coins-v1) — 보유 코인·김프·시세. 보유 수량·매입단가는 이 폰에만 ============ -->
+  <section class="tab" id="tab-coins">
+    <div class="sec">코인 자산 <span id="c-stat">업비트 원화 기준</span></div>
+    <div class="card">
+      <div class="hero-num" id="c-total">0<em>원</em></div>
+      <div class="hero-pnl" id="c-pnl"><span>0원</span><span class="chiprate">0.0%</span><span class="flat">평가손익</span></div>
+      <div class="csum">
+        <div><span>코인 평가액</span><b id="c-eval">0원</b><em id="c-evaln">0종목</em></div>
+        <div><span>코인 예수금</span><b id="c-cash">0원</b><em>원화 대기금</em></div>
+        <div><span>총 매입금액</span><b id="c-cost">0원</b><em id="c-costn">매입단가 입력분</em></div>
+        <div><span>총자산에 더해짐</span><b id="c-sum">0원</b><em id="c-sumpct">총자산의 0.0%</em></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <label class="f"><span>코인 예수금 <u>원</u></span><input class="t" id="c-cash-in" inputmode="numeric" placeholder="0"></label>
+        <label class="f"><span>기준 환율 <u>₩/$</u></span><input class="t" id="c-fx-in" value="—" readonly tabindex="-1" style="background:#f2f4f8;color:#5b6577"></label>
+      </div>
+      <p class="hint">코인 평가액 = 보유 수량 × 업비트 원화 현재가. 매입단가를 넣은 코인만 손익·수익률을 계산하고, 비워 둔 코인은 <b>평가액만</b> 총자산에 더합니다(원금을 지어내지 않음).</p>
+    </div>
+
+    <div class="sec">김치프리미엄 <span id="c-kimpwhen">—</span></div>
+    <div class="card">
+      <div class="rowline"><span class="k">BTC 김프</span><span class="v" id="c-kimp-btc">—</span></div>
+      <div class="rowline"><span class="k">표시 코인 평균</span><span class="v" id="c-kimp-avg">—</span></div>
+      <div class="rowline"><span class="k">시세 출처</span><span class="v" id="c-src" style="font-size:15.75px;font-weight:600;color:#5b6577;text-align:right">—</span></div>
+      <p class="hint">김프(%) = 업비트 원화가 ÷ (해외 USDT가 × 기준 환율) − 1. 해외가는 바이낸스 USDT 공개 시세, 원화가는 업비트 공개 시세입니다.</p>
+    </div>
+
+    <div class="sec">주요·관심 코인 <span class="secright"><button class="px-btn sm" type="button" id="c-refresh">🔄 새로고침</button></span></div>
+    <div class="card" id="c-list"></div>
+    <div class="cadd">
+      <input id="c-add-in" placeholder="심볼 (예: SUI·ADA·PEPE)" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button type="button" id="c-add-go">추가</button>
+    </div>
+
+    <div class="sec">보유 코인 · 매입단가 <span id="c-holdn">0개</span></div>
+    <div class="note">수량은 소수점 여덟 자리까지 넣을 수 있습니다. 여기 적은 수량·매입단가·예수금은 <b>이 폰(localStorage)에만</b> 저장되고 GitHub 에는 올라가지 않습니다.</div>
+    <div class="card" id="c-holds"></div>
+    <p class="hint" style="margin:0 16px 18px">코인 탭의 값은 <b>💾 저장하기</b>를 눌렀을 때만 남습니다. 저장하면 요약·추이의 총자산과 그날 기록에 코인 평가액 + 코인 예수금이 함께 들어갑니다. 업비트에 없는 심볼은 시세가 <b>—</b>로 남고, 그 코인의 평가액도 0원으로 둡니다.</p>
   </section>
 
   <!-- ============ 추이 ============ -->
@@ -996,7 +1083,7 @@
       <button class="btn" id="btn-import">⬆ 백업 불러오기 <small>.json</small></button>
       <input type="file" id="file-in" accept=".json,application/json" style="display:none">
       <button class="btn xlsx" id="btn-export-xlsx">📊 엑셀로 내보내기 <small>.xlsx</small></button>
-      <p class="hint">지금 보고 있는 기준일 그대로 <b>요약·보유종목·예수금·원금·일별추이</b> 시트 4개로 담습니다 — 엑셀에서 바로 합계·정렬이 됩니다.</p>
+      <p class="hint">지금 보고 있는 기준일 그대로 <b>요약·보유종목·예수금·원금·일별추이</b> 시트로 담습니다 — 코인을 보유하고 있으면 <b>코인</b> 시트도 함께 나갑니다. 엑셀에서 바로 합계·정렬이 됩니다.</p>
       <button class="btn" id="btn-import-dates">📅 백업에서 날짜 기록만 가져오기 <small>.json</small></button>
       <input type="file" id="file-dates-in" accept=".json,application/json" style="display:none">
       <p class="hint">예전에 저장한 백업 파일에서 <b>원하는 날짜 기록만</b> 골라 지금 기록에 더합니다. 오늘 데이터(보유·예수금·기준일)는 그대로 남습니다.</p>
@@ -1013,9 +1100,10 @@
     <div class="card">
       <div class="chk"><span class="k">계좌 / 종목</span><span class="v" id="chk-cnt">—</span></div>
       <div class="chk"><span class="k">원화 종목 / 달러 종목</span><span class="v" id="chk-cur">—</span></div>
+      <div class="chk"><span class="k">코인 (평가액 + 예수금)</span><span class="v" id="chk-coin">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-27 · 프로그램 전체 · 난방유 추가</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-28 · 🪙 코인 탭 추가</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1036,12 +1124,13 @@
   </div>
 </div>
 
-<nav>
+<nav class="nav8">
   <button class="on" data-tab="market"><i>🌐</i>시장</button>
   <button data-tab="summary"><i>📊</i>요약</button>
   <button data-tab="input"><i>✏️</i>입력</button>
   <button data-tab="cash"><i>💵</i>예수금</button>
   <button data-tab="stocks"><i>📈</i>종목</button>
+  <button data-tab="coins"><i>🪙</i>코인</button>
   <button data-tab="trend"><i>📉</i>추이</button>
   <button data-tab="backup"><i>💾</i>백업</button>
 </nav>
@@ -1161,11 +1250,16 @@ function normHoldings(list){
              avg:(h.avg===''||h.avg==null)?null:num(h.avg) };
   });
 }
-/* 계좌·종목·환율만으로 총자산을 구한다 (스냅샷 하나를 계산할 때) */
+/* 계좌·종목·코인·환율만으로 총자산을 구한다 (스냅샷 하나를 계산할 때) */
 function bodyTotal(body){
   var fx = num(body.fx), t = 0;
   normAccounts(body.accounts).forEach(function(a){ t += a.cashKrw + a.cashUsd*fx; });
   normHoldings(body.holdings).forEach(function(h){ t += (h.cur === 'USD') ? num(h.price)*num(h.qty)*fx : num(h.price)*num(h.qty); });
+  /* 코인은 그 기록(coins)에 담긴 값만 더한다 — coins 가 없는 옛 기록은 0원 그대로 (coins-v1) */
+  if(body.coins){
+    var ce = coinEvalOf(body.coins);
+    t += ce.eval + ce.cash;
+  }
   return t;
 }
 /* 날짜별 스냅샷: {'YYYY-MM-DD': {asOf, fx, accounts, holdings, total, savedAt, source}} (snap-v1) */
@@ -1176,8 +1270,10 @@ function normSnapshots(snaps){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
     var s = snaps[k];
     if(!s || !Array.isArray(s.accounts) || !Array.isArray(s.holdings)) return;
-    var body = { fx:num(s.fx), accounts:normAccounts(s.accounts), holdings:normHoldings(s.holdings) };
+    var body = { fx:num(s.fx), accounts:normAccounts(s.accounts), holdings:normHoldings(s.holdings),
+                 coins:((s.coins && typeof s.coins === 'object') ? normCoins(s.coins) : null) };
     out[k] = { asOf:k, fx:body.fx, accounts:body.accounts, holdings:body.holdings,
+               coins:body.coins,
                total:num(s.total) || Math.round(bodyTotal(body)),
                savedAt:(typeof s.savedAt === 'string' ? s.savedAt : null),
                source:(typeof s.source === 'string' ? s.source : 'save') };
@@ -1209,6 +1305,8 @@ function normalize(d){
     fxLive: normFxLive(d.fxLive),
     accounts: normAccounts(d.accounts),
     holdings: normHoldings(d.holdings),
+    /* 코인 보유·예수금 — 이 폰에만 남는다 (coins-v1) */
+    coins: normCoins(d.coins),
     snapshots: normSnapshots(d.snapshots),
     /* 사용자가 지운 날짜 — 시세 기록(prices_history.json)으로 다시 메우지 않는다 (edit-past-v1) */
     deletedSnaps: (Array.isArray(d.deletedSnaps) ? d.deletedSnaps.filter(function(x){ return /^\d{4}-\d{2}-\d{2}$/.test(String(x)); }).slice(-SNAP_MAX) : [])
@@ -1290,6 +1388,7 @@ function recordSnapshot(date, source){
   state.snapshots[date] = {
     asOf: date, fx: num(state.fx),
     accounts: clone(state.accounts), holdings: clone(state.holdings),
+    coins: clone(normCoins(state.coins)),
     total: Math.round(m.totalAssets),
     savedAt: new Date().toISOString(), source: source || 'save'
   };
@@ -1399,7 +1498,10 @@ function autoBackfill(hist){
     var accounts = clone(state.accounts);
     state.snapshots[d] = {
       asOf: d, fx: fx, accounts: accounts, holdings: holdings,
-      total: Math.round(bodyTotal({ fx:fx, accounts:accounts, holdings:holdings })),
+      /* 코인은 오늘 기록에만 넣는다 — 지난 날의 코인 가격 기록이 없어 오늘 보유로 지어내지 않는다 */
+      coins: (d >= todayKST()) ? clone(normCoins(state.coins)) : null,
+      total: Math.round(bodyTotal({ fx:fx, accounts:accounts, holdings:holdings,
+                                   coins:(d >= todayKST()) ? normCoins(state.coins) : null })),
       savedAt: new Date().toISOString(), source: 'history'
     };
     made++;
@@ -1479,6 +1581,10 @@ function loadSnapshot(date){
   Object.keys(state.snapshots || {}).forEach(function(k){ view.snapshots[k] = clone(state.snapshots[k]); });
   view.asOf = snap.asOf; view.fx = snap.fx;
   view.pricesAppliedAt = state.pricesAppliedAt;
+  /* 코인은 그 기록에 담긴 만큼만 — 옛 기록(coins 없음)은 0원이고, 오늘 코인이 이 화면에 섞이지 않는다 (coins-v1) */
+  var liveC = normCoins((liveState || state).coins);
+  view.coins = snap.coins ? clone(normCoins(snap.coins))
+                          : { cashKrw:0, mkts:liveC.mkts.slice(), hold:{}, px:{} };
   state = view;
   viewBaseline = clone(snap);          /* 되돌리기 기준 — 이 날짜 기록을 열었을 때의 값 */
   viewingDate = date;
@@ -1508,6 +1614,7 @@ function viewedSnapshotBody(){
   var m = compute();
   return { asOf: viewingDate, fx: num(state.fx),
            accounts: clone(state.accounts), holdings: clone(state.holdings),
+           coins: clone(normCoins(state.coins)),
            total: Math.round(m.totalAssets),
            savedAt: new Date().toISOString(), source: 'edit' };
 }
@@ -1632,11 +1739,13 @@ function baseSnapshotOf(key){
   if(!key || key === 'today'){
     var L = baseLiveState() || state;
     if(!L) return null;
-    return { key:'today', fx:num(L.fx), accounts:clone(L.accounts || []), holdings:clone(L.holdings || []) };
+    return { key:'today', fx:num(L.fx), accounts:clone(L.accounts || []), holdings:clone(L.holdings || []),
+             coins:clone(normCoins(L.coins)) };
   }
   var s = state.snapshots && state.snapshots[key];
   if(!s) return null;
-  return { key:key, fx:num(s.fx), accounts:clone(s.accounts || []), holdings:clone(s.holdings || []) };
+  return { key:key, fx:num(s.fx), accounts:clone(s.accounts || []), holdings:clone(s.holdings || []),
+           coins:(s.coins ? clone(normCoins(s.coins)) : null) };
 }
 function marketUsdKrw(d){          /* 과거 시장종합의 그날 USDKRW (market_history.json) */
   var ds = (marketHist && marketHist.dates) || {};
@@ -1789,9 +1898,11 @@ function createPastSnapshot(date, baseKey){
   });
   var accounts = clone(base.accounts || []);
   if(!state.snapshots) state.snapshots = {};
+  var coins = base.coins ? clone(normCoins(base.coins)) : null;
   state.snapshots[date] = {
     asOf: date, fx: fx, accounts: accounts, holdings: holdings,
-    total: Math.round(bodyTotal({ fx:fx, accounts:accounts, holdings:holdings })),
+    coins: coins,
+    total: Math.round(bodyTotal({ fx:fx, accounts:accounts, holdings:holdings, coins:coins })),
     savedAt: new Date().toISOString(), source: 'edit'
   };
   unsnapSkip(date);                    /* 지운 날짜에서 해제 — 시세 기록으로 다시 메우지 않게 */
@@ -1819,6 +1930,10 @@ function useSnapshotNow(){
   state.asOf = view.asOf; state.fx = num(view.fx);
   state.fxLive = null;                     /* 과거 기록의 환율을 지금 환율로 착각하지 않게 */
   state.accounts = clone(view.accounts); state.holdings = clone(view.holdings);
+  /* 코인이 담긴 기록이면 그것도 옮긴다 — 옛 기록(코인 없음)은 지금 코인을 지우지 않는다 */
+  if(view.coins && (Object.keys(normCoins(view.coins).hold).length || num(view.coins.cashKrw) > 0)){
+    state.coins = clone(normCoins(view.coins));
+  }
   setViewing(null);
   baselineText = JSON.stringify(state); dirty = true;
   renderAll(); renderSavebar(); syncBar();
@@ -1840,12 +1955,17 @@ function isoWeekKey(dstr){
   return y + '-W' + pad2(1 + Math.round((d - jan4) / (7 * 86400000)));
 }
 function snapPrincipal(s){
-  /* 그날 기록의 계좌별 원금(투자원금) 합계 — 계좌가 없거나 모두 0인 옛 기록은 null 로 둔다 (trend-principal-v1) */
+  /* 그날 기록의 계좌별 원금(투자원금) 합계 — 계좌가 없거나 모두 0인 옛 기록은 null 로 둔다 (trend-principal-v1)
+     코인 기록이 있으면 매입단가를 넣은 코인의 매입금액도 원금에 더한다 (coins-v1) */
   if(!s) return null;
   var accs = s.accounts || [], p = 0, ok = false;
   for(var i=0;i<accs.length;i++){
     var v = num(accs[i] && accs[i].principal);
     if(v > 0){ p += v; ok = true; }
+  }
+  if(s.coins){
+    var cc = coinEvalOf(s.coins).cost;
+    if(cc > 0){ p += cc; ok = true; }
   }
   return ok ? p : null;
 }
@@ -2319,7 +2439,7 @@ var barShown = null, barDirty = null;
 function syncBar(){
   var bar = document.getElementById('savebar');
   if(!bar) return;
-  var want = viewingDate ? (activeTab !== 'market') : (activeTab === 'input' || activeTab === 'cash' || dirty);
+  var want = viewingDate ? (activeTab !== 'market') : (activeTab === 'input' || activeTab === 'cash' || activeTab === 'coins' || dirty);
   if(bar.classList.contains('on') !== want) bar.classList.toggle('on', want);
   if(want !== barShown || dirty !== barDirty){ barShown = want; barDirty = dirty; fitFrame(); }
 }
@@ -2482,8 +2602,15 @@ function compute(){
     a.ret = a.principal ? a.pnl / a.principal : 0;
     stockSum += a.stock; cashKrw += a.cashKrw; cashUsd += a.cashUsd; principalSum += a.principal;
   });
-  var totalAssets = stockSum + cashKrw + cashUsd * fx;
-  var pnl = totalAssets - principalSum;
+  /* 코인 자산 (coins-v1) — 계좌 자산과 따로 계산해 총자산에 더한다
+     · 평가액 = 보유 수량 × 업비트 원화가, 예수금 = 코인 원화 대기금
+     · 매입단가(avg)를 넣은 코인만 원금·손익에 넣는다 — 빈 코인의 이익을 지어내지 않는다 */
+  var coinE = coinEvalOf(state.coins);
+  var accPrincipal = principalSum;
+  var accAssets = stockSum + cashKrw + cashUsd * fx;
+  var totalAssets = accAssets + coinE.eval + coinE.cash;
+  var pnl = (accAssets - accPrincipal) + coinE.pnl;
+  principalSum = accPrincipal + coinE.cost;
   var ret = principalSum ? pnl / principalSum : 0;
   /* 통화별 분리 (cur-split-v1) */
   var stockKrw = 0, usdStock = 0, usdStockKrw = 0;
@@ -2550,7 +2677,9 @@ function compute(){
            stockKrw:stockKrw, usdStockKrw:usdStockKrw, krwTotal:krwTotal, cashAll:cashAll,
            totalAssets:totalAssets, principalSum:principalSum, pnl:pnl, ret:ret,
            usdTotal:usdTotal, usdKrw:usdKrw, fxBase:fxBase, fxDiff:fxDiff, fxGain:fxGain,
-           subs:subs, stocks:stocks };
+           subs:subs, stocks:stocks,
+           coin:coinE, coinEval:coinE.eval, coinCash:coinE.cash, coinAll:coinE.eval + coinE.cash,
+           accPrincipal:accPrincipal, accAssets:accAssets };
 }
 
 /* ---------- header ---------- */
@@ -2629,6 +2758,8 @@ function renderSummary(m){
   document.getElementById('s-principal').textContent = won(m.principalSum);
   document.getElementById('s-stock').textContent = won(m.stockSum);
   document.getElementById('s-cash').textContent = won(m.cashAll);
+  setTxt('s-coin', won(m.coinEval));
+  setTxt('s-coincash', won(m.coinCash));
   document.getElementById('s-usd').innerHTML = usd(m.usdTotal) + ' <em>(' + won(m.usdKrw) + ')</em>';
 
   var st = m.subs['주식'], pen = m.subs['연금'];
@@ -2894,6 +3025,13 @@ function renderHoldings(m){
   }
   setTxt('w-barl', '주식 ' + pct(sp));
   setTxt('w-barr', '예수금 ' + pct(cp));
+  /* 코인 비중 행 — 코인이 있을 때만 보인다 (종목 탭 기본 모습은 그대로) */
+  var crow = document.getElementById('w-coinrow');
+  if(crow){
+    var hasC = m.coinAll > 0;
+    crow.style.display = hasC ? '' : 'none';
+    if(hasC) setTxt('w-coin', pct(total ? m.coinAll / total : 0) + ' · ' + won(m.coinAll));
+  }
 
   setTxt('st-count', m.stocks.length + '종목 · 주식 ' + won(m.stockSum));
   var box = document.getElementById('stocks');
@@ -3001,6 +3139,9 @@ function renderBackup(m){
   var curEl = document.getElementById('chk-cur');
   if(curEl) curEl.textContent = kn + '건 / ' + un + '건';
   document.getElementById('chk-saved').textContent = lastSaved ? (lastSaved.getMonth()+1) + '/' + lastSaved.getDate() + ' ' + clockOf(lastSaved) : '—';
+  var cEl = document.getElementById('chk-coin');
+  if(cEl) cEl.textContent = m.coin.n ? (m.coin.n + '종목 · ' + won(m.coinEval) + (m.coinCash > 0 ? ' + ' + won(m.coinCash) : ''))
+                                    : (m.coinCash > 0 ? ('예수금 ' + won(m.coinCash)) : '없음');
   var pEl = document.getElementById('chk-prices');
   if(pEl) pEl.textContent = state.pricesAppliedAt ? (priceStampText(state.pricesAppliedAt) + ' 종가') : '—';
 }
@@ -3029,6 +3170,7 @@ function renderAll(){
   else if(activeTab === 'backup') renderBackup(m);
   else if(activeTab === 'input') renderInputTab(m);
   else if(activeTab === 'cash') renderCashTab(m);
+  else if(activeTab === 'coins') renderCoins(m);
 }
 function afterChange(opts){
   markChanged();   /* state(메모리)만 갱신 — localStorage 저장은 💾 저장하기 에서만 */
@@ -3050,6 +3192,10 @@ function afterChange(opts){
     if(opts && opts.rebuild) renderAccs(m);
     updateInputCalcs(m);
   }
+  else if(activeTab === 'coins'){
+    if(opts && opts.rebuild){ renderCoinList(); renderCoinHolds(); }
+    updateCoinCalcs(m);
+  }
 }
 function switchTab(t){
   activeTab = t;
@@ -3064,6 +3210,7 @@ function switchTab(t){
   if(t === 'input') renderInputTab(m);
   if(t === 'cash') renderCashTab(m);
   if(t === 'stocks') renderHoldings(m);
+  if(t === 'coins'){ renderCoins(m); coinMaybeLoad(); }
   if(t === 'trend') renderTrend(m);
   if(t === 'backup') renderBackup(m);
   window.scrollTo(0,0);
@@ -3592,6 +3739,7 @@ function refreshAll(opts){
 function decDigits(dec){
   if(!dec) return 0;
   if(dec === 'usd' || dec === 'usdq') return 4;
+  if(dec === 'coinq') return 8;
   return 2;
 }
 /* 타이핑 중 값을 다듬는다: dec 가 있으면 소수점(자릿수는 decDigits)을 살리고, false 면 정수만 남긴다 */
@@ -3626,6 +3774,7 @@ function settleNum(e, dec){
   var v = num(e.value);
   if(dec === 'usd')       e.value = v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:4});
   else if(dec === 'usdq') e.value = v.toLocaleString('en-US',{maximumFractionDigits:4});
+  else if(dec === 'coinq')e.value = v.toLocaleString('en-US',{maximumFractionDigits:8});
   else                    e.value = v.toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function bindNumber(e, handler, dec){
@@ -3640,7 +3789,7 @@ document.querySelector('nav').addEventListener('click', function(e){
 });
 
 /* ---------- 탭 좌우 스와이프 (2026-11-24) — 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭 ---------- */
-var TAB_ORDER = ['market', 'summary', 'input', 'cash', 'stocks', 'trend', 'backup'];
+var TAB_ORDER = ['market', 'summary', 'input', 'cash', 'stocks', 'coins', 'trend', 'backup'];
 var swipeStart = null;
 
 /* 입력 칸·선택 상자·텍스트영역, 가로로 스크롤되는 표·영역, 하단 탭바 위에서 시작한 터치는 건너뜁니다
@@ -4376,6 +4525,10 @@ function xRatio(v, s){                /* 수익률·비중 같은 비율 셀 —
   if(v == null || !isFinite(Number(v))) return { t:'b', s:(s == null ? 3 : s) };
   return { t:'n', v:(Math.round(Number(v) * 1e8) / 1e8), s:(s == null ? 3 : s) };
 }
+function xQty(v, s){                  /* 코인 수량·USDT 가격 — 소수 8자리 (coin8-v1) */
+  if(v == null || !isFinite(Number(v))) return { t:'b', s:(s == null ? 21 : s) };
+  return { t:'n', v:(Math.round(Number(v) * 1e8) / 1e8), s:(s == null ? 21 : s) };
+}
 function xRowXml(row, ri){
   var out = '';
   for(var i = 0; i < row.length; i++){
@@ -4417,7 +4570,8 @@ function xSheetXml(rows, widths, opt){
    18 합계 소수2 · 19 소수2 · 20 소수4 */
 var XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
   '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-  '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.####"/></numFmts>' +
+  '<numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.####"/>' +
+  '<numFmt numFmtId="165" formatCode="#,##0.########"/></numFmts>' +
   '<fonts count="4">' +
     '<font><sz val="11"/><name val="맑은 고딕"/><family val="2"/><charset val="129"/></font>' +
     '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="맑은 고딕"/><family val="2"/><charset val="129"/></font>' +
@@ -4436,7 +4590,7 @@ var XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<top style="thin"><color rgb="FFD5DCE8"/></top><bottom style="thin"><color rgb="FFD5DCE8"/></bottom><diagonal/></border>' +
   '</borders>' +
   '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
-  '<cellXfs count="21">' +
+  '<cellXfs count="22">' +
     '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
     '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>' +
     '<xf numFmtId="3" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right" vertical="center"/></xf>' +
@@ -4458,6 +4612,7 @@ var XLSX_STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<xf numFmtId="4" fontId="3" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right"/></xf>' +
     '<xf numFmtId="4" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyAlignment="1"><alignment horizontal="right"/></xf>' +
     '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyAlignment="1"><alignment horizontal="right"/></xf>' +
+    '<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="right"/></xf>' +
   '</cellXfs>' +
   '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
   '</styleSheet>';
@@ -4489,6 +4644,14 @@ function xlsxSheets(){
   s1.push([xTxt('합계', 10), xNum(Math.round(m.principalSum), 8), xNum(Math.round(m.stockSum), 8),
            xNum(Math.round(m.cashAll), 8), xNum(Math.round(m.totalAssets), 8), xNum(Math.round(m.pnl), 8),
            xRatio(m.ret, 9), xRatio(m.totalAssets ? 1 : 0, 9)]);
+  /* 코인이 있으면 계좌 표 아래에 코인 몫을 따로 적어 둔다 — 총자산과 계좌 합계의 차이를 설명 (coins-v1) */
+  if(m.coin.n > 0 || m.coinCash > 0){
+    s1.push([]);
+    s1.push([xTxt('코인 평가액(원)', S), xNum(Math.round(m.coinEval), V)]);
+    s1.push([xTxt('코인 예수금(원)', S), xNum(Math.round(m.coinCash), V)]);
+    s1.push([xTxt('코인 평가손익(원)', S), xNum(Math.round(m.coin.pnl), V)]);
+    s1.push([xTxt('※ 위 총자산·총원금·총손익에는 코인 평가액 + 코인 예수금이 포함되어 있습니다 (코인 시트 참고)', 6)]);
+  }
 
   /* ---- 2) 보유종목 ---- */
   var order = {};
@@ -4546,12 +4709,33 @@ function xlsxSheets(){
              xNum(num(s.fx), 19), xTxt(label + (d === asOf ? ' · 지금 기준일' : ''), 6)]);
   });
 
-  return [
+  /* ---- 5) 코인 (보유 코인이 있을 때만) ---- */
+  var s5 = [[xTxt('코인', 1), xTxt('이름', 1), xTxt('수량', 1), xTxt('평균 매입단가(원)', 1), xTxt('현재가(원)', 1),
+             xTxt('평가금액(원)', 1), xTxt('평가손익(원)', 1), xTxt('수익률(%)', 1),
+             xTxt('해외 USDT', 1), xTxt('24h(%)', 1), xTxt('김프(%)', 1)]];
+  (m.coin.rows || []).forEach(function(r){
+    var kimp = coinKimp(r.sym), pctv = coinLive.pct[r.sym];
+    s5.push([xTxt(r.sym, 7), xTxt(coinName(r.sym), 6), xQty(r.qty, 21), xNum(r.cost != null && r.qty > 0 ? r.cost / r.qty : null, 2),
+             xNum(r.px > 0 ? r.px : null, 2), xNum(r.value == null ? null : Math.round(r.value), 2),
+             xNum(r.pnl == null ? null : Math.round(r.pnl), 2), xRatio(r.ret, 3),
+             xQty(num(coinLive.usdt[r.sym]) || null, 21), xNum(pctv == null ? null : pctv, 3),
+             xNum(kimp == null ? null : Math.round(kimp * 100) / 100, 3)]);
+  });
+  s5.push([xTxt('코인 예수금', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10),
+           xNum(Math.round(m.coinCash), 8), xTxt('', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10)]);
+  s5.push([xTxt('합계', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10), xTxt('', 10),
+           xNum(Math.round(m.coinAll), 8), xNum(Math.round(m.coin.pnl), 8), xRatio(m.coin.ret, 9), xTxt('', 10), xTxt('', 10), xTxt('', 10)]);
+
+  var out = [
     { name:'요약', rows:s1, widths:[22, 15, 15, 15, 16, 15, 11, 10], opt:{ active:true } },
     { name:'보유종목', rows:s2, widths:[22, 20, 11, 7, 10, 14, 14, 14, 14, 16, 15, 10], opt:{ freeze:1, filter:true } },
     { name:'예수금·원금', rows:s3, widths:[22, 16, 15, 15, 16, 16], opt:{ freeze:1, filter:true } },
     { name:'일별추이', rows:s4, widths:[12, 16, 16, 15, 11, 12, 20], opt:{ freeze:1, filter:true } }
   ];
+  if(m.coin.n > 0 || m.coinCash > 0){
+    out.push({ name:'코인', rows:s5, widths:[10, 14, 16, 18, 16, 16, 15, 10, 14, 10, 10], opt:{ freeze:1, filter:true } });
+  }
+  return out;
 }
 function xlsxBuild(){
   var sheets = xlsxSheets();
@@ -4819,60 +5003,60 @@ document.getElementById('btn-reset').addEventListener('click', function(){
 var MARKET_URL = './market.json';
 /* 빌드할 때 market.json 내용을 그대로 넣어 둔다 — 앱 파일 하나로 열거나 오프라인일 때 마지막 값을 보여 준다 */
 var MARKET_INLINE = {
- "updatedAt": "2026-11-27T10:41:30+09:00",
+ "updatedAt": "2026-11-28T13:30:41+09:00",
  "bizdate": "20261127",
  "sections": {
   "index": {
-   "asOf": "2026-11-27T10:41:00+09:00",
+   "asOf": "2026-11-27T20:15:00+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "KOSPI",
      "name": "코스피",
-     "value": 4784.24,
-     "change": 73.03,
-     "pct": 1.55,
-     "tradingValue": 4365635000000,
-     "asOf": "2026-11-27T10:41:00+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "value": 4915.68,
+     "change": 204.47,
+     "pct": 4.34,
+     "tradingValue": 13511015000000,
+     "asOf": "2026-11-27T20:15:00+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "value": 691.61,
-     "change": 35.9,
-     "pct": 5.47,
-     "tradingValue": 3074065000000,
-     "asOf": "2026-11-27T10:41:00+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "value": 708.99,
+     "change": 53.28,
+     "pct": 8.13,
+     "tradingValue": 6794677000000,
+     "asOf": "2026-11-27T20:15:00+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2
     },
     {
      "key": "KPI200",
      "name": "코스피 200",
-     "value": 736.74,
-     "change": 9.66,
-     "pct": 1.33,
-     "tradingValue": 3854955000000,
-     "asOf": "2026-11-27T10:41:00+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "value": 758.51,
+     "change": 31.43,
+     "pct": 4.32,
+     "tradingValue": 11936270000000,
+     "asOf": "2026-11-27T20:15:00+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2
     },
     {
      "key": "NIGHT",
      "name": "야간선물",
-     "value": 728,
-     "change": 1.25,
-     "pct": 0.17,
+     "value": 760.05,
+     "change": 2.9,
+     "pct": 0.38,
      "tradingValue": null,
-     "asOf": "2026-11-27T06:09:17.280707+09:00",
+     "asOf": "2026-11-28T06:08:43.593582+09:00",
      "marketStatus": "CLOSE",
      "status": "CLOSE",
      "statusText": "야간장 마감",
@@ -4883,14 +5067,14 @@ var MARKET_INLINE = {
     {
      "key": "NQ",
      "name": "미니나스닥",
-     "value": 26465.25,
-     "change": 365,
-     "pct": 1.4,
+     "value": 26765,
+     "change": 664.75,
+     "pct": 2.55,
      "tradingValue": null,
-     "asOf": "2026-11-26T19:31:24-06:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "asOf": "2026-11-27T16:00:00-06:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2,
      "delay": "10분 지연",
      "month": "26.12."
@@ -4898,14 +5082,14 @@ var MARKET_INLINE = {
     {
      "key": "FUT",
      "name": "코스피 200 선물",
-     "value": 737.85,
-     "change": 11.1,
-     "pct": 1.53,
-     "tradingValue": 6255915000000,
-     "asOf": "2026-11-27T10:21:58+09:00",
-     "marketStatus": "OPEN",
-     "status": "OPEN",
-     "statusText": "장중",
+     "value": 757.15,
+     "change": 30.4,
+     "pct": 4.18,
+     "tradingValue": 20443340000000,
+     "asOf": "2026-11-27T15:34:59+09:00",
+     "marketStatus": "CLOSE",
+     "status": "CLOSE",
+     "statusText": "장마감",
      "dec": 2
     }
    ],
@@ -4916,19 +5100,19 @@ var MARKET_INLINE = {
      {
       "key": "KOSPI",
       "name": "코스피",
-      "rising": 702,
+      "rising": 783,
       "upper": 0,
-      "unchanged": 30,
-      "falling": 174,
+      "unchanged": 16,
+      "falling": 109,
       "lower": 0
      },
      {
       "key": "KOSDAQ",
       "name": "코스닥",
-      "rising": 1457,
-      "upper": 6,
-      "unchanged": 72,
-      "falling": 218,
+      "rising": 1559,
+      "upper": 12,
+      "unchanged": 47,
+      "falling": 142,
       "lower": 0
      }
     ],
@@ -4937,16 +5121,16 @@ var MARKET_INLINE = {
    }
   },
   "us": {
-   "asOf": "2026-11-25T16:32:17-05:00",
+   "asOf": "2026-11-27T13:38:45-05:00",
    "src": "네이버 증권 해외지수 · 야후 파이낸스(러셀 2000)",
    "rows": [
     {
      "key": "DJI",
      "name": "다우존스",
-     "value": 50182.95,
-     "change": 164.25,
-     "pct": 0.33,
-     "asOf": "2026-11-25T16:32:17-05:00",
+     "value": 50774.94,
+     "change": 591.99,
+     "pct": 1.18,
+     "asOf": "2026-11-27T13:38:45-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -4954,10 +5138,10 @@ var MARKET_INLINE = {
     {
      "key": "INX",
      "name": "S&P 500",
-     "value": 7182.78,
-     "change": -18.31,
-     "pct": -0.25,
-     "asOf": "2026-11-25T16:32:06-05:00",
+     "value": 7297.49,
+     "change": 114.71,
+     "pct": 1.6,
+     "asOf": "2026-11-27T13:38:39-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -4965,10 +5149,10 @@ var MARKET_INLINE = {
     {
      "key": "IXIC",
      "name": "나스닥 종합",
-     "value": 23585.8,
-     "change": -147.73,
-     "pct": -0.62,
-     "asOf": "2026-11-25T17:15:59-05:00",
+     "value": 24129.5,
+     "change": 543.7,
+     "pct": 2.31,
+     "asOf": "2026-11-27T14:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -4976,10 +5160,10 @@ var MARKET_INLINE = {
     {
      "key": "NDX",
      "name": "나스닥 100",
-     "value": 26046.9,
-     "change": -167.27,
-     "pct": -0.64,
-     "asOf": "2026-11-25T17:15:59-05:00",
+     "value": 26726.39,
+     "change": 679.49,
+     "pct": 2.61,
+     "asOf": "2026-11-27T14:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -4987,10 +5171,10 @@ var MARKET_INLINE = {
     {
      "key": "SOX",
      "name": "필라델피아 반도체 지수",
-     "value": 8774.86,
-     "change": -57.64,
-     "pct": -0.65,
-     "asOf": "2026-11-25T17:15:59-05:00",
+     "value": 9186.71,
+     "change": 411.84,
+     "pct": 4.69,
+     "asOf": "2026-11-27T14:15:59-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2
@@ -4998,10 +5182,10 @@ var MARKET_INLINE = {
     {
      "key": "RUT",
      "name": "러셀 2000",
-     "value": 2704.061,
-     "change": 19.119,
-     "pct": 0.712,
-     "asOf": "2026-11-25",
+     "value": 2750.297,
+     "change": 46.236,
+     "pct": 1.71,
+     "asOf": "2026-11-27T13:20:00-05:00",
      "status": "CLOSE",
      "statusText": "장마감",
      "dec": 2,
@@ -5040,16 +5224,16 @@ var MARKET_INLINE = {
     {
      "key": "KOSPI",
      "name": "코스피",
-     "arb": 7370.3,
-     "nonArb": 259223.8,
-     "total": 266594.1
+     "arb": -66494.9,
+     "nonArb": 1112793.0,
+     "total": 1046298.1
     },
     {
      "key": "KOSDAQ",
      "name": "코스닥",
-     "arb": 14.1,
-     "nonArb": 151830.3,
-     "total": 151844.4
+     "arb": 7257.6,
+     "nonArb": 438074.8,
+     "total": 445332.5
     }
    ],
    "ready": true,
@@ -5085,30 +5269,30 @@ var MARKET_INLINE = {
      "key": "individual",
      "name": "개인",
      "values": [
-      -3804,
-      -3209,
-      -185,
-      -7014
+      -17916,
+      -8828,
+      -614,
+      -26744
      ]
     },
     {
      "key": "foreign",
      "name": "외인",
      "values": [
-      2405,
-      1392,
-      336,
-      3797
+      11675,
+      3017,
+      -5802,
+      14692
      ]
     },
     {
      "key": "inst",
      "name": "기관",
      "values": [
-      182,
-      1827,
-      -203,
-      2008
+      2190,
+      5879,
+      6369,
+      8069
      ]
     }
    ],
@@ -5117,7 +5301,7 @@ var MARKET_INLINE = {
    "warn": null
   },
   "bonds": {
-   "asOf": "2026-11-27T10:40:04+09:00",
+   "asOf": "2026-11-27T16:15:56+09:00",
    "src": "네이버 증권",
    "cols": [
     "30년",
@@ -5128,69 +5312,69 @@ var MARKET_INLINE = {
     {
      "key": "KR",
      "name": "한국",
-     "y10": 3.804,
-     "c10": 0.028,
-     "y2": 3.676,
-     "c2": 0.009,
-     "y30": 3.892,
-     "c30": -0.035,
-     "asOf": "2026-11-27T10:40:04+09:00"
+     "y10": 3.798,
+     "c10": 0.022,
+     "y2": 3.72,
+     "c2": 0.053,
+     "y30": 3.903,
+     "c30": -0.024,
+     "asOf": "2026-11-27T16:15:56+09:00"
     },
     {
      "key": "JP",
      "name": "일본",
-     "y10": 2.633,
-     "c10": -0.005,
-     "y2": 1.745,
-     "c2": 0,
-     "y30": 3.888,
+     "y10": 2.641,
+     "c10": -0.002,
+     "y2": 1.759,
+     "c2": -0.002,
+     "y30": 3.866,
      "c30": -0.014,
-     "asOf": "2026-11-27T04:00:00+09:00"
+     "asOf": "2026-11-28T03:25:58+09:00"
     },
     {
      "key": "US",
      "name": "미국",
-     "y10": 4.892,
-     "c10": 0.0438,
-     "y2": 4.668,
-     "c2": 0.0334,
-     "y30": 5.275,
-     "c30": 0.0397,
-     "asOf": "2026-11-26T20:39:20-05:00"
+     "y10": 4.936,
+     "c10": 0.0875,
+     "y2": 4.71,
+     "c2": 0.0749,
+     "y30": 5.325,
+     "c30": 0.0905,
+     "asOf": "2026-11-27T14:30:00-05:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "market": {
-   "asOf": "2026-11-26T20:31:19-05:00",
+   "asOf": "2026-11-27T18:10:00-05:00",
    "src": "네이버 증권 · CNBC",
    "rows": [
     {
      "key": "DXY",
      "name": "달러인덱스",
-     "value": 103.81,
-     "change": 0.14,
-     "pct": 0.14,
-     "asOf": "2026-11-26T20:31:19-05:00",
+     "value": 104.01,
+     "change": 0.35,
+     "pct": 0.34,
+     "asOf": "2026-11-27T18:10:00-05:00",
      "unit": "pt"
     },
     {
      "key": "VIX",
      "name": "VIX",
-     "value": 26.8,
-     "change": -1.49,
-     "pct": -5.27,
-     "asOf": "2026-11-26T16:15:00-05:00",
+     "value": 23.81,
+     "change": -2.99,
+     "pct": -11.16,
+     "asOf": "2026-11-27T16:15:00-05:00",
      "unit": "pt"
     },
     {
      "key": "VKOSPI",
      "name": "VKOSPI",
-     "value": 57.97,
-     "change": -0.43,
-     "pct": -0.74,
-     "asOf": "2026-11-27T10:21:20+09:00",
+     "value": 59.7,
+     "change": 1.3,
+     "pct": 2.23,
+     "asOf": "2026-11-27T15:51:10+09:00",
      "unit": "pt",
      "dec": 2,
      "src": "CNBC"
@@ -5198,19 +5382,19 @@ var MARKET_INLINE = {
     {
      "key": "GOLD",
      "name": "금",
-     "value": 3577.3,
-     "change": 41.5,
-     "pct": 1.17,
-     "asOf": "2026-11-26T19:31:23-06:00",
+     "value": 3639.6,
+     "change": 103.8,
+     "pct": 2.94,
+     "asOf": "2026-11-27T16:00:00-06:00",
      "unit": "USD/t.oz"
     },
     {
      "key": "COPPER",
      "name": "구리",
-     "value": 5.398,
-     "change": 0.0615,
-     "pct": 1.15,
-     "asOf": "2026-11-26T19:31:23-06:00",
+     "value": 5.517,
+     "change": 0.1805,
+     "pct": 3.38,
+     "asOf": "2026-11-27T16:00:00-06:00",
      "unit": "USD/lb",
      "dec": 4
     }
@@ -5219,34 +5403,34 @@ var MARKET_INLINE = {
    "note": null
   },
   "energy": {
-   "asOf": "2026-11-26T19:31:23-06:00",
+   "asOf": "2026-11-27T16:00:00-06:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "WTI",
      "name": "WTI",
-     "value": 85.43,
-     "change": 1.75,
-     "pct": 2.09,
-     "asOf": "2026-11-26T19:31:23-06:00",
+     "value": 83.08,
+     "change": -0.6,
+     "pct": -0.72,
+     "asOf": "2026-11-27T16:00:00-06:00",
      "unit": "USD/Bbl"
     },
     {
      "key": "BRENT",
      "name": "브렌트",
-     "value": 96.29,
-     "change": -0.28,
-     "pct": -0.29,
-     "asOf": "2026-11-27T01:31:23Z",
+     "value": 95.44,
+     "change": -1.13,
+     "pct": -1.17,
+     "asOf": "2026-11-27T23:00:00Z",
      "unit": "USD/Bbl"
     },
     {
      "key": "HO",
      "name": "난방유",
-     "value": 3.7524,
-     "change": 0.0499,
-     "pct": 1.35,
-     "asOf": "2026-11-26T19:31:23-06:00",
+     "value": 3.7145,
+     "change": 0.012,
+     "pct": 0.32,
+     "asOf": "2026-11-27T16:00:00-06:00",
      "unit": "USD/gal",
      "dec": 4
     }
@@ -5255,71 +5439,71 @@ var MARKET_INLINE = {
    "note": null
   },
   "crypto": {
-   "asOf": "2026-11-27T10:28:56+09:00",
+   "asOf": "2026-11-28T13:29:38+09:00",
    "src": "업비트 (USDT 마켓)",
    "rows": [
     {
      "key": "BTC",
      "name": "비트코인",
-     "value": 60500.02,
-     "change": 48.79,
-     "pct": 0.08,
+     "value": 60128.52,
+     "change": 170.5,
+     "pct": 0.28,
      "unit": "USDT",
-     "asOf": "2026-11-27T10:28:56+09:00"
+     "asOf": "2026-11-28T13:29:38+09:00"
     },
     {
      "key": "ETH",
      "name": "이더리움",
-     "value": 1696.67,
-     "change": 2.04,
-     "pct": 0.12,
+     "value": 1663.17,
+     "change": 8.57,
+     "pct": 0.52,
      "unit": "USDT",
-     "asOf": "2026-11-27T09:19:16+09:00"
+     "asOf": "2026-11-28T12:08:04+09:00"
     },
     {
      "key": "SOL",
      "name": "솔라나",
-     "value": 71.25,
-     "change": 3.03,
-     "pct": 4.44,
+     "value": 72.08,
+     "change": -0.35,
+     "pct": -0.48,
      "unit": "USDT",
-     "asOf": "2026-11-27T08:19:08+09:00"
+     "asOf": "2026-11-28T09:31:02+09:00"
     }
    ],
    "ready": true,
    "note": null
   },
   "fx": {
-   "asOf": "2026-11-27T10:40:14+09:00",
+   "asOf": "2026-11-28T06:58:43+09:00",
    "src": "네이버 증권",
    "rows": [
     {
      "key": "USDKRW",
      "name": "USDKRW",
-     "value": 1342.3,
-     "change": -1.7,
-     "pct": -0.13,
-     "asOf": "2026-11-27T10:40:14+09:00",
+     "value": 1336.5,
+     "change": -7.5,
+     "pct": -0.56,
+     "asOf": "2026-11-28T06:58:43+09:00",
      "dec": 2,
      "unit": "원"
     },
     {
      "key": "JPYKRW",
      "name": "JPYKRW",
-     "value": 842.89,
-     "change": -0.99,
-     "pct": -0.12,
-     "asOf": "2026-11-27T10:40:14+09:00",
+     "value": 837.54,
+     "change": -6.34,
+     "pct": -0.75,
+     "asOf": "2026-11-28T06:58:43+09:00",
      "dec": 2,
      "unit": "100엔당 원"
     },
     {
      "key": "EURKRW",
      "name": "EURKRW",
-     "value": 1472.3,
-     "change": -2.34,
-     "pct": -0.16,
-     "asOf": "2026-11-27T10:40:14+09:00",
+     "value": 1461.4,
+     "change": -13.24,
+     "pct": -0.9,
+     "asOf": "2026-11-28T06:58:43+09:00",
      "dec": 2,
      "unit": "원"
     }
@@ -5327,6 +5511,95 @@ var MARKET_INLINE = {
    "ready": true,
    "note": null
   }
+ },
+ "coins": {
+  "asOf": "2026-11-28T13:30:42+09:00",
+  "src": "업비트 KRW · 바이낸스 USDT",
+  "fx": 1336.5,
+  "rows": [
+   {
+    "sym": "BTC",
+    "name": "비트코인",
+    "krw": 81481000.0,
+    "usdt": 60007.44,
+    "pct24": -2.408,
+    "kimp": 1.6
+   },
+   {
+    "sym": "ETH",
+    "name": "이더리움",
+    "krw": 2260000.0,
+    "usdt": 1664.32,
+    "pct24": -3.899,
+    "kimp": 1.6
+   },
+   {
+    "sym": "SOL",
+    "name": "솔라나",
+    "krw": 97200.0,
+    "usdt": 71.61,
+    "pct24": -1.702,
+    "kimp": 1.56
+   },
+   {
+    "sym": "XRP",
+    "name": "리플",
+    "krw": 1290.0,
+    "usdt": 0.9498,
+    "pct24": -1.073,
+    "kimp": 1.62
+   },
+   {
+    "sym": "DOGE",
+    "name": "도지코인",
+    "krw": 78.2,
+    "usdt": 0.05765,
+    "pct24": -0.139,
+    "kimp": 1.49
+   },
+   {
+    "sym": "ADA",
+    "name": "에이다",
+    "krw": 200.0,
+    "usdt": 0.148,
+    "pct24": -2.375,
+    "kimp": 1.11
+   },
+   {
+    "sym": "AVAX",
+    "name": "아발란체",
+    "krw": 8985.0,
+    "usdt": 6.611,
+    "pct24": -1.972,
+    "kimp": 1.69
+   },
+   {
+    "sym": "SUI",
+    "name": "수이",
+    "krw": 912.0,
+    "usdt": 0.6714,
+    "pct24": -1.612,
+    "kimp": 1.64
+   },
+   {
+    "sym": "LINK",
+    "name": "체인링크",
+    "krw": 12540.0,
+    "usdt": 9.227,
+    "pct24": -3.453,
+    "kimp": 1.69
+   },
+   {
+    "sym": "TRX",
+    "name": "트론",
+    "krw": 408.0,
+    "usdt": 0.3008,
+    "pct24": -1.442,
+    "kimp": 1.49
+   }
+  ],
+  "ready": true,
+  "note": null
  }
 };
 var marketInline = false;
@@ -6141,9 +6414,443 @@ function refreshMarket(manual){
   });
 }
 
+/* ---------- 코인 (coins-v1 · 2026-11-28 v53) ----------
+   · 보유 코인의 수량·평균 매입단가·코인 예수금만 이 폰(localStorage)에 저장한다.
+     GitHub 에 올리는 것은 시세뿐이다(market.json 의 coins = 공개 시세).
+   · 원화가는 업비트 공개 API, 해외 USDT가는 바이낸스 공개 시세(data-api.binance.vision),
+     기준 환율은 앱의 USDKRW. 막히면 market.json 의 coins 값(종가 갱신 때 서버가 받아 둔 값)을 쓴다.
+   · 김치프리미엄(%) = 업비트 원화가 ÷ (해외 USDT가 × 기준 환율) − 1 */
+var COIN_NAMES = { BTC:'비트코인', ETH:'이더리움', SOL:'솔라나', XRP:'리플', DOGE:'도지코인',
+  ADA:'에이다', AVAX:'아발란체', SUI:'수이', LINK:'체인링크', TRX:'트론', DOT:'폴카닷',
+  MATIC:'폴리곤', POL:'폴리곤', SHIB:'시바이누', PEPE:'페페', NEAR:'니어', ATOM:'코스모스',
+  APT:'앱토스', ARB:'아비트럼', OP:'옵티미즘', ETC:'이더리움클래식', BCH:'비트코인캐시',
+  XLM:'스텔라루멘', EOS:'이오스', TON:'톤코인', WLD:'월드코인', STX:'스택스', SEI:'세이',
+  INJ:'인젝티브', FIL:'파일코인', HBAR:'헤데라', AAVE:'에이브', SAND:'샌드박스' };
+var COIN_MKTS_DEFAULT = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'];
+function coinSym(s){
+  return String(s == null ? '' : s).trim().toUpperCase()
+    .replace(/^KRW[-_\s]?/, '').replace(/USDT$/,'').replace(/[^A-Z0-9]/g, '').slice(0, 12);
+}
+function coinName(sym){ return COIN_NAMES[sym] || ''; }
+/* 코인 상태 — 없으면 기본 관심 코인만 (값은 0) */
+function normCoins(c){
+  var out = { cashKrw:0, mkts:[], hold:{}, px:{} };
+  if(!c || typeof c !== 'object'){ out.mkts = COIN_MKTS_DEFAULT.slice(); return out; }
+  out.cashKrw = num(c.cashKrw);
+  (Array.isArray(c.mkts) ? c.mkts : []).forEach(function(s){
+    var y = coinSym(s);
+    if(y && out.mkts.indexOf(y) < 0) out.mkts.push(y);
+  });
+  var hd = (c.hold && typeof c.hold === 'object') ? c.hold : {};
+  Object.keys(hd).forEach(function(k){
+    var y = coinSym(k), v = hd[k];
+    if(!y || !v) return;
+    var q = (v.qty === '' || v.qty == null) ? null : num(v.qty);
+    var a = (v.avg === '' || v.avg == null) ? null : num(v.avg);
+    if(q == null && a == null) return;
+    out.hold[y] = { qty:q, avg:(a != null && a > 0) ? a : null };
+  });
+  var px = (c.px && typeof c.px === 'object') ? c.px : {};
+  Object.keys(px).forEach(function(k){
+    var y = coinSym(k), p = num(px[k]);
+    if(y && p > 0) out.px[y] = p;
+  });
+  return out;
+}
+/* 코인 평가 — 보유 수량 × 그 코인의 마지막 원화가(px). 매입단가가 있는 코인만 손익을 낸다 */
+function coinEvalOf(c){
+  var s = normCoins(c);
+  var out = { eval:0, cost:0, pnl:0, ret:0, cash:s.cashKrw, n:0, costN:0, rows:[] };
+  Object.keys(s.hold).forEach(function(sym){
+    var h = s.hold[sym], q = num(h.qty), p = num(s.px[sym]);
+    var v = (q > 0 && p > 0) ? q * p : null;
+    var cost = (q > 0 && h.avg != null) ? q * h.avg : null;
+    if(q > 0) out.n++;
+    if(v != null) out.eval += v;
+    if(cost != null){ out.cost += cost; out.costN++; }
+    if(v != null && cost != null) out.pnl += (v - cost);
+    out.rows.push({ sym:sym, qty:q, px:p, value:v, cost:cost,
+                    pnl:(v != null && cost != null) ? (v - cost) : null,
+                    ret:(v != null && cost) ? (v / cost - 1) : null });
+  });
+  out.ret = out.cost ? out.pnl / out.cost : 0;
+  return out;
+}
+/* 표시 목록 순서 — 관심 코인 먼저, 보유만 있는 코인은 뒤에 */
+function coinSyms(){
+  var c = normCoins(state && state.coins), list = c.mkts.slice();
+  Object.keys(c.hold).forEach(function(s){ if(list.indexOf(s) < 0) list.push(s); });
+  return list;
+}
+/* 시세 수치(USDT·24h·김프용)는 저장 파일이 아니라 화면용 — 최근 값을 이 폰에 캐시해 둔다 */
+var coinLive = { at:null, src:'', usdt:{}, pct:{} };
+var COIN_CACHE = 'asset.coins.v1', coinBusy = false, coinAt = 0;
+function coinCacheLoad(){
+  try{
+    var raw = window.localStorage.getItem(COIN_CACHE);
+    if(!raw) return;
+    var d = JSON.parse(raw);
+    if(!d || typeof d !== 'object') return;
+    coinLive.at = (typeof d.at === 'string' && d.at) ? d.at : null;
+    coinLive.src = String(d.src || '');
+    coinLive.usdt = (d.usdt && typeof d.usdt === 'object') ? d.usdt : {};
+    coinLive.pct = (d.pct && typeof d.pct === 'object') ? d.pct : {};
+  }catch(e){}
+}
+function coinCacheSave(){
+  try{ window.localStorage.setItem(COIN_CACHE, JSON.stringify(coinLive)); }catch(e){}
+}
+function coinUsdTxt(v){
+  var n = num(v);
+  if(!(n > 0)) return '—';
+  var dec = n >= 1000 ? 2 : (n >= 1 ? 3 : 6);
+  return n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:dec});
+}
+function coinPctTxt(p){
+  if(p == null || !isFinite(num(p))) return '—';
+  var v = num(p);
+  return (v > 0 ? '+' : '') + v.toFixed(2) + '%';
+}
+function coinKimp(sym){
+  var c = normCoins(state && state.coins), krw = num(c.px[sym]);
+  var u = num(coinLive.usdt[sym]), fx = num(state && state.fx);
+  if(!(krw > 0) || !(u > 0) || !(fx > 0)) return null;
+  return (krw / (u * fx) - 1) * 100;
+}
+function coinWhenTxt(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  if(isNaN(d.getTime())) return String(iso);
+  try{
+    return new Intl.DateTimeFormat('ko-KR', {timeZone:'Asia/Seoul', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', hour12:false}).format(d);
+  }catch(e){ return String(iso); }
+}
+function coinQtyTxt(v){
+  var n = num(v);
+  return n.toLocaleString('en-US', {maximumFractionDigits:8});
+}
+
+/* ---------- 코인 화면 ---------- */
+function renderCoinList(){
+  var box = document.getElementById('c-list');
+  if(!box) return;
+  var c = normCoins(state.coins), syms = coinSyms();
+  if(!syms.length){
+    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:16px 0">표시할 코인이 없습니다.<br>아래 칸에 심볼(예: SUI)을 넣어 추가하세요.</div>';
+    return;
+  }
+  box.innerHTML = syms.map(function(sym){
+    var krw = num(c.px[sym]), usdt = num(coinLive.usdt[sym]);
+    var pctv = coinLive.pct[sym], kimp = coinKimp(sym);
+    return '<div class="coinrow" data-sym="' + esc(sym) + '">' +
+      '<div class="chd"><b>' + esc(sym) + '</b><span class="nm">' + esc(coinName(sym)) + '</span>' +
+        '<button type="button" class="x" data-del="1" aria-label="' + esc(sym) + ' 목록에서 빼기">✕</button></div>' +
+      '<div class="pxs">' +
+        '<div><span>업비트 KRW</span><b>' + (krw > 0 ? fmtInt(krw) + '원' : '—') + '</b></div>' +
+        '<div><span>해외 USDT</span><b>' + coinUsdTxt(usdt) + '</b></div>' +
+        '<div><span>24h 등락</span><b class="' + (pctv == null ? '' : cls(pctv)) + '">' + coinPctTxt(pctv) + '</b></div>' +
+        '<div><span>김프</span><b class="' + (kimp == null ? '' : cls(kimp)) + '">' + coinPctTxt(kimp) + '</b></div>' +
+      '</div></div>';
+  }).join('');
+}
+function renderCoinHolds(){
+  var box = document.getElementById('c-holds');
+  if(!box) return;
+  var c = normCoins(state.coins), syms = coinSyms();
+  if(!syms.length){
+    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:16px 0">보유 코인이 없습니다.<br>위에서 코인을 추가하면 수량·매입단가를 넣을 수 있습니다.</div>';
+    return;
+  }
+  box.innerHTML = syms.map(function(sym){
+    var h = c.hold[sym] || {};
+    return '<div class="crow" data-sym="' + esc(sym) + '">' +
+      '<div class="chd"><b>' + esc(sym) + '</b><span class="nm">' + esc(coinName(sym)) + '</span><i class="ev"></i></div>' +
+      '<div class="grid2">' +
+        '<label class="f"><span>수량 <u>개</u></span><input type="text" class="t c-qty" inputmode="decimal" value="' +
+          (h.qty == null ? '' : coinQtyTxt(h.qty)) + '" placeholder="0"></label>' +
+        '<label class="f"><span>평균 매입단가 <u>원</u></span><input type="text" class="t c-avg" inputmode="numeric" value="' +
+          (h.avg == null ? '' : fmtInt(h.avg)) + '" placeholder="선택"></label>' +
+      '</div>' +
+      '<div class="foot"><div class="l">평가액<b class="c-eval">—</b></div><div class="r c-pnl"></div></div>' +
+    '</div>';
+  }).join('');
+  updateCoinRows();
+}
+function updateCoinRows(m){
+  m = m || compute();
+  var map = {};
+  (m.coin.rows || []).forEach(function(r){ map[r.sym] = r; });
+  var c = normCoins(state.coins);
+  Array.prototype.forEach.call(document.querySelectorAll('#c-holds .crow'), function(row){
+    var sym = row.getAttribute('data-sym'), r = map[sym] || {};
+    var ev = row.querySelector('.c-eval'), pn = row.querySelector('.c-pnl'), hv = row.querySelector('.chd .ev');
+    if(ev) ev.textContent = (r.value != null) ? won(r.value) : '—';
+    if(hv) hv.textContent = (r.value != null) ? won(r.value) : '';
+    if(pn){
+      var q = num((c.hold[sym] || {}).qty);
+      if(r.pnl == null){
+        pn.className = 'c-pnl flat';
+        pn.textContent = q > 0 ? '매입단가를 넣으면 손익' : '';
+      }else{
+        pn.className = 'c-pnl ' + cls(r.pnl);
+        pn.textContent = signed(r.pnl) + ' ' + pctS(r.ret || 0);
+      }
+    }
+  });
+}
+function updateCoinCalcs(m){
+  m = m || compute();
+  var tot = document.getElementById('c-total');
+  if(tot) tot.innerHTML = fmtInt(m.coinAll) + '<em>원</em>';
+  var pnl = document.getElementById('c-pnl');
+  if(pnl){
+    pnl.className = 'hero-pnl ' + cls(m.coin.pnl);
+    pnl.innerHTML = '<span>' + signed(m.coin.pnl) + '</span><span class="chiprate">' + pctS(m.coin.ret) + '</span><span class="flat">평가손익</span>';
+  }
+  setTxt('c-eval', won(m.coinEval));
+  setTxt('c-evaln', m.coin.n + '종목');
+  setTxt('c-cash', won(m.coinCash));
+  setTxt('c-cost', won(m.coin.cost));
+  setTxt('c-costn', m.coin.costN ? (m.coin.costN + '종목 매입단가 입력분') : '매입단가를 넣은 코인 없음');  setTxt('c-sum', won(m.coinAll));
+  setTxt('c-sumpct', '총자산의 ' + pct(m.totalAssets ? m.coinAll / m.totalAssets : 0));
+  setTxt('c-holdn', m.coin.n + '개');
+  var fxIn = document.getElementById('c-fx-in');
+  if(fxIn) fxIn.value = m.fx > 0 ? fmtFx(m.fx) + '원' : '—';
+  var ci = document.getElementById('c-cash-in');
+  if(ci && document.activeElement !== ci){
+    var want = m.coinCash > 0 ? fmtNum(m.coinCash, false) : '';
+    if(ci.value !== want) ci.value = want;
+  }
+  var bt = coinKimp('BTC'), sum = 0, n = 0;
+  coinSyms().forEach(function(s){ var k = coinKimp(s); if(k != null){ sum += k; n++; } });
+  var eb = document.getElementById('c-kimp-btc');
+  if(eb){ eb.className = 'v' + (bt == null ? '' : ' ' + cls(bt)); eb.textContent = bt == null ? '—' : coinPctTxt(bt); }
+  var ea = document.getElementById('c-kimp-avg');
+  if(ea){ ea.className = 'v' + (n ? ' ' + cls(sum) : ''); ea.textContent = n ? coinPctTxt(sum / n) + ' (' + n + '종목)' : '—'; }
+  setTxt('c-src', coinLive.src || '—');
+  setTxt('c-kimpwhen', coinLive.at ? coinWhenTxt(coinLive.at) + ' 기준' : '—');
+  setTxt('c-stat', coinLive.at ? ('업비트 원화 · ' + coinWhenTxt(coinLive.at)) : '업비트 원화 기준');
+}
+function renderCoins(m){
+  m = m || compute();
+  renderCoinList(); renderCoinHolds(); updateCoinCalcs(m);
+}
+
+/* ---------- 코인 시세 받기 ---------- */
+function coinApplyRows(rows, meta){
+  if(viewingDate || !state) return false;
+  var c = normCoins(state.coins), touched = false;
+  state.coins = c;
+  (rows || []).forEach(function(r){
+    var sym = coinSym(r.sym || r.key);
+    if(!sym) return;
+    var krw = num(r.krw != null ? r.krw : r.krwPrice);
+    if(krw > 0 && num(c.px[sym]) !== krw){ c.px[sym] = krw; touched = true; }
+    var usdt = num(r.usdt);
+    if(usdt > 0) coinLive.usdt[sym] = usdt;
+    var pctv = (r.pct24 == null) ? null : num(r.pct24);
+    if(pctv != null) coinLive.pct[sym] = pctv;
+  });
+  if(meta){
+    if(meta.at) coinLive.at = meta.at;
+    if(meta.src) coinLive.src = meta.src;
+  }
+  coinCacheSave();
+  /* 시세 반영은 '저장 안 된 변경'이 아니다 — 저장 버튼을 세 번 누르게 하지 않는다 (prices-v1 과 같은 규칙) */
+  if(touched && !dirty) baselineText = JSON.stringify(state);
+  return touched;
+}
+function coinFromMarketData(){
+  var d = (marketData && marketData.coins) || (MARKET_INLINE && MARKET_INLINE.coins) || null;
+  if(!d) return false;
+  coinApplyRows(d.rows, { at:d.asOf || null, src:d.src || 'market.json' });
+  return true;
+}
+function coinLoadFile(){
+  if(location.protocol === 'file:'){ coinFromMarketData(); renderCoins(); return Promise.resolve(false); }
+  if(marketData && marketData.coins){ coinFromMarketData(); renderCoins(); return Promise.resolve(true); }
+  return mkFetchJson(MARKET_URL + '?t=' + Date.now(), 9000).then(function(d){
+    if(d && d.sections && !marketData) marketData = d;
+    coinFromMarketData(); renderCoins();
+    return true;
+  }).catch(function(){ coinFromMarketData(); renderCoins(); return false; });
+}
+function fetchCoinKr(){
+  var syms = coinSyms();
+  if(!syms.length) return Promise.reject(new Error('코인 없음'));
+  var url = 'https://api.upbit.com/v1/ticker?markets=' +
+            encodeURIComponent(syms.map(function(s){ return 'KRW-' + s; }).join(','));
+  return mkFetchJson(url, 8000).then(function(d){
+    var out = [], at = null;
+    (d || []).forEach(function(t){
+      var m = String(t.market || '');
+      if(m.indexOf('KRW-') !== 0) return;
+      var sym = m.slice(4).toUpperCase(), p = num(t.trade_price);
+      if(!sym || !(p > 0)) return;
+      if(t.trade_timestamp && !at){ try{ at = new Date(Number(t.trade_timestamp)).toISOString(); }catch(e){} }
+      out.push({ sym:sym, krw:p });
+    });
+    if(!out.length) throw new Error('값 없음');
+    return { rows:out, at:at };
+  });
+}
+function fetchCoinUsdt(){
+  var syms = coinSyms();
+  if(!syms.length) return Promise.reject(new Error('코인 없음'));
+  var q = encodeURIComponent('[' + syms.map(function(s){ return '"' + s + 'USDT"'; }).join(',') + ']');
+  var urls = ['https://data-api.binance.vision/api/v3/ticker/24hr?symbols=' + q,
+              'https://api.binance.com/api/v3/ticker/24hr?symbols=' + q];
+  function one(i){
+    if(i >= urls.length) return Promise.reject(new Error('값 없음'));
+    return mkFetchJson(urls[i], 7000).then(function(d){
+      var out = [];
+      (d || []).forEach(function(t){
+        var s = String(t.symbol || '').toUpperCase();
+        if(s.slice(-4) !== 'USDT') return;
+        var p = num(t.lastPrice);
+        if(!(p > 0)) return;
+        out.push({ sym:s.slice(0, -4), usdt:p, pct24:num(t.priceChangePercent) });
+      });
+      if(!out.length) throw new Error('값 없음');
+      return out;
+    }).catch(function(e){ return one(i + 1); });
+  }
+  return one(0);
+}
+/* 🔄 새로고침 · 탭을 열 때 — 업비트(원화) + 바이낸스(USDT) → 막히면 market.json 값 */
+function refreshCoins(manual){
+  if(!state) return Promise.resolve(null);
+  if(viewingDate){
+    if(manual) toast(viewingDate + ' 기록을 보는 중입니다 — [최신으로 돌아가기] 뒤에 새로고침됩니다', 3400, 'warn');
+    return Promise.resolve(null);
+  }
+  if(coinBusy) return Promise.resolve(null);
+  if(location.protocol === 'file:'){
+    coinFromMarketData(); renderCoins();
+    if(manual) toast('파일로 연 화면에서는 실시간 시세를 못 받아 저장된 코인 시세를 보여 줍니다', 3800, 'warn');
+    return Promise.resolve(null);
+  }
+  if(navigator.onLine === false){
+    coinFromMarketData(); renderCoins();
+    if(manual) toast('인터넷이 끊겨 있어 저장된 코인 시세를 그대로 씁니다', 3400, 'warn');
+    return Promise.resolve(null);
+  }
+  coinBusy = true; coinAt = Date.now();
+  var btn = document.getElementById('c-refresh');
+  if(btn) btn.disabled = true;
+  function done(){ coinBusy = false; if(btn) btn.disabled = false; }
+  var gotKr = false;
+  return fetchCoinKr().then(function(g){
+    gotKr = true;
+    coinApplyRows(g.rows, { at:g.at, src:'업비트 KRW · 바이낸스 USDT' });
+  }).catch(function(){
+    coinFromMarketData();
+  }).then(function(){
+    return fetchCoinUsdt().then(function(rows){ coinApplyRows(rows, null); }).catch(function(){});
+  }).then(function(){
+    done(); renderCoins();
+    if(manual){
+      toast(gotKr ? '코인 시세를 새로 받았습니다' + (coinLive.at ? ' (' + coinWhenTxt(coinLive.at) + ')' : '')
+                  : '업비트 시세를 못 받아 market.json 값으로 보여 줍니다', 3200, gotKr ? undefined : 'warn');
+    }
+    return true;
+  }).catch(function(){ done(); renderCoins(); return false; });
+}
+function coinMaybeLoad(){
+  renderCoins();
+  if(viewingDate) return;
+  var age = coinAt ? (Date.now() - coinAt) : null;
+  if(age != null && age < 45000) return;                 /* 방금 받았으면 그대로 */
+  var have = Object.keys(normCoins(state.coins).px).length > 0;
+  if(have){ refreshCoins(false); return; }
+  /* 처음 열었거나 저장된 코인 시세가 없으면 market.json 부터 받고 이어서 실시간 시세를 시도 */
+  coinLoadFile().then(function(){ refreshCoins(false); });
+}
+function coinAdd(){
+  var inp = document.getElementById('c-add-in');
+  if(!inp) return;
+  var sym = coinSym(inp.value);
+  if(!/^[A-Z0-9]{2,12}$/.test(sym)){ toast('코인 심볼을 알려 주세요 (예: SUI, ADA)', 2800, 'warn'); return; }
+  var c = normCoins(state.coins);
+  state.coins = c;
+  if(c.mkts.indexOf(sym) >= 0){ toast(sym + ' 코인은 이미 목록에 있습니다', 2600); inp.value = ''; return; }
+  c.mkts.push(sym);
+  inp.value = '';
+  markChanged(); renderCoins();
+  refreshCoins(false);
+  toast(sym + (coinName(sym) ? ' · ' + coinName(sym) : '') + ' 추가 — 💾 저장하면 다음에도 남습니다', 3400);
+}
+function coinDel(sym){
+  var c = normCoins(state.coins), h = c.hold[sym];
+  var q = h ? num(h.qty) : 0;
+  var msg = (q > 0)
+    ? (sym + ' 코인을 목록에서 뺄까요?\n\n보유 수량 ' + coinQtyTxt(q) + '개와 매입단가도 함께 지워집니다.' + (viewingDate ? '\n이 날짜 기록에서만 빠지고 오늘 데이터는 그대로입니다.' : ''))
+    : (sym + ' 코인을 목록에서 뺄까요?');
+  if(!confirm(msg)) return;
+  c.mkts = c.mkts.filter(function(x){ return x !== sym; });
+  delete c.hold[sym];
+  delete c.px[sym];
+  delete coinLive.usdt[sym]; delete coinLive.pct[sym];
+  state.coins = c;
+  markChanged(); renderCoins();
+  var m = compute(); renderHeader(m);
+  if(activeTab === 'summary') renderSummary(m);
+  toast(sym + ' 코인을 뺐습니다' + (viewingDate ? ' — 💾 기록 저장을 눌러야 남습니다' : ''));
+}
+document.getElementById('c-refresh').addEventListener('click', function(){ refreshCoins(true); });
+var coinAddIn = document.getElementById('c-add-in');
+if(coinAddIn){
+  document.getElementById('c-add-go').addEventListener('click', coinAdd);
+  coinAddIn.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); coinAdd(); } });
+}
+document.getElementById('c-list').addEventListener('click', function(e){
+  var b = e.target.closest('[data-del]');
+  if(!b) return;
+  var row = b.closest('.coinrow');
+  if(row) coinDel(row.getAttribute('data-sym'));
+});
+/* 보유 코인 입력 — 수량(소수 8자리)·평균 매입단가(원). 입력하는 즉시 평가액·손익·총자산이 따라온다 */
+document.getElementById('c-holds').addEventListener('input', function(e){
+  var t = e.target, row = t.closest ? t.closest('.crow') : null;
+  if(!row) return;
+  var sym = row.getAttribute('data-sym');
+  var c = normCoins(state.coins);
+  state.coins = c;
+  if(!c.hold[sym]) c.hold[sym] = { qty:null, avg:null };
+  if(t.classList.contains('c-qty')){
+    formatLive(t, 'coinq');
+    c.hold[sym].qty = (t.value === '' ? null : num(t.value));
+  }else if(t.classList.contains('c-avg')){
+    formatLive(t, false);
+    c.hold[sym].avg = (t.value === '' ? null : num(t.value));
+  }else return;
+  var m = compute();
+  renderHeader(m); updateCoinCalcs(m); updateCoinRows(m); markChanged();
+});
+document.getElementById('c-holds').addEventListener('focusout', function(e){
+  var t = e.target;
+  if(!t || !t.classList) return;
+  if(t.classList.contains('c-qty')) settleNum(t, 'coinq');
+  else if(t.classList.contains('c-avg')) settleNum(t, false);
+});
+/* 코인 예수금 */
+document.getElementById('c-cash-in').addEventListener('input', function(e){
+  var t = e.target;
+  formatLive(t, false);
+  var c = normCoins(state.coins);
+  c.cashKrw = num(t.value);
+  state.coins = c;
+  var m = compute();
+  renderHeader(m); updateCoinCalcs(m); markChanged();
+});
+document.getElementById('c-cash-in').addEventListener('focusout', function(e){ settleNum(e.target, false); });
+coinCacheLoad();
+
 /* ---------- 시작 ---------- */
 function boot(){
   state = loadState();
+  state.coins = normCoins(state.coins);      /* 코인 탭 기본값 — 저장된 코인이 없으면 관심 코인 기본 목록 (coins-v1) */
   if(!state.asOf) state.asOf = INITIAL.asOf;
   /* 평가 기준일 자동 갱신 (datekst-v1): 마지막 저장 기준일이 오늘(KST)보다 이전이면 오늘로 맞춘다.
      화면을 여는 것만으로 저장된 값을 바꾸지 않도록 메모리에서만 고치고, 바로 아래 baselineText 를

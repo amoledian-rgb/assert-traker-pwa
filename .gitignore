@@ -172,3 +172,9 @@ backfill_history.py
 test_v52.py
 shots_v52/
 sites_v52/
+
+# 코인 탭(업비트 원화·바이낸스 USDT·김프) 검증 (2026-11-28, v53 · coins-v1)
+test_coins.py
+smoke_coins.py
+probe_crypto_cors.py
+shots_coins/
