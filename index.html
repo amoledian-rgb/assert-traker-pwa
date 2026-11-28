@@ -395,7 +395,7 @@
   .chk:last-child{border-bottom:0}
   .chk .k{color:#5b6577; white-space:nowrap}
   .chk .v{font-weight:700; text-align:right; min-width:0}
-  /* ---------- 코인 탭 (coins-v1 · 2026-11-28 v53) ---------- */
+  /* ---------- 코인 탭 (coins-v2 · 2026-11-28 v54) — BTC·ETH·SOL 3종 전용 ---------- */
   .csum{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:11px}
   .csum>div{background:#fbfcfe; border:1px solid var(--line); border-radius:12px; padding:10px 10px; min-width:0}
   .csum span{display:block; font-size:15.75px; color:#8b93a4; margin-bottom:3px; word-break:keep-all}
@@ -403,37 +403,39 @@
   .csum em{display:block; font-style:normal; font-size:15.75px; color:var(--sub); margin-top:2px; font-variant-numeric:tabular-nums; word-break:keep-all}
   .csum .full{grid-column:1 / -1; background:#f4f7ff; border-color:#d5dff5}
   .csum .full b{font-size:26px; color:#0f1c33}
-  /* 시세 카드 한 코인 — 심볼 줄 + 2×2 시세(원화·USDT·24h·김프) */
-  .coinrow{padding:11px 0; border-bottom:1px solid var(--line)}
-  .coinrow:first-child{padding-top:2px}
-  .coinrow:last-child{border-bottom:0; padding-bottom:2px}
-  .coinrow .chd{display:flex; align-items:baseline; gap:6px; min-width:0}
-  .coinrow .chd b{font-size:17.25px; font-weight:800; letter-spacing:-.01em; flex:0 0 auto}
-  .coinrow .chd .nm{font-size:14.5px; font-weight:600; color:#8b93a4; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .coinrow .chd .x{margin-left:auto; flex:0 0 auto; width:32px; height:32px; border:1px solid var(--line); border-radius:8px;
-    background:#fff; color:#b4bbc9; font-size:15px; line-height:1; padding:0}
-  .coinrow .chd .x:active{background:#fdeeee; border-color:#f1d3d3; color:var(--up)}
-  .coinrow .pxs{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px}
-  .coinrow .pxs>div{background:#fbfcfe; border:1px solid #eef1f6; border-radius:9px; padding:6px 8px; min-width:0}
-  .coinrow .pxs span{display:block; font-size:13.5px; font-weight:600; color:#98a1b3; margin-bottom:1px}
-  .coinrow .pxs b{display:block; font-size:16.5px; font-weight:700; font-variant-numeric:tabular-nums;
+  /* 요약 카드 머리 — 큰 금액 + 🔄 새로고침 */
+  .chead{display:flex; align-items:flex-start; gap:8px}
+  .chead>div{flex:1 1 auto; min-width:0}
+  .chead .px-btn{flex:0 0 auto; margin-top:3px}
+  #tab-coins .hero-num{font-size:29px; letter-spacing:-.03em; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  #tab-coins .hero-num em{font-size:17.25px}
+  /* 김프 컴팩트 안내 상자 — 기준 환율·시세 출처·기준 시각을 두 줄로 */
+  .ckimp{margin-top:10px; padding:8px 10px; background:#f8fafc; border:1px solid #eef1f6; border-radius:10px}
+  .ckimp .k{display:flex; align-items:baseline; flex-wrap:wrap; gap:0 6px; font-size:15.75px; color:#5b6577; font-variant-numeric:tabular-nums}
+  .ckimp .k b{font-size:16.5px; font-weight:800}
+  .ckimp .k .sep{color:#c2c9d4}
+  .ckimp .src{margin-top:2px; font-size:13.5px; color:#98a1b3; line-height:1.35; word-break:keep-all}
+  /* 코인 한 종 카드 — 시세 + 내 적립 입력·현황을 한 블록에 */
+  .ccard{padding:12px 0; border-bottom:1px solid var(--line)}
+  .ccard:first-child{padding-top:2px}
+  .ccard:last-child{border-bottom:0; padding-bottom:2px}
+  .ccard .cc-h{display:flex; align-items:flex-start; gap:8px; min-width:0}
+  .ccard .cc-id{display:flex; align-items:baseline; gap:5px; min-width:0; flex:1 1 auto}
+  .ccard .cc-id b{font-size:19.5px; font-weight:800; letter-spacing:-.01em; flex:0 0 auto}
+  .ccard .cc-id span{font-size:14.5px; font-weight:600; color:#8b93a4; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .ccard .cc-mv{flex:0 0 auto; text-align:right; min-width:0; max-width:60%}
+  .ccard .cc-mv b{display:block; font-size:19.5px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .ccard .cc-mv em{display:block; font-style:normal; font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; margin-top:1px; white-space:nowrap}
+  .ccard .cc-mv em.flat{color:#98a1b3; font-weight:600}
+  .ccard .cc-px{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:9px}
+  .ccard .cc-px>div{background:#fbfcfe; border:1px solid #eef1f6; border-radius:9px; padding:6px 8px; min-width:0}
+  .ccard .cc-px span{display:block; font-size:13.5px; font-weight:600; color:#98a1b3; margin-bottom:1px}
+  .ccard .cc-px b{display:block; font-size:16.5px; font-weight:700; font-variant-numeric:tabular-nums;
     letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  /* 보유 코인 카드 */
-  .crow{padding:11px 0; border-bottom:1px solid var(--line)}
-  .crow:first-child{padding-top:2px}
-  .crow:last-child{border-bottom:0; padding-bottom:2px}
-  .crow .chd{display:flex; align-items:baseline; gap:6px; margin-bottom:8px; min-width:0}
-  .crow .chd b{font-size:17.25px; font-weight:800; flex:0 0 auto}
-  .crow .chd .nm{font-size:14.5px; font-weight:600; color:#8b93a4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .crow .chd .ev{margin-left:auto; flex:0 0 auto; font-style:normal; font-size:15.75px; font-weight:800; font-variant-numeric:tabular-nums}
-  /* 코인 추가 줄 */
-  .cadd{display:flex; gap:7px; margin:0 12px 10px}
-  .cadd input{flex:1 1 auto; min-width:0; height:48px; border:1px solid var(--line); border-radius:11px; background:#fff;
-    padding:0 11px; font-size:17.25px; font-weight:700; color:var(--ink); letter-spacing:.01em; outline:none; text-transform:uppercase}
-  .cadd input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,110,240,.12)}
-  .cadd button{flex:0 0 auto; min-width:84px; height:48px; border:0; border-radius:11px; background:#1B365D; color:#fff;
-    font-size:17.25px; font-weight:800; padding:0 14px}
-  .cadd button:active{filter:brightness(1.07)}
+  .ccard .cc-in{margin-top:9px}
+  .ccard .cc-f{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:7px;
+    font-size:14.5px; color:#8b93a4; font-variant-numeric:tabular-nums; word-break:keep-all}
+  .ccard .cc-f b{font-size:15.75px; font-weight:700; color:var(--ink); margin-left:4px}
   .px-btn.sm{height:34px; padding:0 10px; font-size:14.5px}
   /* ---------- nav ---------- */
   nav{
@@ -996,14 +998,19 @@
     <p class="hint" style="margin:0 16px 18px">비중은 모두 <b>총자산(주식 + 원화 예수금 + 달러 예수금 환산 + 코인)</b> 대비입니다. 종목 비중 합계 + 예수금 비중 + 코인 비중 = 100.0%가 됩니다. 계좌 옆 괄호는 그 계좌의 매입단가, 평균단가는 계좌별 매입단가의 수량가중 평균이며, 매입단가를 비워 둔 종목은 손익을 표시하지 않습니다.</p>
   </section>
 
-  <!-- ============ 코인 (coins-v1) — 보유 코인·김프·시세. 보유 수량·매입단가는 이 폰에만 ============ -->
+  <!-- ============ 코인 (coins-v2) — BTC·ETH·SOL 3종 전용. 보유 수량·매입단가·예수금은 이 폰에만 ============ -->
   <section class="tab" id="tab-coins">
     <div class="sec">코인 자산 <span id="c-stat">업비트 원화 기준</span></div>
     <div class="card">
-      <div class="hero-num" id="c-total">0<em>원</em></div>
-      <div class="hero-pnl" id="c-pnl"><span>0원</span><span class="chiprate">0.0%</span><span class="flat">평가손익</span></div>
+      <div class="chead">
+        <div>
+          <div class="hero-num" id="c-total">0<em>원</em></div>
+          <div class="hero-pnl" id="c-pnl"><span>0원</span><span class="chiprate">0.0%</span><span class="flat">평가손익</span></div>
+        </div>
+        <button class="px-btn sm" type="button" id="c-refresh">🔄 새로고침</button>
+      </div>
       <div class="csum">
-        <div><span>코인 평가액</span><b id="c-eval">0원</b><em id="c-evaln">0종목</em></div>
+        <div><span>코인 평가액</span><b id="c-eval">0원</b><em id="c-evaln">0종 보유</em></div>
         <div><span>코인 예수금</span><b id="c-cash">0원</b><em>원화 대기금</em></div>
         <div><span>총 매입금액</span><b id="c-cost">0원</b><em id="c-costn">매입단가 입력분</em></div>
         <div><span>총자산에 더해짐</span><b id="c-sum">0원</b><em id="c-sumpct">총자산의 0.0%</em></div>
@@ -1012,28 +1019,16 @@
         <label class="f"><span>코인 예수금 <u>원</u></span><input class="t" id="c-cash-in" inputmode="numeric" placeholder="0"></label>
         <label class="f"><span>기준 환율 <u>₩/$</u></span><input class="t" id="c-fx-in" value="—" readonly tabindex="-1" style="background:#f2f4f8;color:#5b6577"></label>
       </div>
-      <p class="hint">코인 평가액 = 보유 수량 × 업비트 원화 현재가. 매입단가를 넣은 코인만 손익·수익률을 계산하고, 비워 둔 코인은 <b>평가액만</b> 총자산에 더합니다(원금을 지어내지 않음).</p>
+      <div class="ckimp">
+        <div class="k"><span>김프</span><b id="c-kimp-btc">—</b><span class="sep">·</span><span>3종 평균</span><b id="c-kimp-avg">—</b></div>
+        <div class="src"><span id="c-kimpwhen">—</span> · <span id="c-src">—</span></div>
+        <div class="src">김프 = 업비트 원화가 ÷ (해외 USDT가 × <span id="c-kimpfx">기준 환율</span>) − 1</div>
+      </div>
     </div>
 
-    <div class="sec">김치프리미엄 <span id="c-kimpwhen">—</span></div>
-    <div class="card">
-      <div class="rowline"><span class="k">BTC 김프</span><span class="v" id="c-kimp-btc">—</span></div>
-      <div class="rowline"><span class="k">표시 코인 평균</span><span class="v" id="c-kimp-avg">—</span></div>
-      <div class="rowline"><span class="k">시세 출처</span><span class="v" id="c-src" style="font-size:15.75px;font-weight:600;color:#5b6577;text-align:right">—</span></div>
-      <p class="hint">김프(%) = 업비트 원화가 ÷ (해외 USDT가 × 기준 환율) − 1. 해외가는 바이낸스 USDT 공개 시세, 원화가는 업비트 공개 시세입니다.</p>
-    </div>
-
-    <div class="sec">주요·관심 코인 <span class="secright"><button class="px-btn sm" type="button" id="c-refresh">🔄 새로고침</button></span></div>
-    <div class="card" id="c-list"></div>
-    <div class="cadd">
-      <input id="c-add-in" placeholder="심볼 (예: SUI·ADA·PEPE)" autocomplete="off" autocapitalize="characters" spellcheck="false">
-      <button type="button" id="c-add-go">추가</button>
-    </div>
-
-    <div class="sec">보유 코인 · 매입단가 <span id="c-holdn">0개</span></div>
-    <div class="note">수량은 소수점 여덟 자리까지 넣을 수 있습니다. 여기 적은 수량·매입단가·예수금은 <b>이 폰(localStorage)에만</b> 저장되고 GitHub 에는 올라가지 않습니다.</div>
-    <div class="card" id="c-holds"></div>
-    <p class="hint" style="margin:0 16px 18px">코인 탭의 값은 <b>💾 저장하기</b>를 눌렀을 때만 남습니다. 저장하면 요약·추이의 총자산과 그날 기록에 코인 평가액 + 코인 예수금이 함께 들어갑니다. 업비트에 없는 심볼은 시세가 <b>—</b>로 남고, 그 코인의 평가액도 0원으로 둡니다.</p>
+    <div class="sec">BTC · ETH · SOL <span id="c-holdn">3종 전용</span></div>
+    <div class="card" id="c-cards"></div>
+    <p class="hint" style="margin:0 16px 18px">코인은 <b>비트코인(BTC) · 이더리움(ETH) · 솔라나(SOL)</b> 세 종만 모읍니다. 카드마다 시세와 내 적립 현황을 함께 보고 수량·매입단가를 바로 넣습니다. 수량·매입단가·예수금은 이 폰에만 저장되고 <b>💾 저장하기</b>를 눌렀을 때만 남습니다(그때 요약·추이 총자산과 그날 기록에 합산).</p>
   </section>
 
   <!-- ============ 추이 ============ -->
@@ -1103,7 +1098,7 @@
       <div class="chk"><span class="k">코인 (평가액 + 예수금)</span><span class="v" id="chk-coin">—</span></div>
       <div class="chk"><span class="k">마지막 저장</span><span class="v" id="chk-saved">—</span></div>
       <div class="chk"><span class="k">종가 자동 반영</span><span class="v" id="chk-prices">—</span></div>
-      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-28 · 🪙 코인 탭 추가</span></div>
+      <div class="chk"><span class="k">앱 버전</span><span class="v" style="font-size:15.75px">2026-11-28 · 🪙 코인 탭 (BTC·ETH·SOL)</span></div>
     </div>
 
     <div class="sec">초기화</div>
@@ -1582,9 +1577,8 @@ function loadSnapshot(date){
   view.asOf = snap.asOf; view.fx = snap.fx;
   view.pricesAppliedAt = state.pricesAppliedAt;
   /* 코인은 그 기록에 담긴 만큼만 — 옛 기록(coins 없음)은 0원이고, 오늘 코인이 이 화면에 섞이지 않는다 (coins-v1) */
-  var liveC = normCoins((liveState || state).coins);
   view.coins = snap.coins ? clone(normCoins(snap.coins))
-                          : { cashKrw:0, mkts:liveC.mkts.slice(), hold:{}, px:{} };
+                          : { cashKrw:0, hold:{}, px:{} };
   state = view;
   viewBaseline = clone(snap);          /* 되돌리기 기준 — 이 날짜 기록을 열었을 때의 값 */
   viewingDate = date;
@@ -3193,8 +3187,8 @@ function afterChange(opts){
     updateInputCalcs(m);
   }
   else if(activeTab === 'coins'){
-    if(opts && opts.rebuild){ renderCoinList(); renderCoinHolds(); }
-    updateCoinCalcs(m);
+    if(opts && opts.rebuild) renderCoinCards();
+    updateCoinRows(m); updateCoinCalcs(m);
   }
 }
 function switchTab(t){
@@ -6414,19 +6408,16 @@ function refreshMarket(manual){
   });
 }
 
-/* ---------- 코인 (coins-v1 · 2026-11-28 v53) ----------
+/* ---------- 코인 (coins-v2 · 2026-11-28 v54) — BTC · ETH · SOL 3종 전용 ----------
    · 보유 코인의 수량·평균 매입단가·코인 예수금만 이 폰(localStorage)에 저장한다.
      GitHub 에 올리는 것은 시세뿐이다(market.json 의 coins = 공개 시세).
+   · v54부터 화면·합산 모두 BTC·ETH·SOL 세 종만 다룬다. 예전(v53) 저장값이나 백업 파일에
+     XRP·DOGE 같은 다른 코인이 남아 있어도 읽을 때 걸러 내 화면에도 총자산에도 들어가지 않는다.
    · 원화가는 업비트 공개 API, 해외 USDT가는 바이낸스 공개 시세(data-api.binance.vision),
      기준 환율은 앱의 USDKRW. 막히면 market.json 의 coins 값(종가 갱신 때 서버가 받아 둔 값)을 쓴다.
    · 김치프리미엄(%) = 업비트 원화가 ÷ (해외 USDT가 × 기준 환율) − 1 */
-var COIN_NAMES = { BTC:'비트코인', ETH:'이더리움', SOL:'솔라나', XRP:'리플', DOGE:'도지코인',
-  ADA:'에이다', AVAX:'아발란체', SUI:'수이', LINK:'체인링크', TRX:'트론', DOT:'폴카닷',
-  MATIC:'폴리곤', POL:'폴리곤', SHIB:'시바이누', PEPE:'페페', NEAR:'니어', ATOM:'코스모스',
-  APT:'앱토스', ARB:'아비트럼', OP:'옵티미즘', ETC:'이더리움클래식', BCH:'비트코인캐시',
-  XLM:'스텔라루멘', EOS:'이오스', TON:'톤코인', WLD:'월드코인', STX:'스택스', SEI:'세이',
-  INJ:'인젝티브', FIL:'파일코인', HBAR:'헤데라', AAVE:'에이브', SAND:'샌드박스' };
-var COIN_MKTS_DEFAULT = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE'];
+var COIN_ORDER = ['BTC', 'ETH', 'SOL'];
+var COIN_NAMES = { BTC:'비트코인', ETH:'이더리움', SOL:'솔라나' };
 function coinSym(s){
   var t = String(s == null ? '' : s).trim().toUpperCase()
     .replace(/^KRW[-_\s]?/, '').replace(/[^A-Z0-9]/g, '').slice(0, 12);
@@ -6435,19 +6426,15 @@ function coinSym(s){
   return t;
 }
 function coinName(sym){ return COIN_NAMES[sym] || ''; }
-/* 코인 상태 — 없으면 기본 관심 코인만 (값은 0) */
+/* 코인 상태 — BTC·ETH·SOL 3종만. 저장값이 없으면 수량 0인 빈 상태 */
 function normCoins(c){
-  var out = { cashKrw:0, mkts:[], hold:{}, px:{} };
-  if(!c || typeof c !== 'object'){ out.mkts = COIN_MKTS_DEFAULT.slice(); return out; }
+  var out = { cashKrw:0, hold:{}, px:{} };
+  if(!c || typeof c !== 'object') return out;
   out.cashKrw = num(c.cashKrw);
-  (Array.isArray(c.mkts) ? c.mkts : []).forEach(function(s){
-    var y = coinSym(s);
-    if(y && out.mkts.indexOf(y) < 0) out.mkts.push(y);
-  });
   var hd = (c.hold && typeof c.hold === 'object') ? c.hold : {};
   Object.keys(hd).forEach(function(k){
     var y = coinSym(k), v = hd[k];
-    if(!y || !v) return;
+    if(COIN_ORDER.indexOf(y) < 0 || !v) return;
     var q = (v.qty === '' || v.qty == null) ? null : num(v.qty);
     var a = (v.avg === '' || v.avg == null) ? null : num(v.avg);
     if(q == null && a == null) return;
@@ -6456,7 +6443,7 @@ function normCoins(c){
   var px = (c.px && typeof c.px === 'object') ? c.px : {};
   Object.keys(px).forEach(function(k){
     var y = coinSym(k), p = num(px[k]);
-    if(y && p > 0) out.px[y] = p;
+    if(y && p > 0 && COIN_ORDER.indexOf(y) >= 0) out.px[y] = p;
   });
   return out;
 }
@@ -6479,12 +6466,8 @@ function coinEvalOf(c){
   out.ret = out.cost ? out.pnl / out.cost : 0;
   return out;
 }
-/* 표시 목록 순서 — 관심 코인 먼저, 보유만 있는 코인은 뒤에 */
-function coinSyms(){
-  var c = normCoins(state && state.coins), list = c.mkts.slice();
-  Object.keys(c.hold).forEach(function(s){ if(list.indexOf(s) < 0) list.push(s); });
-  return list;
-}
+/* 표시 순서 — BTC · ETH · SOL 고정 (v54) */
+function coinSyms(){ return COIN_ORDER.slice(); }
 /* 시세 수치(USDT·24h·김프용)는 저장 파일이 아니라 화면용 — 최근 값을 이 폰에 캐시해 둔다 */
 var coinLive = { at:null, src:'', usdt:{}, pct:{} };
 var COIN_CACHE = 'asset.coins.v1', coinBusy = false, coinAt = 0;
@@ -6534,72 +6517,72 @@ function coinQtyTxt(v){
   return n.toLocaleString('en-US', {maximumFractionDigits:8});
 }
 
-/* ---------- 코인 화면 ---------- */
-function renderCoinList(){
-  var box = document.getElementById('c-list');
+/* ---------- 코인 화면 (v54) ---------- */
+/* 코인 1종 = 카드 1장 — 시세와 내 적립 현황을 한 블록에 묶어 위아래로 오가지 않게 한다 */
+function renderCoinCards(){
+  var box = document.getElementById('c-cards');
   if(!box) return;
-  var c = normCoins(state.coins), syms = coinSyms();
-  if(!syms.length){
-    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:16px 0">표시할 코인이 없습니다.<br>아래 칸에 심볼(예: SUI)을 넣어 추가하세요.</div>';
-    return;
-  }
-  box.innerHTML = syms.map(function(sym){
-    var krw = num(c.px[sym]), usdt = num(coinLive.usdt[sym]);
-    var pctv = coinLive.pct[sym], kimp = coinKimp(sym);
-    return '<div class="coinrow" data-sym="' + esc(sym) + '">' +
-      '<div class="chd"><b>' + esc(sym) + '</b><span class="nm">' + esc(coinName(sym)) + '</span>' +
-        '<button type="button" class="x" data-del="1" aria-label="' + esc(sym) + ' 목록에서 빼기">✕</button></div>' +
-      '<div class="pxs">' +
-        '<div><span>업비트 KRW</span><b>' + (krw > 0 ? fmtInt(krw) + '원' : '—') + '</b></div>' +
-        '<div><span>해외 USDT</span><b>' + coinUsdTxt(usdt) + '</b></div>' +
-        '<div><span>24h 등락</span><b class="' + (pctv == null ? '' : cls(pctv)) + '">' + coinPctTxt(pctv) + '</b></div>' +
-        '<div><span>김프</span><b class="' + (kimp == null ? '' : cls(kimp)) + '">' + coinPctTxt(kimp) + '</b></div>' +
-      '</div></div>';
-  }).join('');
-}
-function renderCoinHolds(){
-  var box = document.getElementById('c-holds');
-  if(!box) return;
-  var c = normCoins(state.coins), syms = coinSyms();
-  if(!syms.length){
-    box.innerHTML = '<div style="text-align:center;color:#8b93a4;font-size:16px;line-height:1.55;padding:16px 0">보유 코인이 없습니다.<br>위에서 코인을 추가하면 수량·매입단가를 넣을 수 있습니다.</div>';
-    return;
-  }
-  box.innerHTML = syms.map(function(sym){
+  var c = normCoins(state.coins);
+  box.innerHTML = COIN_ORDER.map(function(sym){
     var h = c.hold[sym] || {};
-    return '<div class="crow" data-sym="' + esc(sym) + '">' +
-      '<div class="chd"><b>' + esc(sym) + '</b><span class="nm">' + esc(coinName(sym)) + '</span><i class="ev"></i></div>' +
-      '<div class="grid2">' +
-        '<label class="f"><span>수량 <u>개</u></span><input type="text" class="t c-qty" inputmode="decimal" value="' +
+    return '<div class="ccard" data-sym="' + sym + '">' +
+      '<div class="cc-h">' +
+        '<div class="cc-id"><b>' + sym + '</b><span>' + esc(coinName(sym)) + '</span></div>' +
+        '<div class="cc-mv"><b class="c-eval">—</b><em class="c-pnl flat"></em></div>' +
+      '</div>' +
+      '<div class="cc-px">' +
+        '<div><span>업비트 KRW</span><b class="c-krw">—</b></div>' +
+        '<div><span>24h 등락</span><b class="c-pct">—</b></div>' +
+        '<div><span>해외 USDT</span><b class="c-usdt">—</b></div>' +
+        '<div><span>김프</span><b class="c-kimp">—</b></div>' +
+      '</div>' +
+      '<div class="grid2 cc-in">' +
+        '<label class="f"><span>보유 수량 <u>개</u></span><input type="text" class="t c-qty" inputmode="decimal" value="' +
           (h.qty == null ? '' : coinQtyTxt(h.qty)) + '" placeholder="0"></label>' +
         '<label class="f"><span>평균 매입단가 <u>원</u></span><input type="text" class="t c-avg" inputmode="numeric" value="' +
           (h.avg == null ? '' : fmtInt(h.avg)) + '" placeholder="선택"></label>' +
       '</div>' +
-      '<div class="foot"><div class="l">평가액<b class="c-eval">—</b></div><div class="r c-pnl"></div></div>' +
+      '<div class="cc-f"><span>매입금액 <b class="c-cost">—</b></span><span>코인 내 비중 <b class="c-w">—</b></span></div>' +
     '</div>';
   }).join('');
   updateCoinRows();
 }
+/* 값만 다시 칠한다 — 입력 중에 DOM 을 갈아 끼우면 초점이 날아간다 */
 function updateCoinRows(m){
   m = m || compute();
   var map = {};
   (m.coin.rows || []).forEach(function(r){ map[r.sym] = r; });
-  var c = normCoins(state.coins);
-  Array.prototype.forEach.call(document.querySelectorAll('#c-holds .crow'), function(row){
-    var sym = row.getAttribute('data-sym'), r = map[sym] || {};
-    var ev = row.querySelector('.c-eval'), pn = row.querySelector('.c-pnl'), hv = row.querySelector('.chd .ev');
-    if(ev) ev.textContent = (r.value != null) ? won(r.value) : '—';
-    if(hv) hv.textContent = (r.value != null) ? won(r.value) : '';
-    if(pn){
-      var q = num((c.hold[sym] || {}).qty);
+  var c = normCoins(state.coins), all = m.coinEval;
+  Array.prototype.forEach.call(document.querySelectorAll('#c-cards .ccard'), function(card){
+    var sym = card.getAttribute('data-sym'), r = map[sym] || {};
+    var krw = num(c.px[sym]), usdt = num(coinLive.usdt[sym]);
+    var pctv = coinLive.pct[sym], kimp = coinKimp(sym);
+    var q = num((c.hold[sym] || {}).qty);
+    var e;
+    e = card.querySelector('.c-eval');
+    if(e) e.textContent = (r.value != null) ? won(r.value) : '—';
+    e = card.querySelector('.c-pnl');
+    if(e){
       if(r.pnl == null){
-        pn.className = 'c-pnl flat';
-        pn.textContent = q > 0 ? '매입단가를 넣으면 손익' : '';
+        e.className = 'c-pnl flat';
+        e.textContent = q > 0 ? '매입단가를 넣으면 손익' : '';
       }else{
-        pn.className = 'c-pnl ' + cls(r.pnl);
-        pn.textContent = signed(r.pnl) + ' ' + pctS(r.ret || 0);
+        e.className = 'c-pnl ' + cls(r.pnl);
+        e.textContent = signed(r.pnl) + ' ' + pctS(r.ret || 0);
       }
     }
+    e = card.querySelector('.c-krw');
+    if(e) e.textContent = krw > 0 ? won(krw) : '—';
+    e = card.querySelector('.c-pct');
+    if(e){ e.className = 'c-pct' + (pctv == null ? '' : ' ' + cls(pctv)); e.textContent = coinPctTxt(pctv); }
+    e = card.querySelector('.c-usdt');
+    if(e) e.textContent = coinUsdTxt(usdt);
+    e = card.querySelector('.c-kimp');
+    if(e){ e.className = 'c-kimp' + (kimp == null ? '' : ' ' + cls(kimp)); e.textContent = coinPctTxt(kimp); }
+    e = card.querySelector('.c-cost');
+    if(e) e.textContent = (r.cost != null) ? won(r.cost) : '—';
+    e = card.querySelector('.c-w');
+    if(e) e.textContent = (all > 0 && r.value != null) ? pct(r.value / all) : '—';
   });
 }
 function updateCoinCalcs(m){
@@ -6612,12 +6595,13 @@ function updateCoinCalcs(m){
     pnl.innerHTML = '<span>' + signed(m.coin.pnl) + '</span><span class="chiprate">' + pctS(m.coin.ret) + '</span><span class="flat">평가손익</span>';
   }
   setTxt('c-eval', won(m.coinEval));
-  setTxt('c-evaln', m.coin.n + '종목');
+  setTxt('c-evaln', m.coin.n + '종 보유');
   setTxt('c-cash', won(m.coinCash));
   setTxt('c-cost', won(m.coin.cost));
-  setTxt('c-costn', m.coin.costN ? (m.coin.costN + '종목 매입단가 입력분') : '매입단가를 넣은 코인 없음');  setTxt('c-sum', won(m.coinAll));
+  setTxt('c-costn', m.coin.costN ? (m.coin.costN + '종 매입단가 입력분') : '매입단가를 넣은 코인 없음');
+  setTxt('c-sum', won(m.coinAll));
   setTxt('c-sumpct', '총자산의 ' + pct(m.totalAssets ? m.coinAll / m.totalAssets : 0));
-  setTxt('c-holdn', m.coin.n + '개');
+  setTxt('c-holdn', m.coin.n ? (m.coin.n + '종 보유') : '3종 전용');
   var fxIn = document.getElementById('c-fx-in');
   if(fxIn) fxIn.value = m.fx > 0 ? fmtFx(m.fx) + '원' : '—';
   var ci = document.getElementById('c-cash-in');
@@ -6628,18 +6612,22 @@ function updateCoinCalcs(m){
   var bt = coinKimp('BTC'), sum = 0, n = 0;
   coinSyms().forEach(function(s){ var k = coinKimp(s); if(k != null){ sum += k; n++; } });
   var eb = document.getElementById('c-kimp-btc');
-  if(eb){ eb.className = 'v' + (bt == null ? '' : ' ' + cls(bt)); eb.textContent = bt == null ? '—' : coinPctTxt(bt); }
+  if(eb){ eb.className = kimpCls(bt); eb.textContent = bt == null ? '—' : coinPctTxt(bt); }
   var ea = document.getElementById('c-kimp-avg');
-  if(ea){ ea.className = 'v' + (n ? ' ' + cls(sum) : ''); ea.textContent = n ? coinPctTxt(sum / n) + ' (' + n + '종목)' : '—'; }
+  if(ea){ ea.className = kimpCls(n ? sum / n : null); ea.textContent = n ? coinPctTxt(sum / n) : '—'; }
   setTxt('c-src', coinLive.src || '—');
-  setTxt('c-kimpwhen', viewingDate ? ('과거 기록 · 김프는 오늘 시세 기준')
+  setTxt('c-kimpfx', m.fx > 0 ? fmtFx(m.fx) + '원' : '기준 환율');
+  setTxt('c-kimpwhen', viewingDate ? '과거 기록 · 김프는 오늘 시세 기준'
                                     : (coinLive.at ? coinWhenTxt(coinLive.at) + ' 기준' : '—'));
   setTxt('c-stat', viewingDate ? (viewingDate + ' 기록 · 그 기록의 코인만')
                                 : (coinLive.at ? ('업비트 원화 · ' + coinWhenTxt(coinLive.at)) : '업비트 원화 기준'));
 }
+function kimpCls(v){ return v == null ? '' : cls(v); }
+/* 시세만 바았을 때 — 입력칸은 그대로 두고 숫자만 다시 칠한다 */
+function paintCoins(m){ m = m || compute(); updateCoinRows(m); updateCoinCalcs(m); renderHeader(m); }
 function renderCoins(m){
   m = m || compute();
-  renderCoinList(); renderCoinHolds(); updateCoinCalcs(m);
+  renderCoinCards(); updateCoinCalcs(m);
 }
 
 /* ---------- 코인 시세 받기 ---------- */
@@ -6649,7 +6637,7 @@ function coinApplyRows(rows, meta){
   state.coins = c;
   (rows || []).forEach(function(r){
     var sym = coinSym(r.sym || r.key);
-    if(!sym) return;
+    if(COIN_ORDER.indexOf(sym) < 0) return;   /* 3종 밖의 코인은 받지 않는다 (v54) */
     var krw = num(r.krw != null ? r.krw : r.krwPrice);
     if(krw > 0 && num(c.px[sym]) !== krw){ c.px[sym] = krw; touched = true; }
     var usdt = num(r.usdt);
@@ -6673,13 +6661,13 @@ function coinFromMarketData(){
   return true;
 }
 function coinLoadFile(){
-  if(location.protocol === 'file:'){ coinFromMarketData(); renderCoins(); return Promise.resolve(false); }
-  if(marketData && marketData.coins){ coinFromMarketData(); renderCoins(); return Promise.resolve(true); }
+  if(location.protocol === 'file:'){ coinFromMarketData(); paintCoins(); return Promise.resolve(false); }
+  if(marketData && marketData.coins){ coinFromMarketData(); paintCoins(); return Promise.resolve(true); }
   return mkFetchJson(MARKET_URL + '?t=' + Date.now(), 9000).then(function(d){
     if(d && d.sections && !marketData) marketData = d;
-    coinFromMarketData(); renderCoins();
+    coinFromMarketData(); paintCoins();
     return true;
-  }).catch(function(){ coinFromMarketData(); renderCoins(); return false; });
+  }).catch(function(){ coinFromMarketData(); paintCoins(); return false; });
 }
 function fetchCoinKr(){
   var syms = coinSyms();
@@ -6732,12 +6720,12 @@ function refreshCoins(manual){
   }
   if(coinBusy) return Promise.resolve(null);
   if(location.protocol === 'file:'){
-    coinFromMarketData(); renderCoins();
+    coinFromMarketData(); paintCoins();
     if(manual) toast('파일로 연 화면에서는 실시간 시세를 못 받아 저장된 코인 시세를 보여 줍니다', 3800, 'warn');
     return Promise.resolve(null);
   }
   if(navigator.onLine === false){
-    coinFromMarketData(); renderCoins();
+    coinFromMarketData(); paintCoins();
     if(manual) toast('인터넷이 끊겨 있어 저장된 코인 시세를 그대로 씁니다', 3400, 'warn');
     return Promise.resolve(null);
   }
@@ -6754,13 +6742,13 @@ function refreshCoins(manual){
   }).then(function(){
     return fetchCoinUsdt().then(function(rows){ coinApplyRows(rows, null); }).catch(function(){});
   }).then(function(){
-    done(); renderCoins();
+    done(); paintCoins();
     if(manual){
       toast(gotKr ? '코인 시세를 새로 받았습니다' + (coinLive.at ? ' (' + coinWhenTxt(coinLive.at) + ')' : '')
                   : '업비트 시세를 못 받아 market.json 값으로 보여 줍니다', 3200, gotKr ? undefined : 'warn');
     }
     return true;
-  }).catch(function(){ done(); renderCoins(); return false; });
+  }).catch(function(){ done(); paintCoins(); return false; });
 }
 function coinMaybeLoad(){
   renderCoins();
@@ -6772,54 +6760,13 @@ function coinMaybeLoad(){
   /* 처음 열었거나 저장된 코인 시세가 없으면 market.json 부터 받고 이어서 실시간 시세를 시도 */
   coinLoadFile().then(function(){ refreshCoins(false); });
 }
-function coinAdd(){
-  var inp = document.getElementById('c-add-in');
-  if(!inp) return;
-  var sym = coinSym(inp.value);
-  if(!/^[A-Z0-9]{2,12}$/.test(sym)){ toast('코인 심볼을 알려 주세요 (예: SUI, ADA)', 2800, 'warn'); return; }
-  var c = normCoins(state.coins);
-  state.coins = c;
-  if(c.mkts.indexOf(sym) >= 0){ toast(sym + ' 코인은 이미 목록에 있습니다', 2600); inp.value = ''; return; }
-  c.mkts.push(sym);
-  inp.value = '';
-  markChanged(); renderCoins();
-  refreshCoins(false);
-  toast(sym + (coinName(sym) ? ' · ' + coinName(sym) : '') + ' 추가 — 💾 저장하면 다음에도 남습니다', 3400);
-}
-function coinDel(sym){
-  var c = normCoins(state.coins), h = c.hold[sym];
-  var q = h ? num(h.qty) : 0;
-  var msg = (q > 0)
-    ? (sym + ' 코인을 목록에서 뺄까요?\n\n보유 수량 ' + coinQtyTxt(q) + '개와 매입단가도 함께 지워집니다.' + (viewingDate ? '\n이 날짜 기록에서만 빠지고 오늘 데이터는 그대로입니다.' : ''))
-    : (sym + ' 코인을 목록에서 뺄까요?');
-  if(!confirm(msg)) return;
-  c.mkts = c.mkts.filter(function(x){ return x !== sym; });
-  delete c.hold[sym];
-  delete c.px[sym];
-  delete coinLive.usdt[sym]; delete coinLive.pct[sym];
-  state.coins = c;
-  markChanged(); renderCoins();
-  var m = compute(); renderHeader(m);
-  if(activeTab === 'summary') renderSummary(m);
-  toast(sym + ' 코인을 뺐습니다' + (viewingDate ? ' — 💾 기록 저장을 눌러야 남습니다' : ''));
-}
 document.getElementById('c-refresh').addEventListener('click', function(){ refreshCoins(true); });
-var coinAddIn = document.getElementById('c-add-in');
-if(coinAddIn){
-  document.getElementById('c-add-go').addEventListener('click', coinAdd);
-  coinAddIn.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); coinAdd(); } });
-}
-document.getElementById('c-list').addEventListener('click', function(e){
-  var b = e.target.closest('[data-del]');
-  if(!b) return;
-  var row = b.closest('.coinrow');
-  if(row) coinDel(row.getAttribute('data-sym'));
-});
-/* 보유 코인 입력 — 수량(소수 8자리)·평균 매입단가(원). 입력하는 즉시 평가액·손익·총자산이 따라온다 */
-document.getElementById('c-holds').addEventListener('input', function(e){
-  var t = e.target, row = t.closest ? t.closest('.crow') : null;
-  if(!row) return;
-  var sym = row.getAttribute('data-sym');
+/* 코인 입력 — 수량(소수 8자리)·평균 매입단가(원). 입력하는 즉시 평가액·손익·총자산이 따라온다 */
+document.getElementById('c-cards').addEventListener('input', function(e){
+  var t = e.target, card = t.closest ? t.closest('.ccard') : null;
+  if(!card) return;
+  var sym = card.getAttribute('data-sym');
+  if(COIN_ORDER.indexOf(sym) < 0) return;
   var c = normCoins(state.coins);
   state.coins = c;
   if(!c.hold[sym]) c.hold[sym] = { qty:null, avg:null };
@@ -6833,7 +6780,7 @@ document.getElementById('c-holds').addEventListener('input', function(e){
   var m = compute();
   renderHeader(m); updateCoinCalcs(m); updateCoinRows(m); markChanged();
 });
-document.getElementById('c-holds').addEventListener('focusout', function(e){
+document.getElementById('c-cards').addEventListener('focusout', function(e){
   var t = e.target;
   if(!t || !t.classList) return;
   if(t.classList.contains('c-qty')) settleNum(t, 'coinq');
